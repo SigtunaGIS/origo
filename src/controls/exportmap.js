@@ -5,6 +5,8 @@ const Exportmap = function Exportmap(options = {}) {
     buttonText = 'Ladda ner kartan',
     attributionFontSize = options.attributionFontSize = '10',
     attributionFontColor = options.attributionFontColor = 'rgb(64, 64, 64)',
+    logoWidth = options.logoWidth,
+    logoHeight = options.logoHeight,
     icon = '#fa-download'
   } = options;
 
@@ -105,20 +107,26 @@ const Exportmap = function Exportmap(options = {}) {
       ctx.fillText(scaleInfo.innerHTML, canvas.width - 5 - (scaleInfo.width / 2) - (textSize.width / 2), canvas.height - 10);
       ctx.stroke();
 
-      const fileName = format === 'image/png' ? 'map.png' : 'map.jpeg';
+      const logo = new Image();
+      logo.onload = function ImgLoad() {       
+        ctx.drawImage(logo, 20, 20, logoWidth, logoHeight);
 
-      canvas.toBlob((blob) => {
-        if (navigator.msSaveBlob) {
-          navigator.msSaveBlob(blob, fileName);
-        } else {
-          const link = document.createElement('a');
-          const objectURL = URL.createObjectURL(blob);
-          link.setAttribute('download', fileName);
-          link.setAttribute('href', objectURL);
-          link.click();
-          URL.revokeObjectURL(objectURL);
-        }
-      }, format);
+        const fileName = format === 'image/png' ? 'map.png' : 'map.jpeg';
+
+        canvas.toBlob((blob) => {
+          if (navigator.msSaveBlob) {
+            navigator.msSaveBlob(blob, fileName);
+          } else {
+            const link = document.createElement('a');
+            const objectURL = URL.createObjectURL(blob);
+            link.setAttribute('download', fileName);
+            link.setAttribute('href', objectURL);
+            link.click();
+            URL.revokeObjectURL(objectURL);
+          }
+        }, format);
+      };
+      logo.src = '..\\img\\png\\sigtuna_logo.png';
     });
     map.renderSync();
   }
