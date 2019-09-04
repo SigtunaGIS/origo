@@ -7,6 +7,8 @@ const Exportmap = function Exportmap(options = {}) {
     attributionFontColor = options.attributionFontColor = 'rgb(64, 64, 64)',
     logoWidth = options.logoWidth,
     logoHeight = options.logoHeight,
+    arrowWidth = options.arrowWidth,
+    arrowHeight = options.arrowHeight,
     icon = '#fa-download'
   } = options;
 
@@ -80,11 +82,19 @@ const Exportmap = function Exportmap(options = {}) {
     };
   }
 
+  function rotateAndPaintImage (canvas, context, image) {
+    context.translate(canvas.width-150, 20); 
+    context.translate(arrowWidth/2, arrowHeight/2); 
+    context.rotate(map.getView().getRotation()); 
+    context.drawImage(image, -arrowWidth/2, -arrowHeight/2, arrowWidth, arrowHeight);
+  }
+  
   function download(format) {
     const attr = getAttributions();
     const scaleInfo = getScaleInfo();
 
     map.once('postrender', (event) => {
+      
       const canvasOriginal = document.getElementsByTagName('canvas')[0];
       // cloning canvas so that adding text to it doesn't dirty map view.
       const canvas = cloneCanvas(canvasOriginal);
@@ -93,7 +103,7 @@ const Exportmap = function Exportmap(options = {}) {
       ctx.font = `${attributionFontSize}px Arial`;
       ctx.fillStyle = attributionFontColor;
       ctx.strokeStyle = attributionFontColor;
-
+      
       ctx.fillText(attr, 10, canvas.height - 5);
 
       ctx.beginPath();
@@ -108,23 +118,34 @@ const Exportmap = function Exportmap(options = {}) {
       ctx.stroke();
 
       const logo = new Image();
-      logo.onload = function ImgLoad() {       
+      logo.onload = function () {       
         ctx.drawImage(logo, 20, 20, logoWidth, logoHeight);
-
-        const fileName = format === 'image/png' ? 'map.png' : 'map.jpeg';
-
-        canvas.toBlob((blob) => {
-          if (navigator.msSaveBlob) {
-            navigator.msSaveBlob(blob, fileName);
+        const northArrow = new Image();
+        northArrow.onload = function () {
+          if (map.getView().getRotation() === 0){
+            ctx.drawImage(northArrow, canvas.width-150, 20, arrowWidth, arrowHeight);
           } else {
-            const link = document.createElement('a');
-            const objectURL = URL.createObjectURL(blob);
-            link.setAttribute('download', fileName);
-            link.setAttribute('href', objectURL);
-            link.click();
-            URL.revokeObjectURL(objectURL);
+            rotateAndPaintImage (canvas, ctx, northArrow);
           }
-        }, format);
+          
+          
+          const fileName = format === 'image/png' ? 'map.png' : 'map.jpeg';
+
+          canvas.toBlob((blob) => {
+            if (navigator.msSaveBlob) {
+              navigator.msSaveBlob(blob, fileName);
+            } else {
+              const link = document.createElement('a');
+              const objectURL = URL.createObjectURL(blob);
+              link.setAttribute('download', fileName);
+              link.setAttribute('href', objectURL);
+              link.click();
+              URL.revokeObjectURL(objectURL);
+            }
+          }, format);
+        };
+        northArrow.src = '..\\img\\png\\north_arrow.png';
+
       };
       logo.src = '..\\img\\png\\sigtuna_logo.png';
     });
