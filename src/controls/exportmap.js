@@ -5,6 +5,10 @@ const Exportmap = function Exportmap(options = {}) {
     buttonText = 'Ladda ner kartan',
     attributionFontSize = options.attributionFontSize = '10',
     attributionFontColor = options.attributionFontColor = 'rgb(64, 64, 64)',
+    logoWidth = options.logoWidth,
+    logoHeight = options.logoHeight,
+    arrowWidth = options.arrowWidth,
+    arrowHeight = options.arrowHeight,
     icon = '#fa-download'
   } = options;
 
@@ -78,11 +82,19 @@ const Exportmap = function Exportmap(options = {}) {
     };
   }
 
+  function rotateAndPaintImage (canvas, context, image) {
+    context.translate(canvas.width-150, 20); 
+    context.translate(arrowWidth/2, arrowHeight/2); 
+    context.rotate(map.getView().getRotation()); 
+    context.drawImage(image, -arrowWidth/2, -arrowHeight/2, arrowWidth, arrowHeight);
+  }
+  
   function download(format) {
     const attr = getAttributions();
     const scaleInfo = getScaleInfo();
 
     map.once('postrender', (event) => {
+      
       const canvasOriginal = document.getElementsByTagName('canvas')[0];
       // cloning canvas so that adding text to it doesn't dirty map view.
       const canvas = cloneCanvas(canvasOriginal);
@@ -91,7 +103,7 @@ const Exportmap = function Exportmap(options = {}) {
       ctx.font = `${attributionFontSize}px Arial`;
       ctx.fillStyle = attributionFontColor;
       ctx.strokeStyle = attributionFontColor;
-
+      
       ctx.fillText(attr, 10, canvas.height - 5);
 
       ctx.beginPath();
@@ -105,20 +117,37 @@ const Exportmap = function Exportmap(options = {}) {
       ctx.fillText(scaleInfo.innerHTML, canvas.width - 5 - (scaleInfo.width / 2) - (textSize.width / 2), canvas.height - 10);
       ctx.stroke();
 
-      const fileName = format === 'image/png' ? 'map.png' : 'map.jpeg';
+      const logo = new Image();
+      logo.onload = function () {       
+        ctx.drawImage(logo, 20, 20, logoWidth, logoHeight);
+        const northArrow = new Image();
+        northArrow.onload = function () {
+          if (map.getView().getRotation() === 0){
+            ctx.drawImage(northArrow, canvas.width-150, 20, arrowWidth, arrowHeight);
+          } else {
+            rotateAndPaintImage (canvas, ctx, northArrow);
+          }
+          
+          
+          const fileName = format === 'image/png' ? 'map.png' : 'map.jpeg';
 
-      canvas.toBlob((blob) => {
-        if (navigator.msSaveBlob) {
-          navigator.msSaveBlob(blob, fileName);
-        } else {
-          const link = document.createElement('a');
-          const objectURL = URL.createObjectURL(blob);
-          link.setAttribute('download', fileName);
-          link.setAttribute('href', objectURL);
-          link.click();
-          URL.revokeObjectURL(objectURL);
-        }
-      }, format);
+          canvas.toBlob((blob) => {
+            if (navigator.msSaveBlob) {
+              navigator.msSaveBlob(blob, fileName);
+            } else {
+              const link = document.createElement('a');
+              const objectURL = URL.createObjectURL(blob);
+              link.setAttribute('download', fileName);
+              link.setAttribute('href', objectURL);
+              link.click();
+              URL.revokeObjectURL(objectURL);
+            }
+          }, format);
+        };
+        northArrow.src = '..\\img\\png\\north_arrow.png';
+
+      };
+      logo.src = '..\\img\\png\\sigtuna_logo.png';
     });
     map.renderSync();
   }
