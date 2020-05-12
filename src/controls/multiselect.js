@@ -402,7 +402,7 @@ const Multiselect = function Multiselect(options = {}) {
       const layerName = item.getLayer().get('title');
       const feature = item.getFeature();
       const title = feature.get(bufferAttribute) || feature.get('namn') || feature.getId();
-      const titleEl = layerName ? `<span>Feature <b>${title}</b> från lagret <b>${layerName}</b></span>` : `<span>Feature ${title}</span>`;
+      const titleEl = layerName ? `<span><b>${title}</b> (${layerName})</span>` : `<span>${title}</span>`;
       return `<div class="featureSelectorItem" id="${feature.getId()}"> ${titleEl} </div>`;
     });
 
@@ -734,7 +734,7 @@ const Multiselect = function Multiselect(options = {}) {
             },
             // icon: '#baseline-crop_square-24px',
             icon: '#fa-square-o',
-            tooltipText: 'Box',
+            tooltipText: 'Ruta',
             tooltipPlacement: 'east'
           });
           buttons.push(boxSelectionButton);
@@ -748,7 +748,7 @@ const Multiselect = function Multiselect(options = {}) {
               toggleType(this);
             },
             icon: '#fa-circle-o',
-            tooltipText: 'Circle',
+            tooltipText: 'Cirkel',
             tooltipPlacement: 'east'
           });
           buttons.push(circleSelectionButton);
