@@ -66,6 +66,10 @@ const Keepexternalsessionalive = function Keepexternalsessionalive(options) {
           initTimer(service);
         });
       }
+    },
+    onAdd(evt) {
+    },
+    render() {
     }
   });
 };
