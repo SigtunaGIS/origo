@@ -235,11 +235,12 @@ function createSubexportComponent(selectionGroup) {
   if (layerSpecificExportOptions) {
     const exportUrls = layerSpecificExportOptions.exportUrls || [];
     const attributesToSendToExportPerLayer = layerSpecificExportOptions.attributesToSendToExport;
-    const layerSpecificExportedFileName = layerSpecificExportOptions.exportedFileName || exportedFileName;
+    //const layerSpecificExportedFileName = layerSpecificExportOptions.exportedFileName || exportedFileName;
 
     exportUrls.forEach((obj) => {
       const buttonText = obj.buttonText || 'External Call';
       const url = obj.url;
+      const layerSpecificExportedFileName = obj.exportedFileName;
       const attributesToSendToExport = obj.attributesToSendToExport ? obj.attributesToSendToExport : attributesToSendToExportPerLayer;
       const exportBtn = createExportButton(buttonText);
       const btn = exportBtn.querySelector('button');
