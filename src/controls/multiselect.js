@@ -4,13 +4,17 @@ import GeometryType from 'ol/geom/GeometryType';
 import GeoJSON from 'ol/format/GeoJSON';
 import PointerInteraction from 'ol/interaction/Pointer';
 import Overlay from 'ol/Overlay';
-import { fromCircle } from 'ol/geom/Polygon';
-import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style';
+import { fromCircle, fromExtent } from 'ol/geom/Polygon';
+import {
+  Circle as CircleStyle, Fill, Stroke, Style
+} from 'ol/style';
 import Feature from 'ol/Feature';
-import { fromExtent } from 'ol/geom/Polygon';
+
 import buffer from '@turf/buffer';
 import disjoint from '@turf/boolean-disjoint';
-import { Component, Element as El, Button, dom, Modal } from '../ui';
+import {
+  Component, Element as El, Button, dom, Modal
+} from '../ui';
 import getFeatureInfo from '../getfeatureinfo';
 import SelectedItem from '../models/SelectedItem';
 import featurelayer from '../featurelayer';
@@ -50,10 +54,10 @@ const Multiselect = function Multiselect(options = {}) {
 
   const tools = Object.prototype.hasOwnProperty.call(options, 'tools') ? options.tools : ['click', 'box', 'circle', 'buffer'];
   const defaultTool = Object.prototype.hasOwnProperty.call(options, 'default') ? options.default : 'click';
-  const clickSelection = !!tools.find(i => i === 'click');
-  const boxSelection = !!tools.find(i => i === 'box');
-  const circleSelection = !!tools.find(i => i === 'circle');
-  const bufferSelection = !!tools.find(i => i === 'buffer');
+  const clickSelection = !!tools.find((i) => i === 'click');
+  const boxSelection = !!tools.find((i) => i === 'box');
+  const circleSelection = !!tools.find((i) => i === 'circle');
+  const bufferSelection = !!tools.find((i) => i === 'buffer');
 
   function setActive(state) {
     isActive = state;
@@ -248,14 +252,14 @@ const Multiselect = function Multiselect(options = {}) {
     // adding features got from wfs GetFeature
     Promise.all(results.selectedRemoteItemsPromises).then((data) => {
       // data is an array containing corresponding array of features for each layer.
-      data.forEach(items => allItems = allItems.concat(items));
+      data.forEach((items) => allItems = allItems.concat(items));
 
       if (allItems.length === 1) {
         selectionManager.addOrHighlightItem(allItems[0]);
       } else if (allItems.length > 1) {
         selectionManager.addItems(allItems);
       }
-    }).catch(err => console.error(err));
+    }).catch((err) => console.error(err));
   }
 
   function fetchFeatures_Circle(evt) {
@@ -280,7 +284,7 @@ const Multiselect = function Multiselect(options = {}) {
     // adding features got from wfs GetFeature
     Promise.all(results.selectedRemoteItemsPromises).then((data) => {
       // data is an array containing corresponding arrays of features for each layer.
-      data.forEach(items => allItems = allItems.concat(getItemsIntersectingGeometry(items, circle)));
+      data.forEach((items) => allItems = allItems.concat(getItemsIntersectingGeometry(items, circle)));
 
       if (allItems.length === 1) {
         selectionManager.addOrHighlightItem(allItems[0]);
@@ -337,7 +341,7 @@ const Multiselect = function Multiselect(options = {}) {
 
   function createFeatureSelectionModal(items) {
     // extracting features
-    const features = items.map(item => item.getFeature());
+    const features = items.map((item) => item.getFeature());
     const featuresList = items.map((item) => {
       const layerAttributes = item.getLayer().get('attributes');
       const bufferAttribute = layerAttributes ? layerAttributes[0].name ? layerAttributes[0].name : undefined : undefined;
@@ -364,7 +368,7 @@ const Multiselect = function Multiselect(options = {}) {
       for (let index = 0; index < featureSelectors.length; index++) {
         const f = featureSelectors[index];
         f.addEventListener('click', function (e) {
-          bufferFeature = features.find(ff => ff.getId().toString() === this.id).clone();
+          bufferFeature = features.find((ff) => ff.getId().toString() === this.id).clone();
           modal.closeModal();
           resolve();
           e.stopPropagation();
@@ -394,11 +398,11 @@ const Multiselect = function Multiselect(options = {}) {
       // const onlyNumbers = pattern.test(radiusVal);
       // console.log(onlyNumbers);
       const radius = parseFloat(radiusVal);
-      if ((!radius && radius !== 0) ||
-        (radius <= 0 && (bufferFeature.getGeometry().getType() === GeometryType.POINT ||
-          bufferFeature.getGeometry().getType() === GeometryType.MULTI_POINT ||
-          bufferFeature.getGeometry().getType() === GeometryType.MULTI_LINE_STRING ||
-          bufferFeature.getGeometry().getType() === GeometryType.LINE_STRING))) {
+      if ((!radius && radius !== 0)
+        || (radius <= 0 && (bufferFeature.getGeometry().getType() === GeometryType.POINT
+          || bufferFeature.getGeometry().getType() === GeometryType.MULTI_POINT
+          || bufferFeature.getGeometry().getType() === GeometryType.MULTI_LINE_STRING
+          || bufferFeature.getGeometry().getType() === GeometryType.LINE_STRING))) {
         bufferradiusEl.classList.add('unvalidValue');
         e.stopPropagation();
         return;
@@ -430,7 +434,7 @@ const Multiselect = function Multiselect(options = {}) {
     // adding features got from wfs GetFeature
     Promise.all(results.selectedRemoteItemsPromises).then((data) => {
       // data is an array containing corresponding arrays of features for each layer.
-      data.forEach(items => allItems = allItems.concat(getItemsIntersectingGeometry(items, bufferedGeometry)));
+      data.forEach((items) => allItems = allItems.concat(getItemsIntersectingGeometry(items, bufferedGeometry)));
 
       if (allItems.length === 1) {
         selectionManager.addOrHighlightItem(allItems[0]);
@@ -543,8 +547,7 @@ const Multiselect = function Multiselect(options = {}) {
   // General function that recieves a list of features and a geometry, then removes all the features that lie outside of the geometry.
   // Do not confuse this function with getFeaturesIntersectingExtent!
   function getItemsIntersectingGeometry(items, _geometry) {
-
-    const geometry = _geometry.clone()
+    const geometry = _geometry.clone();
 
     const format = new GeoJSON();
     const projection = map.getView().getProjection();
@@ -590,10 +593,10 @@ const Multiselect = function Multiselect(options = {}) {
     return new Promise(((resolve) => {
       const req = wfs.request(layer, extent, viewer);
       req.then((data) => {
-        const selectedRemoteItems = data.map(feature => new SelectedItem(feature, layer, map, selectionGroup, selectionGroupTitle));
+        const selectedRemoteItems = data.map((feature) => new SelectedItem(feature, layer, map, selectionGroup, selectionGroupTitle));
         resolve(selectedRemoteItems);
       })
-        .catch(err => console.error(err));
+        .catch((err) => console.error(err));
     }));
   }
 
@@ -633,7 +636,6 @@ const Multiselect = function Multiselect(options = {}) {
   return Component({
     name: 'multiselection',
     onInit() {
-
       if (clickSelection || boxSelection || circleSelection || bufferSelection) {
         multiselectElement = El({
           tagName: 'div',
@@ -641,7 +643,7 @@ const Multiselect = function Multiselect(options = {}) {
         });
 
         multiselectButton = Button({
-          cls: 'o-multiselect padding-small margin-bottom-smaller icon-smaller rounded light box-shadow',
+          cls: 'o-multiselect padding-small margin-bottom-smaller icon-smaller round light box-shadow',
           click() {
             toggleMultiselection();
           },
@@ -653,7 +655,7 @@ const Multiselect = function Multiselect(options = {}) {
 
         if (clickSelection) {
           clickSelectionButton = Button({
-            cls: 'o-multiselect-click padding-small margin-bottom-smaller icon-smaller rounded light box-shadow hidden',
+            cls: 'o-multiselect-click padding-small margin-bottom-smaller icon-smaller round light box-shadow hidden',
             click() {
               type = 'click';
               toggleType(this);
@@ -668,7 +670,7 @@ const Multiselect = function Multiselect(options = {}) {
 
         if (boxSelection) {
           boxSelectionButton = Button({
-            cls: 'o-multiselect-box padding-small margin-bottom-smaller icon-smaller rounded light box-shadow hidden',
+            cls: 'o-multiselect-box padding-small margin-bottom-smaller icon-smaller round light box-shadow hidden',
             click() {
               type = 'box';
               toggleType(this);
@@ -683,7 +685,7 @@ const Multiselect = function Multiselect(options = {}) {
 
         if (circleSelection) {
           circleSelectionButton = Button({
-            cls: 'o-multiselect-circle padding-small margin-bottom-smaller icon-smaller rounded light box-shadow hidden',
+            cls: 'o-multiselect-circle padding-small margin-bottom-smaller icon-smaller round light box-shadow hidden',
             click() {
               type = 'circle';
               toggleType(this);
@@ -697,7 +699,7 @@ const Multiselect = function Multiselect(options = {}) {
 
         if (bufferSelection) {
           bufferSelectionButton = Button({
-            cls: 'o-multiselect-buffer padding-small margin-bottom-smaller icon-smaller rounded light box-shadow hidden',
+            cls: 'o-multiselect-buffer padding-small margin-bottom-smaller icon-smaller round light box-shadow hidden',
             click() {
               type = 'buffer';
               toggleType(this);

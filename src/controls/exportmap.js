@@ -5,6 +5,7 @@ const Exportmap = function Exportmap(options = {}) {
     buttonText = 'Ladda ner kartan',
     attributionFontSize = options.attributionFontSize = '10',
     attributionFontColor = options.attributionFontColor = 'rgb(64, 64, 64)',
+    scaleLineBgColor = options.scaleLineBgColor = 'rgb(255, 255, 255)',
     icon = '#fa-download'
   } = options;
 
@@ -38,7 +39,7 @@ const Exportmap = function Exportmap(options = {}) {
         // If layer type is "GROUP" then it is not a real layer and does not have any source, we need to check its sublayers.
         if (layer.get('type') === 'GROUP') {
           const subLayers = layer.getLayers();
-          subLayers.forEach(lyr => getAttributionsFunction(lyr));
+          subLayers.forEach((lyr) => getAttributionsFunction(lyr));
         } else {
           attributionsFunctions.push(layer.getSource().getAttributions());
         }
@@ -53,7 +54,7 @@ const Exportmap = function Exportmap(options = {}) {
     attributionsFunctions.forEach((func) => {
       if (func) { // check is needed because layers without attribution return null.
         const attributionsList = func();
-        attributionsList.forEach(att => attributionHTMLs.push(att));
+        attributionsList.forEach((att) => attributionHTMLs.push(att));
       }
     });
 
@@ -70,11 +71,14 @@ const Exportmap = function Exportmap(options = {}) {
   function getScaleInfo() {
     const el = document.getElementsByClassName('ol-scale-line-inner')[0];
     const widthStr = el.style.width;
+    const heightStr = document.getElementsByClassName('ol-scale-line')[0].offsetHeight;
     const widthNumber = parseInt(widthStr, 10);
+    const heightNumber = parseInt(heightStr, 10);
 
     return {
       innerHTML: el.innerHTML,
-      width: widthNumber
+      width: widthNumber,
+      height: heightNumber
     };
   }
 
@@ -92,17 +96,21 @@ const Exportmap = function Exportmap(options = {}) {
       ctx.fillStyle = attributionFontColor;
       ctx.strokeStyle = attributionFontColor;
 
+      // Background for the ol-scaleline
+      ctx.fillStyle = scaleLineBgColor;
+      ctx.fillRect((canvas.width - scaleInfo.width - 15), (canvas.height - scaleInfo.height - 10), (scaleInfo.width + 4), (scaleInfo.height + 4));
+      ctx.fillStyle = attributionFontColor;
+      ctx.font = '10px Arial';
+      const textSize = ctx.measureText(scaleInfo.innerHTML); // TextMetrics object
+      ctx.fillText(scaleInfo.innerHTML, canvas.width - 10 - (scaleInfo.width / 2) - (textSize.width / 2), canvas.height - 15);
+
       ctx.fillText(attr, 10, canvas.height - 5);
 
       ctx.beginPath();
-      ctx.moveTo(canvas.width - 5, canvas.height - 10);
-      ctx.lineTo(canvas.width - 5, canvas.height - 5);
-      ctx.lineTo(canvas.width - 5 - scaleInfo.width, canvas.height - 5);
-      ctx.lineTo(canvas.width - 5 - scaleInfo.width, canvas.height - 10);
-
-      ctx.font = '10px Arial';
-      const textSize = ctx.measureText(scaleInfo.innerHTML); // TextMetrics object
-      ctx.fillText(scaleInfo.innerHTML, canvas.width - 5 - (scaleInfo.width / 2) - (textSize.width / 2), canvas.height - 10);
+      ctx.moveTo((canvas.width - scaleInfo.width - 10), (canvas.height - scaleInfo.height - 10));
+      ctx.lineTo((canvas.width - scaleInfo.width - 10), (canvas.height - 9));
+      ctx.lineTo((canvas.width - 15), (canvas.height - 9));
+      ctx.lineTo((canvas.width - 15), (canvas.height - scaleInfo.height - 10));
       ctx.stroke();
 
       const fileName = format === 'image/png' ? 'map.png' : 'map.jpeg';
@@ -134,9 +142,9 @@ const Exportmap = function Exportmap(options = {}) {
         value(callback, type, quality) {
           const dataURL = this.toDataURL(type, quality).split(',')[1];
           setTimeout(() => {
-            let binStr = atob(dataURL),
-              len = binStr.length,
-              arr = new Uint8Array(len);
+            const binStr = atob(dataURL);
+            const len = binStr.length;
+            const arr = new Uint8Array(len);
 
             for (let i = 0; i < len; i++) {
               arr[i] = binStr.charCodeAt(i);

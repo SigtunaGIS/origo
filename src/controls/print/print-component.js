@@ -58,7 +58,9 @@ const PrintComponent = function PrintComponent(options = {}) {
     update() { dom.replace(document.getElementById(this.getId()), this.render()); },
     render() { return `<div id="${this.getId()}" class="o-print-description padding-y text-grey-dark empty">${description}</div>`; }
   });
-  const printMapComponent = PrintMap({ baseUrl: viewer.getBaseUrl(), logo, map });
+  const printMapComponent = PrintMap({
+    baseUrl: viewer.getBaseUrl(), logo, map, viewer
+  });
 
   const printSettings = PrintSettings({
     orientation,

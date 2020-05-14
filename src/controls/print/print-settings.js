@@ -5,6 +5,7 @@ import printSettingsTemplate from './print-settings.template';
 import CustomSizeControl from './custom-size-control';
 import DescriptionControl from './description-control';
 import MarginControl from './margin-control';
+import ScaleControl from './scale-control';
 import OrientationControl from './orientation-control';
 import SizeControl from './size-control';
 import TitleControl from './title-control';
@@ -81,6 +82,7 @@ const PrintSettings = function PrintSettings({
       const titleControl = TitleControl({});
       const descriptionControl = DescriptionControl();
       const marginControl = MarginControl({ checked: true });
+      const scaleControl = ScaleControl({ checked: true });
       customSizeControl = CustomSizeControl({
         state: initialSize === 'custom' ? 'active' : 'inital',
         height: customSize[0],
@@ -95,13 +97,14 @@ const PrintSettings = function PrintSettings({
             customSizeControl,
             descriptionControl,
             marginControl,
+            scaleControl,
             orientationControl,
             sizeControl,
             titleControl
           });
         }
       });
-      contentComponent.addComponents([customSizeControl, marginControl, orientationControl, sizeControl, titleControl, descriptionControl]);
+      contentComponent.addComponents([customSizeControl, marginControl, scaleControl, orientationControl, sizeControl, titleControl, descriptionControl]);
       printSettingsContainer = Collapse({
         cls: 'no-print fixed flex column top-left rounded box-shadow bg-white overflow-hidden z-index-ontop-high',
         collapseX: true,
@@ -113,6 +116,7 @@ const PrintSettings = function PrintSettings({
 
       descriptionControl.on('change', (evt) => this.dispatch('change:description', evt));
       marginControl.on('change:check', (evt) => this.dispatch('change:margin', evt));
+      scaleControl.on('change:check', (evt) => this.dispatch('change:resolution', evt));
       orientationControl.on('change:orientation', (evt) => this.dispatch('change:orientation', evt));
       sizeControl.on('change:size', (evt) => this.dispatch('change:size', evt));
       sizeControl.on('change:size', this.onChangeSize.bind(this));

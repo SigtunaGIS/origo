@@ -37,6 +37,9 @@
       }
     },
     {
+      "name": "exportmap"
+    },
+    {
       "name": "legend"
     },
     {
@@ -51,6 +54,9 @@
     },
     {
       "name": "measure"
+    },
+    {
+      "name": "multiselect"
     }
   ],
   "pageSettings": {
