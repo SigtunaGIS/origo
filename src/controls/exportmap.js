@@ -5,7 +5,8 @@ const Exportmap = function Exportmap(options = {}) {
     buttonText = 'Ladda ner kartan',
     attributionFontSize = options.attributionFontSize = '10',
     attributionFontColor = options.attributionFontColor = 'rgb(64, 64, 64)',
-	logoWidth = options.logoWidth = '150',
+    scaleLineBgColor = options.scaleLineBgColor = 'rgb(255, 255, 255)',
+    logoWidth = options.logoWidth = '150',
     logoHeight = options.logoHeight = '50',
     arrowWidth = options.arrowWidth = '100',
     arrowHeight = options.arrowHeight = '150',
@@ -86,7 +87,7 @@ const Exportmap = function Exportmap(options = {}) {
       height: heightNumber
     };
   }
-  
+
   function rotateAndPaintImage(canvas, context, image) {
     context.translate(canvas.width - 150, 20);
     context.translate(arrowWidth / 2, arrowHeight / 2);
