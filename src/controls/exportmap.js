@@ -21,19 +21,27 @@ const Exportmap = function Exportmap(options = {}) {
   let map;
   let alreadyDrawn = false;
 
-  function cloneCanvas(oldCanvas) {
+  function renderCanvas(oldCanvas) {
     // create a new canvas
     const newCanvas = document.createElement('canvas');
-    const context = newCanvas.getContext('2d');
+    const mapContext = newCanvas.getContext('2d');
 
     // set dimensions
     newCanvas.width = oldCanvas.width;
     newCanvas.height = oldCanvas.height;
 
-    // apply the old canvas to the new one
-    context.drawImage(oldCanvas, 0, 0);
-
-    // return the new canvas
+    Array.prototype.forEach.call(document.querySelectorAll('.ol-layer canvas'), (canvas) => {
+      if (canvas.width > 0) {
+        const opacity = canvas.parentNode.style.opacity;
+        mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
+        const transform = canvas.style.transform;
+        // Get the transform parameters from the style's transform matrix
+        const matrix = transform.match(/^matrix\(([^\(]*)\)$/)[1].split(',').map(Number);
+        // Apply the transform to the export map context
+        CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
+        mapContext.drawImage(canvas, 0, 0);
+      }
+    });
     return newCanvas;
   }
   function getAttributions() {
@@ -101,14 +109,13 @@ const Exportmap = function Exportmap(options = {}) {
 
     map.once('postrender', (event) => {
       const canvasOriginal = document.getElementsByTagName('canvas')[0];
-      // cloning canvas so that adding text to it doesn't dirty map view.
-      const canvas = cloneCanvas(canvasOriginal);
+      // Render a canvas so that adding text to it doesn't dirty map view.
+      const canvas = renderCanvas(canvasOriginal);
       const ctx = canvas.getContext('2d');
       // var text = ctx.measureText('foo'); // TextMetrics object
       ctx.font = `${attributionFontSize}px Arial`;
       ctx.fillStyle = attributionFontColor;
       ctx.strokeStyle = attributionFontColor;
-
       // Background for the ol-scaleline
       ctx.fillStyle = scaleLineBgColor;
       ctx.fillRect((canvas.width - scaleInfo.width - 15), (canvas.height - scaleInfo.height - 10), (scaleInfo.width + 4), (scaleInfo.height + 4));
@@ -120,10 +127,10 @@ const Exportmap = function Exportmap(options = {}) {
       ctx.fillText(attr, 10, canvas.height - 5);
 
       ctx.beginPath();
-      ctx.moveTo((canvas.width - scaleInfo.width - 10), (canvas.height - scaleInfo.height - 10));
+      ctx.moveTo((canvas.width - scaleInfo.width - 10), (canvas.height - scaleInfo.height - 9));
       ctx.lineTo((canvas.width - scaleInfo.width - 10), (canvas.height - 9));
       ctx.lineTo((canvas.width - 15), (canvas.height - 9));
-      ctx.lineTo((canvas.width - 15), (canvas.height - scaleInfo.height - 10));
+      ctx.lineTo((canvas.width - 15), (canvas.height - scaleInfo.height - 9));
       ctx.stroke();
 
       const logo = new Image();
