@@ -5,11 +5,11 @@
 ## 1. About
 
 This document contains information on how to work with GIT and what type of paradigm to use in the SigtunaGIS repos. 
-You should know the fundamentals of GIT and Github and know the basic syntax GIT to understand the content of this document.
+To to able to work with the workflow fully you should know the fundamentals of GIT and Github and the basic syntax of GIT.
 
 ## 2. Introduction
 
-The workflow is strongly inspired by Vincent Driessen's orginal blog post  on [A successful Git branching model](https://nvie.com/posts/a-successful-git-branching-model/) and [the github-flow paradigm](https://guides.github.com/introduction/flow/). 
+The following workflow is strongly inspired by Vincent Driessen's orginal blog post  on [A successful Git branching model](https://nvie.com/posts/a-successful-git-branching-model/) and [the github-flow paradigm](https://guides.github.com/introduction/flow/). 
 
 The workflow is not dependent of any extensions.
 
@@ -24,12 +24,12 @@ Instead of a single master branch, this workflow uses two branches to record the
 * **Develop =** Serves as an integration branch for features. It's also convenient to tag all commits in the master branch with a version number.
 
 
-### Supporting branches:
+### 3.2 Supporting branches:
 
 These branches have a specific purpose and are bound to strict rules as to which branches may be their originating branch and which branches must be their merge targets.
 They're categorized by how we use them. 
 
-**The different types of branches we may use are:**
+**Types of branches we may use are:**
 
 * **Feature branches =** Are used to develop new features for the upcoming or a distant future release. feature branches use develop as their parent branch. When a feature is complete, it gets merged back into develop. Features should never interact directly with master.
 * **May branch off from:** Develop
@@ -70,10 +70,10 @@ They allow for last-minute dotting of i’s and crossing t’s. Furthermore, the
   git merge hotfix_branch
   git branch -D hotfix_branch
 
-## 4.Testing
+## 4.Testing and deployment
 
-Before merging a branch into the parent branch it must **Always** be tested, to minimize the risk for potential/future issues.
-Preferably when a branch is done a code review should be done.
+Before merging a branch into the parent branch it must **always** be tested, to minimize the risk for potential/future issues.
+Preferably when a branch is done a [Code Review/Peer Code Review](https://smartbear.com/learn/code-review/what-is-code-review/) should be done.
 
 
 
