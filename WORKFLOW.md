@@ -1,6 +1,6 @@
 # Workflow
 
-**Notice:** The workflow md-file is used by SigtunaGIS and is **NOT** a part of the general Origo project.
+**Notice:** The workflow md-file is used by SigtunaGIS only and is **NOT** a part of the general Origo project.
 
 ## 1. About
 

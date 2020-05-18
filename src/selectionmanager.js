@@ -140,6 +140,7 @@ const Selectionmanager = function Selectionmanager(options = {}) {
     const sum = urval.get(selectionGroup).getFeatures().length;
     infowindow.updateUrvalElementText(selectionGroup, selectionGroupTitle, sum);
 
+
     if (isInfowindow) {
       infowindow.show();
     }
