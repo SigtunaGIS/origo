@@ -21,8 +21,6 @@ export { default as Splash } from './controls/splash';
 export { default as Zoom } from './controls/zoom';
 export { default as Exportmap } from './controls/exportmap';
 export { default as Externalurl } from './controls/externalurl';
-<<<<<<<<< Temporary merge branch 1
 export { default as Multiselect } from './controls/multiselect';
-=========
 export { default as Scalepicker } from './controls/scalepicker';
 export { default as Keepexternalsessionalive } from './controls/keepexternalsessionalive';
