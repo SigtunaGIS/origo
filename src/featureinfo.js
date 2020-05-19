@@ -286,9 +286,9 @@ const Featureinfo = function Featureinfo(options = {}) {
         break;
       }
       default:
-        {
-          break;
-        }
+      {
+        break;
+      }
     }
 
     const modalLinks = document.getElementsByClassName('o-identify-link-modal');
