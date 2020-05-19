@@ -53,6 +53,9 @@
       }
     },
     {
+      "name": "measure"
+    },
+    {
       "name": "multiselect"
     }
   ],

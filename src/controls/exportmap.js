@@ -5,6 +5,13 @@ const Exportmap = function Exportmap(options = {}) {
     buttonText = 'Ladda ner kartan',
     attributionFontSize = options.attributionFontSize = '10',
     attributionFontColor = options.attributionFontColor = 'rgb(64, 64, 64)',
+    scaleLineBgColor = options.scaleLineBgColor = 'rgb(255, 255, 255)',
+    logoWidth = options.logoWidth = '150',
+    logoHeight = options.logoHeight = '50',
+    arrowWidth = options.arrowWidth = '100',
+    arrowHeight = options.arrowHeight = '150',
+    logoSrc = options.logoSrc = '..\\img\\png\\sigtuna_logo.png',
+    arrowSrc = options.arrowSrc = '..\\img\\png\\north_arrow.png',
     icon = '#fa-download'
   } = options;
 
@@ -14,19 +21,27 @@ const Exportmap = function Exportmap(options = {}) {
   let map;
   let alreadyDrawn = false;
 
-  function cloneCanvas(oldCanvas) {
+  function renderCanvas(oldCanvas) {
     // create a new canvas
     const newCanvas = document.createElement('canvas');
-    const context = newCanvas.getContext('2d');
+    const mapContext = newCanvas.getContext('2d');
 
     // set dimensions
     newCanvas.width = oldCanvas.width;
     newCanvas.height = oldCanvas.height;
 
-    // apply the old canvas to the new one
-    context.drawImage(oldCanvas, 0, 0);
-
-    // return the new canvas
+    Array.prototype.forEach.call(document.querySelectorAll('.ol-layer canvas'), (canvas) => {
+      if (canvas.width > 0) {
+        const opacity = canvas.parentNode.style.opacity;
+        mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
+        const transform = canvas.style.transform;
+        // Get the transform parameters from the style's transform matrix
+        const matrix = transform.match(/^matrix\(([^\(]*)\)$/)[1].split(',').map(Number);
+        // Apply the transform to the export map context
+        CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
+        mapContext.drawImage(canvas, 0, 0);
+      }
+    });
     return newCanvas;
   }
   function getAttributions() {
@@ -38,7 +53,7 @@ const Exportmap = function Exportmap(options = {}) {
         // If layer type is "GROUP" then it is not a real layer and does not have any source, we need to check its sublayers.
         if (layer.get('type') === 'GROUP') {
           const subLayers = layer.getLayers();
-          subLayers.forEach(lyr => getAttributionsFunction(lyr));
+          subLayers.forEach((lyr) => getAttributionsFunction(lyr));
         } else {
           attributionsFunctions.push(layer.getSource().getAttributions());
         }
@@ -53,7 +68,7 @@ const Exportmap = function Exportmap(options = {}) {
     attributionsFunctions.forEach((func) => {
       if (func) { // check is needed because layers without attribution return null.
         const attributionsList = func();
-        attributionsList.forEach(att => attributionHTMLs.push(att));
+        attributionsList.forEach((att) => attributionHTMLs.push(att));
       }
     });
 
@@ -70,12 +85,22 @@ const Exportmap = function Exportmap(options = {}) {
   function getScaleInfo() {
     const el = document.getElementsByClassName('ol-scale-line-inner')[0];
     const widthStr = el.style.width;
+    const heightStr = document.getElementsByClassName('ol-scale-line')[0].offsetHeight;
     const widthNumber = parseInt(widthStr, 10);
+    const heightNumber = parseInt(heightStr, 10);
 
     return {
       innerHTML: el.innerHTML,
-      width: widthNumber
+      width: widthNumber,
+      height: heightNumber
     };
+  }
+
+  function rotateAndPaintImage(canvas, context, image) {
+    context.translate(canvas.width - 150, 20);
+    context.translate(arrowWidth / 2, arrowHeight / 2);
+    context.rotate(map.getView().getRotation());
+    context.drawImage(image, -arrowWidth / 2, -arrowHeight / 2, arrowWidth, arrowHeight);
   }
 
   function download(format) {
@@ -84,41 +109,59 @@ const Exportmap = function Exportmap(options = {}) {
 
     map.once('postrender', (event) => {
       const canvasOriginal = document.getElementsByTagName('canvas')[0];
-      // cloning canvas so that adding text to it doesn't dirty map view.
-      const canvas = cloneCanvas(canvasOriginal);
+      // Render a canvas so that adding text to it doesn't dirty map view.
+      const canvas = renderCanvas(canvasOriginal);
       const ctx = canvas.getContext('2d');
       // var text = ctx.measureText('foo'); // TextMetrics object
       ctx.font = `${attributionFontSize}px Arial`;
       ctx.fillStyle = attributionFontColor;
       ctx.strokeStyle = attributionFontColor;
+      // Background for the ol-scaleline
+      ctx.fillStyle = scaleLineBgColor;
+      ctx.fillRect((canvas.width - scaleInfo.width - 15), (canvas.height - scaleInfo.height - 10), (scaleInfo.width + 4), (scaleInfo.height + 4));
+      ctx.fillStyle = attributionFontColor;
+      ctx.font = '10px Arial';
+      const textSize = ctx.measureText(scaleInfo.innerHTML); // TextMetrics object
+      ctx.fillText(scaleInfo.innerHTML, canvas.width - 10 - (scaleInfo.width / 2) - (textSize.width / 2), canvas.height - 15);
 
       ctx.fillText(attr, 10, canvas.height - 5);
 
       ctx.beginPath();
-      ctx.moveTo(canvas.width - 5, canvas.height - 10);
-      ctx.lineTo(canvas.width - 5, canvas.height - 5);
-      ctx.lineTo(canvas.width - 5 - scaleInfo.width, canvas.height - 5);
-      ctx.lineTo(canvas.width - 5 - scaleInfo.width, canvas.height - 10);
-
-      ctx.font = '10px Arial';
-      const textSize = ctx.measureText(scaleInfo.innerHTML); // TextMetrics object
-      ctx.fillText(scaleInfo.innerHTML, canvas.width - 5 - (scaleInfo.width / 2) - (textSize.width / 2), canvas.height - 10);
+      ctx.moveTo((canvas.width - scaleInfo.width - 10), (canvas.height - scaleInfo.height - 9));
+      ctx.lineTo((canvas.width - scaleInfo.width - 10), (canvas.height - 9));
+      ctx.lineTo((canvas.width - 15), (canvas.height - 9));
+      ctx.lineTo((canvas.width - 15), (canvas.height - scaleInfo.height - 9));
       ctx.stroke();
 
-      const fileName = format === 'image/png' ? 'map.png' : 'map.jpeg';
-
-      canvas.toBlob((blob) => {
-        if (navigator.msSaveBlob) {
-          navigator.msSaveBlob(blob, fileName);
-        } else {
-          const link = document.createElement('a');
-          const objectURL = URL.createObjectURL(blob);
-          link.setAttribute('download', fileName);
-          link.setAttribute('href', objectURL);
-          link.click();
-          URL.revokeObjectURL(objectURL);
-        }
-      }, format);
+      const logo = new Image();
+      logo.onload = function () {
+        ctx.drawImage(logo, 20, 20, logoWidth, logoHeight);
+        const northArrow = new Image();
+        northArrow.onload = function () {
+          if (map.getView().getRotation() === 0) {
+            ctx.drawImage(northArrow, canvas.width - 150, 20, arrowWidth, arrowHeight);
+          } else {
+            rotateAndPaintImage(canvas, ctx, northArrow);
+          }
+          const fileName = format === 'image/png' ? 'map.png' : 'map.jpeg';
+          canvas.toBlob((blob) => {
+            if (navigator.msSaveBlob) {
+              navigator.msSaveBlob(blob, fileName);
+            } else {
+              const link = document.createElement('a');
+              const objectURL = URL.createObjectURL(blob);
+              link.setAttribute('download', fileName);
+              link.setAttribute('href', objectURL);
+              document.getElementsByTagName('div')[0].appendChild(link);
+              link.click();
+              document.getElementsByTagName('div')[0].removeChild(link);
+              URL.revokeObjectURL(objectURL);
+            }
+          }, format);
+        };
+        northArrow.src = arrowSrc;
+      };
+      logo.src = logoSrc;
     });
     map.renderSync();
   }
@@ -134,9 +177,9 @@ const Exportmap = function Exportmap(options = {}) {
         value(callback, type, quality) {
           const dataURL = this.toDataURL(type, quality).split(',')[1];
           setTimeout(() => {
-            let binStr = atob(dataURL),
-              len = binStr.length,
-              arr = new Uint8Array(len);
+            const binStr = atob(dataURL);
+            const len = binStr.length;
+            const arr = new Uint8Array(len);
 
             for (let i = 0; i < len; i++) {
               arr[i] = binStr.charCodeAt(i);
