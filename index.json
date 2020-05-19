@@ -22,6 +22,9 @@
       "name": "print"
     },
     {
+      "name":"exportmap"
+    },
+    {
       "name": "about",
       "options": {
         "buttonText": "Om Origo",
@@ -37,10 +40,10 @@
       }
     },
     {
-      "name": "exportmap"
-    },
-    {
-      "name": "legend"
+      "name": "legend",
+      "options": {
+        "labelOpacitySlider": "Opacity"
+      }
     },
     {
       "name": "position",

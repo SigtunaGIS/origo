@@ -60,6 +60,13 @@ const Featureinfo = function Featureinfo(options = {}) {
     }
   }
 
+  // if (showOverlay) {
+  //   identifyTarget = 'overlay';
+  // } else {
+  //   sidebar.init();
+  //   identifyTarget = 'sidebar';
+  // }
+
   const clear = function clear() {
     selectionLayer.clear();
     // check needed for when sidebar or overlay are selected.
@@ -121,6 +128,14 @@ const Featureinfo = function Featureinfo(options = {}) {
       } else if (identifyTarget === 'sidebar') {
         sidebar.setTitle(title);
       }
+
+      const toggleFeatureinfo = new CustomEvent('toggleFeatureinfo', {
+        detail: {
+          type: 'toggleFeatureinfo',
+          currentItem
+        }
+      });
+      document.dispatchEvent(toggleFeatureinfo);
     }
   };
 
