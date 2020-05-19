@@ -108,7 +108,7 @@ const PrintSettings = function PrintSettings({
           });
         }
       });
-      contentComponent.addComponents([customSizeControl, marginControl, orientationControl, sizeControl, titleControl, descriptionControl, createdControl]);
+      contentComponent.addComponents([customSizeControl, marginControl, scaleControl, orientationControl, sizeControl, titleControl, descriptionControl, createdControl]);
       printSettingsContainer = Collapse({
         cls: 'no-print fixed flex column top-left rounded box-shadow bg-white overflow-hidden z-index-ontop-high',
         collapseX: true,

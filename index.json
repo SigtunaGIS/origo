@@ -22,6 +22,9 @@
       "name": "print"
     },
     {
+      "name":"exportmap"
+    },
+    {
       "name": "about",
       "options": {
         "buttonText": "Om Origo",
@@ -115,7 +118,7 @@
     0.5972
   ],
   "featureinfoOptions": {
-    "infowindow": "overlay"
+    "infowindow": "infowindow"
   },
   "source": {
     "local": {
