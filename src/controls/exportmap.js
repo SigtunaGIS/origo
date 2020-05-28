@@ -26,7 +26,6 @@ const Exportmap = function Exportmap(options = {}) {
     const newCanvas = document.createElement('canvas');
     const mapContext = newCanvas.getContext('2d');
 
-    // set dimensions
     newCanvas.width = oldCanvas.width;
     newCanvas.height = oldCanvas.height;
 
@@ -38,8 +37,10 @@ const Exportmap = function Exportmap(options = {}) {
         // Get the transform parameters from the style's transform matrix
         const matrix = transform.match(/^matrix\(([^\(]*)\)$/)[1].split(',').map(Number);
         // Apply the transform to the export map context
-        CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
+        debugger;
+        // CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
         mapContext.drawImage(canvas, 0, 0);
+        // set dimensions
       }
     });
     return newCanvas;
@@ -112,6 +113,8 @@ const Exportmap = function Exportmap(options = {}) {
       // Render a canvas so that adding text to it doesn't dirty map view.
       const canvas = renderCanvas(canvasOriginal);
       const ctx = canvas.getContext('2d');
+      // Set alpha channel on canvas to 1 to avoid transparency on the rest of the canvas objects.
+      ctx.globalAlpha = 1;
       // var text = ctx.measureText('foo'); // TextMetrics object
       ctx.font = `${attributionFontSize}px Arial`;
       ctx.fillStyle = attributionFontColor;
@@ -123,7 +126,7 @@ const Exportmap = function Exportmap(options = {}) {
       ctx.font = '10px Arial';
       const textSize = ctx.measureText(scaleInfo.innerHTML); // TextMetrics object
       ctx.fillText(scaleInfo.innerHTML, canvas.width - 10 - (scaleInfo.width / 2) - (textSize.width / 2), canvas.height - 15);
-
+      debugger;
       ctx.fillText(attr, 10, canvas.height - 5);
 
       ctx.beginPath();
@@ -138,6 +141,7 @@ const Exportmap = function Exportmap(options = {}) {
         ctx.drawImage(logo, 20, 20, logoWidth, logoHeight);
         const northArrow = new Image();
         northArrow.onload = function () {
+          debugger;
           if (map.getView().getRotation() === 0) {
             ctx.drawImage(northArrow, canvas.width - 150, 20, arrowWidth, arrowHeight);
           } else {
