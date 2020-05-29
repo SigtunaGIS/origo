@@ -1,0 +1,4591 @@
+{
+  "controls": [
+    {
+      "name": "geoposition"
+    },
+    {
+      "name": "mapmenu",
+      "options": {
+        "isActive": false
+      }
+    },
+    {
+      "name": "sharemap"
+    },
+    {
+      "name": "print"
+    },
+    {
+      "name": "legend",
+      "options": {
+        "expanded": false,
+   		"contentStyle": {
+     	"width": "280px"
+   		}
+ 		}
+	},
+    {
+      "name": "position",
+      "options": {
+        "title": "Sweref99 18 00",
+        "projections": {
+          "EPSG:4326": "WGS84",
+          "EPSG:3006": "Sweref99 TM"
+        }
+      }
+    },
+    {
+      "name": "printmap"
+    },
+    {
+      "name": "exportmap",
+      "options": {
+        "buttonText": "Spara bild",
+        "attributionFontSize": 12,
+        "attributionFontColor" : "#000000"
+      }
+    },
+    {
+      "name": "link",
+      "options": {
+        "title": "Sigtuna kommun",
+        "url": "http://www.sigtuna.se"
+      }
+    },
+    {
+      "name": "home",
+      "options":{
+        "zoomOnStart": true
+      }
+    },
+    {
+      "name": "measure"
+    },
+    {
+      "name": "externalurl",
+      "options": {
+        "tooltipText": "Kartlänkar",
+        "links": [
+          {
+            "name": "google",
+            "tooltipText": "Google maps",
+            "method": "LatLon",
+            "url": "https://www.google.com/maps/@?api=1&map_action=map&center={{LAT}},{{LON}}&zoom=18&basemap=terrain",
+            "buttonImage": "img/png/google_maps.png" 
+          },
+          {
+            "name": "googlestreet",
+            "tooltipText": "Google street view",
+            "method": "LatLon",
+            "url": "https://www.google.com/maps/@?api=1&map_action=pano&viewpoint={{LAT}},{{LON}}&heading=-45&pitch=10&fov=80",
+            "buttonImage": "img/png/google_street_view.png" 
+          }
+        ]
+      }
+    },
+    {
+      "name": "multiselect"
+    },
+    {
+      "name": "scale"
+    },
+    {
+      "name": "search",
+      "options":{
+        "searchAttribute": "NAMN",
+        "geometryAttribute": "GEOM",
+        "idAttribute": "GID",
+        "layerNameAttribute": "TYPE",
+        "url": "https://karta.sigtuna.se/origoserver/search",
+        "hintText": "Sök...",
+        "title": "Sökresultat",
+        "limit": 10,
+        "maxZoomLevel": 10
+      }
+    }    
+  ],
+  "pageSettings": {
+  	"footer": {
+    	"img": "img/png/logo.png",
+    	"url" : "http://www.sigtuna.se",
+   	 	"urlText": "Sigtuna kommun"
+  },
+  	"mapGrid": {
+    	"visible": true
+  }
+},
+  "projectionCode": "EPSG:3011",
+  "projectionExtent": [
+    -1806490.0,4631510.0,2157127.28,8595127.28
+  ],
+  "proj4Defs": [
+      {
+          "code": "EPSG:3011",
+          "alias": "urn:ogc:def:crs:EPSG::3011",
+          "projection": "+proj=tmerc +lat_0=0 +lon_0=18 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
+      },
+      {
+          "code": "EPSG:3006",
+          "alias": "urn:ogc:def:crs:EPSG::3006",
+          "projection": "+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
+      }
+  ],
+  "extent": [
+    115160.07, 6588840.23, 172504.07, 6637992.23
+ ],
+  "center": [
+    142476, 6614452
+  ],
+  "zoom": 5,
+  "resolutions": [
+    573.4399999999999, 286.71999999999997, 143.35999999999999, 71.67999999999999, 35.839999999999996, 17.919999999999998, 8.959999999999999, 4.4799999999999995, 2.2399999999999998, 1.1199999999999999, 0.5599999999999999, 0.27999999999999997, 0.13999999999999999, 0.055999999999999994
+  ],
+  "enableRotation": false,
+  "featureinfoOptions": {
+      "clusterFeatureinfoLevel": 2,
+      "pinning": false,
+      "hitTolerance": 4,
+	  "infowindow": "infowindow" 
+  },
+  "source": {
+    "sigtuna": {
+      "url": "https://karta.sigtuna.se/geoserver/ows"
+    },
+    "basemap_sigtunakarta": {
+      "url": "https://karta.sigtuna.se/geoserver/gwc/service/wmts"
+    }
+  },
+  "groups": [
+    {
+      "name": "wfs",
+      "title": "WFS",
+      "expanded": false
+    },
+    {
+      "name": "wms",
+      "title": "WMS/WMTS",
+      "expanded": false
+    },
+    {
+      "name": "grupp",
+      "title": "Grupplager",
+      "expanded": false
+    },
+    {
+      "name": "cluster",
+      "title": "Cluster",
+      "expanded": false
+    },
+    {
+      "name": "background",
+      "title": "Bakgrundskartor",
+      "expanded": true
+    }
+  ],
+  "layers": [
+    {
+      "name": "sok_fast_y",
+      "title": "Fastighetsytor",
+      "group": "none",
+      "source": "sigtuna",
+      "style": "default",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+            {
+              "name": "namn"
+            },
+            {
+              "html": "<br><i>Ytan är endast illustrativ och saknar juridisk verkan.</i>"
+            }
+      ]
+    },
+    {
+      "name": "sok_adress_p",
+      "title": "Adresser",
+      "group": "none",
+      "source": "sigtuna",
+      "style": "dp_pagaende",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+            {
+              "name": "namn"
+            }
+      ]
+    },
+    {
+      "name": "sok_ortnamn_p",
+      "title": "Ortnamn",
+      "group": "none",
+      "source": "sigtuna",
+      "style": "default",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+            {
+              "name": "namn"
+            }
+      ]
+    },
+    {
+      "name": "forskola",
+      "title": "Punkter cluster (WFS)",
+      "group": "cluster",
+      "source": "sigtuna",
+      "style": "ped_omsorg",
+      "clusterStyle": "ped_omsorg_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+             {
+              "name": "namn",
+              "url": "url"
+            },
+            {
+             "name": "regi",
+        	 "title": "Regi: "
+        	}
+        ]
+    },
+    {
+      "name": "dp_gallande",
+      "title": "Origo grupplager punkter",
+      "group": "grupp",
+      "type": "GROUP",
+      "source": "sigtuna",
+      "style": "forskola",
+      "visible": false,
+      "layers": [
+         {
+	      "name": "grundsarskola",
+	      "title": "Grundsärskola",
+	      "source": "sigtuna",
+	      "style": "grundsarskola",
+	      "type": "WFS",
+	      "visible": true,
+	      "attributes": [
+	            {
+	              "name": "namn",
+	              "url": "url"
+	            },
+	            {
+	              "name": "regi",
+	           	  "title": "Regi: "
+	          	},
+	          	{
+	           	  "name": "arskurser",
+	           	  "title": "Årskurser: "}
+	        ]
+    	},
+    	{
+	      "name": "gymnasium",
+	      "title": "Gymnasium",
+	      "source": "sigtuna",
+	      "style": "gymnasieskola",
+	      "type": "WFS",
+	      "visible": true,
+	      "attributes": [
+	            {
+	              "name": "namn",
+	              "url": "url"
+	            }
+	        ]
+	    },
+	    {
+	      "name": "vuxenutbildning",
+	      "title": "Vuxenutbildning",
+	      "source": "sigtuna",
+	      "style": "vuxenutbildning",
+	      "type": "WFS",
+	      "visible": true,
+	      "attributes": [
+	            {
+	              "name": "namn",
+	              "url": "url"
+	            }
+	        ]
+	    }
+      ]
+    },
+    {
+      "name": "sbk_inf_parkering_p__husbil",
+      "title": "Punkter (WFS)",
+      "group": "wfs",
+      "source": "sigtuna",
+      "style": "cirkel",
+      "type": "WFS",
+      "visible": false,
+      "filter": "typ = 'Husbil'",
+      "attributes": [
+            {
+              "html": "<b>{{namn}}</b><br></br>"
+            },
+            {
+              "name": "platser",
+              "title": "Antal platser: "
+            },
+            {
+              "html": "<br><b>Fordon: </b>På särskilt markerade platser inom parkeringsområdet får endast personbil klass II (husbilar) parkeras. Se skyltning på plats.</br>"
+            },
+            {
+              "html": "<br><b>Tidsbegränsning: </b>{{info}}<br></br>"
+            }
+        ]
+    },
+    {
+      "name": "sbk_inf_parkering_p__infart",
+      "title": "Punkter (WMS)",
+      "group": "wms",
+      "source": "sigtuna",
+      "style": "infart",
+      "type": "WMS",
+      "visible": false,
+      "filter": "typ = 'Infartsparkering'",
+      "attributes": [
+            {
+              "html": "<b>{{nummer}}. {{namn}}</b><br></br>"
+            },
+            {
+              "name": "platser",
+              "title": "Antal platser: "
+            },
+            {
+              "html": "<br><b>Fordon: </b>På markerade platser inom parkeringsområdet får endast lätt lastbil, moped, motorcykel, traktor a och personbil klass I parkeras.</br>"
+            },
+            {
+              "html": "<br><b>Parkeringsförbud gäller följande tider:</b></br>"
+            },
+            {
+              "name": "tid_1"
+            },
+            {
+              "name": "tid_2"
+            },
+            {
+              "name": "tid_3"
+            },
+            {
+              "html": "<a href='https://www.sigtuna.se/trafik-och-resor/trafik-och-gator/parkering-och-tillstand/parkeringsplatser-allmanna.html' target='_blank'>Läs mer...</a>"
+            }
+        ]
+    },
+     {
+      "name": "dpgallande",
+      "title": "Origo grupplager ytor",
+      "group": "grupp",
+      "type": "GROUP",
+      "source": "sigtuna",
+      "style": "dp_gallande",
+      "visible": false,
+      "layers": [
+        {
+      	  "name": "dp_pagaende",
+      	  "source": "sigtuna",
+          "style": "dp_pagaende",
+          "type": "WFS",
+          "visible": true,
+          "attributes": [
+            {
+              "name": "projekt",
+              "url": "url"
+            }
+      		]
+    	},
+    	{
+          "name": "dp_gallande",
+          "source": "sigtuna",
+          "style": "dp_gallande",
+          "maxScale": 35000,
+          "type": "WFS",
+          "visible": true,
+          "attributes": [
+            {
+              "name": "plannr",
+              "title": "Detaljplan: ",
+              "url": "url"
+            }
+              ]
+        },
+        {
+          "name": "dp_gallande_over",
+          "source": "sigtuna",
+          "type": "WFS",
+          "style": "dp_gallande",
+          "minScale": 35000,
+          "queryable": false,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "name": "sbk_inf_cykel_l",
+      "title": "Linjer (WFS)",
+      "group": "wfs",
+      "source": "sigtuna",
+      "style": "cykelvag",
+      "type": "WFS",
+      "visible": false,
+      "queryable": true
+    },
+    {
+      "name": "tn_vandringsled",
+      "title": "Linjer (WMS)",
+      "group": "wms",
+      "source": "sigtuna",
+      "style": "vandringsled",
+      "type": "WMS",
+      "visible": false,
+      "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            }
+        ]
+    },
+    {
+      "name": "buf_skolplacering_y",
+      "title": "Ytor (WFS)",
+      "group": "wfs",
+      "source": "sigtuna",
+      "style": "dp_gallande",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+             {
+              "name": "skola",
+              "title": "Skolplacering: ",
+              "url": "url"
+            },
+            {
+              "name": "arskurs",
+              "title": "Årskurser: "
+            },
+            {
+              "html": "<br>{{info}}"
+            }
+        ]
+    },
+    {
+  	  "name": "dp_pagaende",
+  	  "title": "Ytor (WMS)",
+  	  "group": "wms",
+  	  "source": "sigtuna",
+      "style": "dp_pagaende",
+      "type": "WMS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "projekt",
+          "url": "url"
+        }
+  		]
+    },
+    {
+      "name": "mask",
+      "opacity": 0.15,
+      "title": "mask",
+      "group": "none",
+      "queryable": false,
+      "source": "data/mask.geojson",
+      "style": "mask",
+      "type": "GEOJSON",
+      "visible": true
+    },
+    {      
+      "name": "SIG:orto_2008",
+      "source": "basemap_sigtunakarta",
+      "title": "Ortofoto, 2008 (WMTS)",
+      "group": "wms",
+      "format": "image/png",
+      "type": "WMTS",
+      "style": "orto_mini",
+      "visible": false,
+      "queryable": false,
+      "attribution": "&copy Lantmäteriet Geodatasamverkan",
+      "abstract": "Lantmäteriet ortofoto 2008"
+    },
+    {
+      "format": "image/png",
+      "group": "grupp",
+      "name": "SIG:topowebbkartan_gra_fastgr",
+      "source": "sigtuna",
+      "title": "Geoserver grupplager (WMS)",
+      "type": "WMS",
+      "style": "cirkel",
+      "visible": false,
+      "queryable": false,
+      "abstract": "Grupplager från geoserver. Topowebbkartan med fastighetsgräns."
+    },
+    {
+      "attribution": "&copy Lantmäteriet Geodatasamverkan",
+      "format": "image/png",
+      "group": "background",
+      "name": "SIG:topowebbkartan",
+      "source": "basemap_sigtunakarta",
+      "title": "Karta, färg",
+      "type": "WMTS",
+      "style": "karta_farg",
+      "queryable": false,
+      "opacity": 0.5,
+      "visible": true
+    },
+    {
+      "attribution": "&copy Lantmäteriet Geodatasamverkan",
+      "format": "image/png",
+      "group": "background",
+      "name": "SIG:orto025",
+      "source": "basemap_sigtunakarta",
+      "title": "Ortofoto, 2017",
+      "type": "WMTS",
+      "style": "orto",
+      "queryable": false,
+      "visible": false,
+      "abstract": "Lantmäteriet ortofoto 2017"
+    },
+    {
+      "group": "background",
+      "name": "blank",
+      "source": "",
+      "title": "Ingen bakgrundskarta",
+      "type": "WMTS",
+      "style": "karta_vit",
+      "queryable": false,
+      "visible": false
+    }
+  ],
+  "styles": {
+      "default": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(0,0,0,1)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(128,128,128,1)"
+            },
+            "circle": {
+              "radius": 6,
+              "stroke": {
+                "color": "rgba(0,0,0,1)",
+                "width": 2
+              },
+              "fill": {
+                "color": "rgba(0,0,0,0.5)"
+              }       
+            }
+          }
+        ]
+      ],
+      "transparent": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(0,0,0,0)"
+            },
+            "fill": {
+              "color": "rgba(0,0,0,0)"
+            },
+            "circle": {
+              "radius": 6,
+              "stroke": {
+                "color": "rgba(0,0,0,1)"
+              },
+              "fill": {
+                "color": "rgba(0,0,0,0)"
+              }       
+            }
+          }
+        ]
+      ],
+      "fir_adress_p": [
+        [
+          {  
+            "circle": {
+              "radius": 2,
+              "stroke": {
+                "color": "rgba(61,61,92,1.0)",
+                "width": 1
+              },
+              "fill": {
+                "color": "rgba(61,61,92,0.5)"
+              }
+            },
+            "label": "Adresspunkter"  
+          }       
+        ]
+      ],
+      "lm_granser_l": [
+      [
+        {
+          "label": "Fastighetsgräns",
+          "filter": "[detaljtyp] == 'KVTRAKTGR'",
+          "stroke": {
+            "color": "rgba(89,9,0,0.7)",
+            "width": 3
+          }
+        }
+      ]
+    ],
+      "lm_granser": [
+      [
+        {
+          "label": "Fastighetsgräns",
+          "fill": {
+            "color": "rgba(89,9,0,0)"
+          },
+          "stroke": {
+            "color": "rgba(89,9,0,1.0)",
+            "width": 0.5
+          },
+          "text": {
+              "font": "Bold 10px Arial",
+              "textAlign": "center",
+              "exceedLength": true,
+              "offsetX": 0,
+              "offsetY": 0,
+              "text": "{{blockenhet}}",
+              "fill": {
+                  "color": "rgba(89,9,0,1)"
+              },
+              "stroke": {
+                "color": "rgba(255,255,255,0.7)",
+                "width": 2
+              }
+            }
+        }
+      ]
+    ],
+      "fast_y": [
+        [
+          {
+            "fill": {
+               "color": "rgba(0,0,0,0.0)"
+                  },
+            "stroke": {
+                "color": "rgba(154,29,31,0.9)",
+                "width": 0.2
+            }
+          }
+        ]
+      ],
+      "bestammelse_y_lm": [
+        [
+          {
+            "fill": {
+               "color": "rgba(0,0,0,0.0)"
+                  },
+            "stroke": {
+                "color": "rgba(153,175,53,1)",
+                "width": 1.2,
+                "lineDash": [
+                  3,
+                  1
+                  ]
+              },
+              "label": "Bestämmelser"
+            }
+          ]
+      ], 
+      "rattigheter_group": [
+        [
+          {
+          "label": "Servitut",  
+          "circle": {
+              "radius": 5,
+              "fill": {
+                "color": "rgba(247,125,227,0.4)"
+              },
+              "stroke": {
+                "color": "rgba(247,125,227,1)",
+                "width": 2
+              }
+          },
+          "stroke": {
+            "color": "rgba(247,125,227,1)",
+            "width": 2,
+            "lineDash": [
+                7,
+                3
+            ]
+          },
+          "fill": {
+            "color": "rgba(247,125,227,0.4)"
+          },
+          "filter": "[detaljtyp] == 'SERVITUT'"
+          }
+        ],           
+        [
+          {  
+          "label":"Ledningsrätt",
+          "circle": {
+              "radius": 5,
+              "fill": {
+                "color": "rgba(52,138,251,0.4)"
+              },
+              "stroke": {
+                "color": "rgba(52,138,251,1)",
+                "width": 2
+              }
+          },
+          "stroke": {
+            "color": "rgba(52,138,251,1)",
+            "width": 2,
+            "lineDash": [
+                  7,
+                  3
+              ]
+          },
+          "fill": {
+          "color": "rgba(52,138,251,0.4)"
+          },
+          "filter": "[detaljtyp] == 'LEDNRÄTT'"
+          }
+        ],      
+        [
+          {
+          "label":"Gemensamhetsanläggning",
+          "circle": {
+              "radius": 5,
+              "fill": {
+                "color": "rgba(46,139,120,0.4)"
+              },
+              "stroke": {
+                "color": "rgba(46,139,120,1)",
+                "width": 2
+              }
+          },
+          "stroke": {
+            "color": "rgba(46,139,120,1)",
+            "width": 2,
+            "lineDash": [
+                  7,
+                  3
+              ]
+          },
+          "fill": {
+          "color": "rgba(46,139,120,0.4)"
+          },
+          "filter": "[detaljtyp] == 'GAANLÄGGN'"
+          }
+        ]
+      ],
+      "lstab_markavvattningsforetag_dike_vall_l": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(0,102,0,1.0)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(0,102,0,0.5)"
+            }
+          }
+        ]
+      ],      
+      "lstab_djurskyddsomraden_y": [
+        [
+          {
+            "label": "Djurskyddsområden",
+            "stroke": {
+              "color": "rgba(153,255,102,1.0)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(153,255,102,0.5)"
+            }
+          }
+        ]
+      ],
+      "lstab_landskapsbildsskydd_19para_nvl_y": [
+        [
+          {
+            "label": "Landskapsbildsskydd",
+            "stroke": {
+              "color": "rgba(51,204,51,1.0)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(51,204,51,0.5)"
+            }
+          }
+        ]
+      ],
+      "lstab_utv_strandskydd_inom_detaljplan_y": [
+        [
+          {
+            "label": "Utvidgat strandskydd inom detaljplan",
+            "stroke": {
+              "color": "rgba(102,153,0,1.0)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(102,153,0,0.5)"
+            }
+          }
+        ]
+      ],
+      "lstab_utv_strandskydd_ytor_y": [
+        [
+          {
+            "label": "Utvidgat strandskydd",
+            "stroke": {
+              "color": "rgba(0,179,89,1.0)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(0,179,89,0.5)"
+            }
+          }
+        ]
+      ],
+      "nv_naturreservat_y": [
+        [
+          {
+            "label": "Naturreservat",
+            "stroke": {
+              "color": "rgba(51,102,0,1.0)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(51,102,0,0.5)"
+            }
+          }
+        ]
+      ],
+      "ri_tot_inflomr_luftrum_y": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(153,0,51,1.0)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(153,0,51,0.5)"
+            }
+          }
+        ]
+      ],
+      "ri_tot_vaderradar_stopp_y": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(153,0,51,1.0)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(153,0,51,0.5)"
+            }
+          }
+        ]
+      ],
+      "ri_tot_vaderradar_y": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(153,0,51,1.0)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(153,0,51,0.5)"
+            }
+          }
+        ]
+      ],
+      "ri_tot_omr_betydelse_y": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(153,0,51,1.0)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(153,0,51,0.5)"
+            }
+          }
+        ]
+      ],
+      "lstab_markavvattningsforetag_batnadsomrade_y": [
+        [
+          {
+            "label": "Båtnadsområden",
+            "stroke": {
+              "color": "rgba(204,204,0,1.0)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(204,204,0,0.5)"
+            }
+          }
+        ]
+      ],
+      "riksintr_flygplats": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(255,102,102,1.0)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(255,102,102,0.5)"
+            }
+          }
+        ]
+      ],
+      "riksintr_jarnvag": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(255,51,204,1.0)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(255,51,204,0.5)"
+            }
+          }
+        ]
+      ],
+      "raa_ri_kulturmiljovard_mb3kap6_y": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(255,153,102,1.0)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(255,153,102,0.5)"
+            }
+          }
+        ]
+      ],
+      "ri_malaren_4kap2_riket_y": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(255,153,204,1.0)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(255,153,204,0.5)"
+            }
+          }
+        ]
+      ],
+      "nv_natura2000_habitatdir_y": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(204,153,255,1.0)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(204,153,255,0.5)"
+            }
+          }
+        ]
+      ],
+      "ri_vagnat_l": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(204,0,255,1.0)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(204,0,255,0.5)"
+            }
+          }
+        ]
+      ],    
+      "kultur_bebyggelsegrp_p": [
+        [
+          {  
+            "label": "Bebyggelsegrupp",
+            "circle": {
+              "radius": 4,
+              "stroke": {
+                "color": "rgba(255,102,102,1.0)",
+                "width": 1
+              },
+              "fill": {
+                "color": "rgba(255,102,102,0.5)"
+              }
+            }  
+          }       
+        ]
+      ],
+      "kultur_narmiljo_y": [
+        [
+          {
+            "label": "Närmiljö",
+            "stroke": {
+              "color": "rgba(102,0,51,1.0)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(102,0,51,0.5)"
+            }
+          }
+        ]
+      ],
+      "kultur_helhetsmiljo_y": [
+        [
+          {
+            "label": "Helhetsmiljö",
+            "stroke": {
+              "color": "rgba(255,102,102,1.0)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(255,102,102,0.5)"
+            }
+          }
+        ]
+      ],
+      "raa_kulturminnen_p": [
+        [
+          {  
+            "circle": {
+              "radius": 4,
+              "stroke": {
+                "color": "rgba(255,51,204,1.0)",
+                "width": 1
+              },
+              "fill": {
+                "color": "rgba(255,51,204,0.5)"
+              }
+            }  
+          }       
+        ]
+      ],
+      "raa_kulturminnen_y": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(255,51,204,1.0)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(255,51,204,0.5)"
+            }
+          }
+        ]
+      ],
+      "raa_kulturminnen_l": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(255,51,204,1.0)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(255,51,204,0.5)"
+            }
+          }
+        ]
+      ],
+      "lstab_skyddsvarda_trad_p": [
+        [
+          {  
+            "label": "Skyddsvärda träd",
+            "circle": {
+              "radius": 4,
+              "stroke": {
+                "color": "rgba(0,179,0,1.0)",
+                "width": 1
+              },
+              "fill": {
+                "color": "rgba(0,179,0,0.5)"
+              }
+            }  
+          }       
+        ]
+      ],
+      "lstab_skyddsvarda_tradmiljoer2_y": [
+        [
+          {
+            "label": "Skyddsvärda trädmiljöer",
+            "stroke": {
+              "color": "rgba(26,255,26,1.0)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(26,255,26,0.5)"
+            }
+          }
+        ]
+      ],
+      "natur_naturinv2007_y": [
+        [
+          {
+            "label": "Naturinventering 2007",
+            "stroke": {
+              "color": "rgba(0,204,0,1.0)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(0,204,0,0.5)"
+            }
+          }
+        ]
+      ],
+      "natur_naturinv2015_y": [
+        [
+          {
+            "label": "Naturinventering 2015",
+            "stroke": {
+              "color": "rgba(102,153,0,1.0)",
+              "width": 3
+            },
+            "fill": {
+              "color": "rgba(102,153,0,0.5)"
+            }
+          }
+        ]
+      ],       
+      "miljo_enskilda_avlopp_p": [
+        [
+          {  
+            "label": "Enskilda avlopp",
+            "circle": {
+              "radius": 4,
+              "stroke": {
+                "color": "rgba(61,61,92,1.0)",
+                "width": 1
+              },
+              "fill": {
+                "color": "rgba(61,61,92,0.5)"
+              }
+            }  
+          }       
+        ]
+      ],                       
+      "primarkarta_farg": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(0,0,0,1)",
+              "width": 1
+            },
+            "fill": {
+              "color": "rgba(128,128,128,1)"
+            },
+            "label": "Primärkarta"
+          }
+        ]
+      ],
+      "lst_100_arsflode_y": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(153,51,0,1.0)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(153,51,0,0.5)"
+            },
+            "label": "LST - 100-års flöde"
+          }
+        ]
+      ],
+      "lst_10000_arsflode_y": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(229,109,30,1.0)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(255,198,105,0.5)"
+            },
+            "label": "LST - 10000-års flöde"
+          }
+        ]
+      ],
+      "vatten_vattenplan2013_grundvatten_y": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(229,109,30,1.0)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(255,198,105,0.5)"
+            },
+            "label": "Grundvatten VP 2016"
+          }
+        ]
+      ],      
+      "lstab_malarrekommendationerna_y": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(204,102,0,1.0)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(204,102,0,0.5)"
+            },
+            "label": "LST - Mälarrekommendationer"
+          }
+        ]
+      ],
+      "msb_oversvamning_2_8_y": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(255,140,26,1.0)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(255,140,26,0.5)"
+            },
+            "label": "MSB - Översvämning 2,8 m"
+          }
+        ]
+      ],
+      "lstab_inventeringsrapporter_sjoar_y": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(255,153,51,1.0)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(255,153,51,0.5)"
+            },
+            "label": "Sjöinventering"
+          }
+        ]
+      ],         
+       "op2014_verksamhetsomr_v_y_tabort": [
+        [
+          {
+            "fill": {
+               "color": "rgba(66,89,179,0.7)"
+              		},
+              "stroke": {
+                "color": "rgba(229,109,30,0.7)",
+                "width": 10,
+                "lineDash": [
+                14,
+                6
+            	]
+               }
+          }
+        ]	
+      ],
+       "op2014_utredningsomr_u_y": [
+        [
+          {
+            "fill": {
+               "color": "rgba(237,120,173,0.3)"
+              		},
+            "stroke": {
+                "color": "rgba(108,128,137,0.8)",
+                "width": 2,
+                "lineDash": [
+                		15,
+                		8
+            		]
+               },
+            "text": {
+              "font": "Bold 12px Arial",
+              "textAlign": "center",
+              "exceedLength": true,
+              "offsetX": 0,
+              "offsetY": 0,
+              "text": "{{omrade_bet}}",
+              "fill": {
+                  "color": "rgba(108,128,137,1)"
+              },
+              "stroke": {
+                "color": "rgba(255,255,255,0.7)",
+                "width": 2
+              }
+            },
+            "label": "Utredningsområden (U)"
+          }
+        ]	
+      ],
+        "op2014_forandromr_verksamhet_y": [
+        [
+          {
+            "fill": {
+               "color": "rgba(196,134,79,0.3)"
+              		},
+            "stroke": {
+                "color": "rgba(108,128,137,0.8)",
+                "width": 2,
+                "lineDash": [
+                		15,
+                		8
+            		]
+               },
+            "text": {
+              "font": "Bold 12px Arial",
+              "textAlign": "center",
+              "exceedLength": true,
+              "offsetX": 0,
+              "offsetY": 0,
+              "text": "{{omrade_bet}}",
+              "fill": {
+                  "color": "rgba(108,128,137,1)"
+              },
+              "stroke": {
+                "color": "rgba(255,255,255,0.7)",
+                "width": 2
+              }
+            },
+            "label": "Förändringsområden - verksamhetsområde (Fs)"
+          }
+        ]	
+      ],
+        "op2014_forandromr_bostad_y": [
+        [
+          {
+            "fill": {
+               "color": "rgba(186,166,33,0.3)"
+              		},
+            "stroke": {
+                "color": "rgba(108,128,137,0.8)",
+                "width": 2,
+                "lineDash": [
+                		15,
+                		8
+            		]
+               },
+            "text": {
+              "font": "Bold 12px Arial",
+              "textAlign": "center",
+              "exceedLength": true,
+              "offsetX": 0,
+              "offsetY": 0,
+              "text": "{{omrade_bet}}",
+              "fill": {
+                  "color": "rgba(108,128,137,1)"
+              },
+              "stroke": {
+                "color": "rgba(255,255,255,0.7)",
+                "width": 2
+              }
+            },
+            "label": "Förändringsområden - hudvudsakligen bostäder (F)"
+          }
+        ]	
+      ],
+        "op2014_bebutv_i_ansl_tatort_y": [
+        [
+          {
+            "fill": {
+               "color": "rgba(22,7,151,0.5)"
+              		},
+            "stroke": {
+                "color": "rgba(0,0,0,0)",
+                "width": 2
+               },
+            "text": {
+              "font": "Bold 12px Arial",
+              "textAlign": "center",
+              "exceedLength": true,
+              "offsetX": 0,
+              "offsetY": 0,
+              "text": "{{littra}}",
+              "fill": {
+                  "color": "rgba(108,128,137,1)"
+              },
+              "stroke": {
+                "color": "rgba(255,255,255,0.7)",
+                "width": 2
+              }
+            },
+            "label": "Bebyggelseutveckling inom och i anslutning till tätort"
+          }
+        ]	
+      ],
+        "op2014_bebutv_kollektiv_trafiknod_buf_y": [
+        [
+          {
+            "fill": {
+               "color": "rgba(0,0,0,0)"
+              		},
+            "stroke": {
+                "color": "rgba(108,128,137,0.6)",
+                "width": 4,
+                "lineDash": [
+                		15,
+                		8
+            		]
+               },
+            "label": "Bebyggelseutveckling kring kollektivtrafiknod"
+          }
+        ]	
+      ],
+        "op2014_verksamhetsomr_v_y": [
+        [
+          {
+            "fill": {
+               "color": "rgba(187,102,27,0.7)"
+              		},
+            "stroke": {
+                "color": "rgba(108,128,137,0)",
+                "width": 2,
+                "lineDash": [
+                		15,
+                		8
+            		]
+               },
+            "label": "Verksamhetsområden (V)"
+          }
+        ]	
+      ],
+      "op2014_regional_stadskarna_y": [
+        [
+          {
+            "fill": {
+               "color": "rgba(0,0,0,0)"
+              		},
+            "stroke": {
+                "color": "rgba(70,124,206,0.7)",
+                "width": 4
+               },
+            "label": "Regional stadskärna"
+          }
+        ]	
+      ],
+      "op2014_historisk_stadskarna_y": [
+        [
+          {
+            "fill": {
+               "color": "rgba(0,0,0,0)"
+              		},
+            "stroke": {
+                "color": "rgba(185,49,90,1)",
+                "width": 2
+               },
+            "label": "Regional stadskärna"
+          }
+        ]	
+      ],
+      "op2014_sar_verksamhet_y": [
+        [
+          {
+            "fill": {
+               "color": "rgba(0,0,0,0)"
+              		},
+            "stroke": {
+                "color": "rgba(185,49,90,1)",
+                "width": 3,
+                "lineDash": [
+                		20,
+                		5,
+                		5,
+                		5
+            		]
+               },
+            "label": "Särskilda verksamhetsområden"
+          }
+        ]	
+      ],
+      "op2014_bebutv_kollektiv_trafiknod_p": [
+        [
+          {  
+            "label": "Kollektivtrafiknod",
+            "circle": {
+              "radius": 4,
+              "stroke": {
+                "color": "rgba(61,61,92,1.0)",
+                "width": 1
+              },
+              "fill": {
+                "color": "rgba(197,17,17,1)"
+              }
+            }  
+          }       
+        ]
+      ],
+      "op2014_kollektiv_trafiknod_p": [
+        [
+          {  
+            "label": "Kollektivtrafiknod planerad",
+            "circle": {
+              "radius": 4,
+              "stroke": {
+                "color": "rgba(61,61,92,1.0)",
+                "width": 1
+              },
+              "fill": {
+                "color": "rgba(17,134,197,1)"
+              }
+            }  
+          }       
+        ]
+      ],
+      "op2014_storre_idrott_rekreationanl_p": [
+        [
+          {  
+            "label": "Större idrotts- och rekreationsanläggning",
+            "circle": {
+              "radius": 8,
+              "stroke": {
+                "color": "rgba(22,7,151,1)",
+                "width": 1
+              },
+              "fill": {
+                "color": "rgba(0,0,0,0)"
+              }
+            }  
+          },
+          {
+          	"circle": {
+              "radius": 4,
+              "stroke": {
+                "color": "rgba(61,61,92,0)",
+                "width": 1
+              },
+              "fill": {
+                "color": "rgba(22,7,151,1)"
+              }
+            }  
+          }      
+        ]
+      ],
+      "op2014_kollektiv_stomnat_l": [
+        [
+          {
+            "label": "Stomnät för kollektivtrafik",
+            "stroke": {
+              "color": "rgba(197,17,17,0.5)",
+              "width": 6
+            },
+            "fill": {
+              "color": "rgba(0,0,0,0)"
+            }
+          }
+        ]
+      ],
+      "op2014_regional_cykel_l": [
+        [
+          {
+            "label": "Regionalt cykelstråk",
+            "stroke": {
+              "color": "rgba(197,17,17,1)",
+              "width": 3,
+              "lineDash":[
+              	5,
+              	5
+              ]
+            },
+            "fill": {
+              "color": "rgba(0,0,0,0)"
+            }
+          }
+        ]
+      ],
+      "op2014_vagdragning_planerad_l": [
+        [
+          {
+            "label": "Väg - ev ny dragning",
+            "stroke": {
+              "color": "rgba(17,134,197,1)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(0,0,0,0)"
+            }
+          }
+        ]
+      ],
+      "op2014_kollektiv_trafikstrak_l": [
+        [
+          {
+            "label": "Stomnät för kollektivtrafik planerad",
+            "stroke": {
+              "color": "rgba(17,134,197,0.5)",
+              "width": 6
+            },
+            "fill": {
+              "color": "rgba(0,0,0,0)"
+            }
+          }
+        ]
+      ],
+      "op2014_cykel_planerad_l": [
+        [
+          {
+            "label": "Regionalt cykelstråk planerad",
+            "stroke": {
+              "color": "rgba(17,134,197,1)",
+              "width": 3,
+              "lineDash":[
+              	5,
+              	5
+              ]
+            },
+            "fill": {
+              "color": "rgba(0,0,0,0)"
+            }
+          }
+        ]
+      ],
+      "op2014_jvagdragning_planerad_l": [
+        [
+          {
+            "label": "Järnväg ev ny dragning",
+            "stroke": {
+              "color": "rgba(17,134,197,1)",
+              "width": 2,
+              "lineDash":[
+              	10,
+              	10
+              ]
+            },
+            "fill": {
+              "color": "rgba(0,0,0,0)"
+            }
+          }
+        ]
+      ],
+      "op2014_sparreservat_arl_l": [
+        [
+          {
+            "label": "Spårreservat",
+            "stroke": {
+              "color": "rgba(17,134,197,0.5)",
+              "width": 8,
+              "lineDash":[
+              	15,
+              	15
+              ]
+            },
+            "fill": {
+              "color": "rgba(0,0,0,0)"
+            }
+          }
+        ]
+      ],
+      "op2014_utredningsomr_u_rbanan_y": [
+        [
+          {
+            "label": "Utredningsområde för Roslagsbanans avgrening",
+            "stroke": {
+              "color": "rgba(17,134,197,1)",
+              "width": 2,
+              "lineDash":[
+              	10,
+              	5
+              ]
+            },
+            "fill": {
+              "color": "rgba(17,134,197,0.4)"
+            }
+          }
+        ]
+      ],
+      "bistand_omr": [
+        [
+          {
+            "fill": {
+               "color": "rgba(0,0,0,0.0)"
+                  },
+            "stroke": {
+                "color": "rgba(184,124,150,1)",
+                "width": 2
+            }
+          }
+        ]
+      ],
+      "hemtjanst_omr": [
+        [
+          {
+            "fill": {
+               "color": "rgba(0,0,0,0.0)"
+                  },
+            "stroke": {
+                "color": "rgba(124,84,100,1)",
+                "width": 4
+            }
+          }
+        ]
+      ],
+       "nvdb_vaghallare_l": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(154,29,31,1)",
+            "width": 2
+          },
+          "filter": "[typ] == 'kommunal'",
+          "label": "Kommunal"
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(31,120,180,1)",
+            "width": 2
+          },
+          "filter": "[typ] == 'statlig'",
+          "label": "Statlig"
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(186,186,56,1)",
+            "width": 2
+          },
+          "filter": "[typ] == 'enskild'",
+          "label": "Enskild"
+        }
+      ] 
+    ],
+       "nvdb_barighet_l": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(154,29,31,1)",
+            "width": 2
+          },
+          "filter": "[baeightsss] == 'BK 1'",
+          "label": "BK 1"
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(31,120,180,1)",
+            "width": 2
+          },
+          "filter": "[baeightsss] == 'BK 2'",
+          "label": "BK 2"
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(186,186,56,1)",
+            "width": 2
+          },
+          "filter": "[baeightsss] == 'BK 3'",
+          "label": "BK 3"
+        }
+      ] 
+    ],
+      "nvdb_rekomvagfarligtgods_l": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(0,153,0,1)",
+            "width": 2
+          },
+          "filter": "[rekomend] == 'rekommenderad primär väg'",
+          "label": "Rekommenderad primär väg"
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(255,153,0,1)",
+            "width": 2
+          },
+          "filter": "[rekomend] == 'rekommenderad sekundär väg'",
+          "label": "Rekommenderad sekundär väg"
+        }
+      ]
+    ],
+      "nvdb_vagtrafiknat_l": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(255,0,102,1)",
+            "width": 3
+          },
+          "filter": "[nattyp] == '1'",
+          "label": "Bilnät"
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(102,102,255,1)",
+            "width": 3,
+            "lineDash": [
+                14,
+                6
+            ]
+          },
+          "filter": "[nattyp] == '2'",
+          "label": "Cykelnät"
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(0,204,153,1)",
+            "width": 3,
+            "lineDash": [
+                14,
+                6
+            ]
+          },
+          "filter": "[nattyp] == '4'",
+          "label": "Gångnät"
+        }
+      ]      
+    ],      
+      "nvdb_gatunamn_l": [
+      [
+          {
+            "fill": {
+               "color": "rgba(0,0,0,0.0)"
+                  },
+            "stroke": {
+                "color": "rgba(184,124,150,1)",
+                "width": 2
+            },
+            "label": "Gatunamn"
+          }
+      ]
+    ],
+       "nvdb_ovrigt_vagnamn_l": [
+      [
+          {
+            "fill": {
+               "color": "rgba(0,0,0,0.0)"
+                  },
+            "stroke": {
+                "color": "rgba(184,40,103,1)",
+                "width": 2
+            },
+            "label": "Övrigt vägnamn"
+          }
+      ]
+    ],
+    "nvdb_hastighetsgrans_l": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(255,51,153,1)",
+            "width": 2
+          },
+          "filter": "[hthast] == '5'",
+          "label": "Gångfart"
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(153,102,51,1)",
+            "width": 2
+          },
+          "filter": "[hthast] == '20'",
+          "label": "20"
+        }
+      ],      
+      [
+        {
+          "stroke": {
+            "color": "rgba(102,255,102,1)",
+            "width": 2
+          },
+          "filter": "[hthast] == '30'",
+          "label": "30"
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(255,153,255,1)",
+            "width": 2
+          },
+          "filter": "[hthast] == '40'",
+          "label": "40"
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(0,255,255,1)",
+            "width": 2
+          },
+          "filter": "[hthast] == '50'",
+          "label": "50"
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(0,204,153,1)",
+            "width": 2
+          },
+          "filter": "[hthast] == '60'",
+          "label": "60"
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(255,153,0,1)",
+            "width": 2
+          },
+          "filter": "[hthast] == '70'",
+          "label": "70"
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(255,0,102,1)",
+            "width": 2
+          },
+          "filter": "[hthast] == '80'",
+          "label": "80"
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(255,51,0,1)",
+            "width": 2
+          },
+          "filter": "[hthast] == '100'",
+          "label": "100"
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(153,0,153,1)",
+            "width": 2
+          },
+          "filter": "[hthast] == '110'",
+          "label": "110"
+        }
+      ]      
+    ],          
+       "skolplacering": [
+        [
+          {
+          	"minScale": 140000,
+            "fill": {
+               "color": "rgba(150,100,52,0.1)"
+              		},
+              "stroke": {
+                "color": "rgba(188,77,0,0.9)",
+                "width": 2
+            		},
+           	"filter": "[skola] != 'Centralskolan'",
+           	"text": {
+              "font": "Bold 16px Arial",
+              "textAlign": "end",
+              "exceedLength": true,
+              "offsetX": -40,
+              "offsetY": 40,
+              "text": "{{omrade}}",
+              "fill": {
+                  "color": "rgba(0,0,0,1.0)"
+              },
+              "stroke": {
+                "color": "rgba(255,255,255,0.7)",
+                "width": 2
+              }
+            }
+          }
+        ],
+        [
+          {
+          	"minScale": 140000,
+            "fill": {
+               "color": "rgba(150,100,52,0.1)"
+              		},
+              "stroke": {
+                "color": "rgba(188,77,0,0.9)",
+                "width": 2
+            		},
+           	"filter": "[skola] == 'Centralskolan'",
+           	"text": {
+              "font": "Bold 16px Arial",
+              "textAlign": "center",
+              "exceedLength": true,
+              "offsetX": 60,
+              "offsetY": 10,
+              "text": "{{omrade}}",
+              "fill": {
+                  "color": "rgba(0,0,0,1.0)"
+              },
+              "stroke": {
+                "color": "rgba(255,255,255,0.7)",
+                "width": 2
+              }
+            }
+          }
+        ]
+      ],
+       "komm_mark": [
+        [
+          {
+            "label": "Kommunalägd mark",
+            "fill": {
+               "color": "rgba(178,100,52,0.4)"
+                  },
+            "stroke": {
+                "color": "rgba(132,77,0,0.9)",
+                "width": 0.2
+                }
+          }
+        ]
+      ],
+       "sigtunahem_mark": [
+        [
+          {
+            "label": "Sigtunahems mark",
+            "fill": {
+               "color": "rgba(31,120,180,0.5)"
+                  },
+            "stroke": {
+                "color": "rgba(132,77,0,0.9)",
+                "width": 0.2
+                }
+          }
+        ]
+      ],
+       "lm_pag_arenden": [
+        [
+          {
+          "label": "Pågående gräns",
+          "filter": "[detaljtyp] == 'Fastighetsgräns'",
+          "stroke": {
+            "color": "rgba(204,122,0,1)",
+            "lineDash": [
+              5,
+              5
+            ],
+            "width": 2
+          }
+          }
+        ],
+        [
+          {
+            "label": "Pågående ärenden",
+            "fill": {
+               "color": "rgba(31,120,180,0.1)"
+                  },
+            "stroke": {
+                "color": "rgba(31,120,180,0.9)",
+                "width": 2
+                }
+          }
+        ]
+      ],
+       "dp_granser": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(163,118,14,1)",
+            "lineDash": [
+              50,
+              10
+            ],
+            "width": 5
+          },
+          "label": "Plangräns",
+          "filter": "[detaljtyp] == 'Plangräns'",
+          "minScale": 4000
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(163,118,14,1)",
+            "lineDash": [
+              50,
+              10,
+              10,
+              10
+            ],
+            "width": 2
+          },
+          "label": "Användningsgräns",
+          "filter": "[detaljtyp] == 'Användningsgräns'",
+          "minScale": 4000
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(163,118,14,1)",
+            "lineDash": [
+              30,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "width": 1
+          },
+          "label": "Egenskapsgräns",
+          "filter": "[detaljtyp] == 'Egenskapsgräns'",
+          "minScale": 4000
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(255,0,255,0.5)",
+            "lineDash": [
+              50,
+              10,
+              10,
+              10
+            ],
+            "width": 3
+          },
+          "label": "Utfartsförbud",
+          "filter": "[detaljtyp] == 'Utfartsförbud'",
+          "minScale": 4000
+        }
+      ],
+      [
+          {
+            "label": "Prickmark",
+            "filter": "[detaljtyp] == 'Prickmark'",
+            "minScale": 2000,
+            "fill": {
+              "color": "rgba(163,118,14,0.2)"
+            },
+            "stroke": {
+              "color": "rgba(0,0,0,0)",
+              "width": 0
+            }
+          }
+        ]
+    ],
+      "dp_pagaende": [
+        [
+          {
+            "label": "Pågående detaljplaner",
+            "fill": {
+              "color": "rgba(255,196,105,0.8)"
+            },
+            "stroke": {
+              "color": "rgba(229,109,30,0.7)",
+              "width": 1.2,
+              "lineDash": [
+                15,
+                8
+              ]
+            }
+          }
+        ]
+      ],
+       "dp_gallande": [
+          [
+            {
+              "fill": {
+                "color": "rgba(66,89,179,0.5)"
+              },
+              "stroke": {
+                "color": "rgba(229,109,30,0.7)",
+                "width": 1
+              }
+            }
+          ]
+      ],
+      "tbo": [
+        [
+          {
+            "fill": {
+               "color": "rgba(150,121,148,0.7)"
+              		}
+          }
+        ]	
+      ],
+      "mask": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(0,0,0,1.0)"
+            },
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            }
+          }
+        ]
+      ],
+            "valdistrikt": [
+        [
+          {
+            "fill": {
+               "color": "rgba(88,107,95,0.1)"
+                  },
+              "stroke": {
+                "color": "rgba(188,107,31,1)",
+                "width": 2.5
+                }
+          }
+        ] 
+      ],
+       "vallokal": [
+      [
+        {
+        "icon": {
+          "size": [23,36],
+          "src": "img/png/droppe_orange.png"
+        }
+      }
+      ]
+      ],
+       "vallokal_cluster": [
+        [
+          {       
+            "icon": {
+              "size": [23,36],
+              "src": "img/png/droppe_orange.png"
+            }            
+          },        
+          {            
+            "text": {
+              "font": "Bold 9px Arial",
+              "textAlign": "center",
+              "offsetX": 10,
+              "offsetY": -10,
+              "text": "size",
+              "fill": {
+                "color": "rgba(255,255,255,1.0)"
+              }           
+            },
+            "icon": {
+              "size": [14,14],
+              "anchor": [17,17],
+              "anchorXUnits": "pixels",
+              "anchorYUnits": "pixels",            
+              "anchorOrigin": "top-right",
+              "src": "data/png/Svart_14.png",
+              "opacity": 0.65
+            }             
+          }
+        ]
+      ],
+       "fortidslokal": [
+      [
+        {
+        "icon": {
+          "size": [32,32],
+          "src": "img/png/droppe_black.png"
+        }
+      }
+      ]
+      ],
+       "fortidslokal_cluster": [
+        [
+          {       
+            "icon": {
+              "size": [32,32],
+              "src": "img/png/droppe_black.png"
+            }            
+          },        
+          {            
+            "text": {
+              "font": "Bold 9px Arial",
+              "textAlign": "center",
+              "offsetX": 10,
+              "offsetY": -10,
+              "text": "size",
+              "fill": {
+                "color": "rgba(255,255,255,1.0)"
+              }           
+            },
+            "icon": {
+              "size": [14,14],
+              "anchor": [17,17],
+              "anchorXUnits": "pixels",
+              "anchorYUnits": "pixels",            
+              "anchorOrigin": "top-right",
+              "src": "data/png/Svart_14.png",
+              "opacity": 0.65
+            }             
+          }
+        ]
+      ],
+      "cirkel": [
+        [
+          {
+            "circle": {
+              "radius": 6,
+              "stroke": {
+                "color": "rgba(0,0,0,1)",
+                "width": 2
+              },
+              "fill": {
+                "color": "rgba(0,0,0,0.5)"
+              }       
+            }
+          }
+        ]
+      ],
+      "akt_sbproj_cirkel": [
+        [
+          {
+            "circle": {
+              "radius": 8,
+              "stroke": {
+                "color": "rgba(43,90,143,1)",
+                "width": 2
+              },
+              "fill": {
+                "color": "rgba(56,115,185,0.8)"
+              }       
+            }
+          }
+        ]
+      ],
+      "akt_sbproj_cluster": [
+        [
+         {
+            "circle": {
+              "radius": 8,
+              "stroke": {
+                "color": "rgba(43,90,143,1)",
+                "width": 2
+              },
+              "fill": {
+                "color": "rgba(56,115,185,0.8)"
+              }       
+            }
+          },        
+          {            
+            "text": {
+              "font": "Bold 9px Arial",
+              "textAlign": "center",
+              "offsetX": 10,
+              "offsetY": -10,
+              "text": "size",
+              "fill": {
+                "color": "rgba(255,255,255,1.0)"
+              }           
+            },
+            "icon": {
+              "size": [14,14],
+              "anchor": [17,17],
+              "anchorXUnits": "pixels",
+              "anchorYUnits": "pixels",            
+              "anchorOrigin": "top-right",
+              "src": "data/png/Svart_14.png",
+              "opacity": 0.65
+            }             
+          }
+        ]
+      ],
+      "pcykel": [
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Pcykel.png"
+        }
+      }
+    	]
+  	  ],
+  	  "pcykel_cluster": [
+        [
+          {       
+            "icon": {
+              "size": [32,32],
+              "src": "data/png/Pcykel.png"
+            }            
+          },        
+          {            
+            "text": {
+              "font": "Bold 9px Arial",
+              "textAlign": "center",
+              "offsetX": 10,
+              "offsetY": -10,
+              "text": "size",
+              "fill": {
+                "color": "rgba(255,255,255,1.0)"
+              }           
+            },
+            "icon": {
+              "size": [14,14],
+              "anchor": [17,17],
+              "anchorXUnits": "pixels",
+              "anchorYUnits": "pixels",            
+              "anchorOrigin": "top-right",
+              "src": "data/png/Svart_14.png",
+              "opacity": 0.65
+            }             
+          }
+        ]
+      ],
+      "cykelpump": [
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Cykelpump.png"
+        }
+      }
+    	]
+  	  ],
+      "infart": [
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Pinfart.png"
+        }
+      }
+    	]
+  	  ],
+  	   "infart_cluster": [
+        [
+          {
+            "icon": {
+              "size": [32,32],
+              "src": "data/png/Pinfart.png"
+            }
+          },
+          {
+            "text": {
+              "font": "Bold 9px Arial",
+              "textAlign": "center",
+              "offsetX": 10,
+              "offsetY": -10,
+              "text": "size",
+              "fill": {
+                "color": "rgba(255,255,255,1.0)"
+              }
+            },
+            "icon": {
+              "size": [14,14],
+              "anchor": [17,17],
+              "anchorXUnits": "pixels",
+              "anchorYUnits": "pixels",            
+              "anchorOrigin": "top-right",
+              "src": "data/png/Svart_14.png",
+              "opacity": 0.65
+            }
+          }
+        ]
+      ],
+      "parkering": [
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Parkering.png"
+        }
+      }
+    	]
+  	  ],
+  	   "parkering_cluster": [
+        [
+          {
+            "icon": {
+              "size": [32,32],
+              "src": "data/png/Parkering.png"
+            }
+          },
+          {
+            "text": {
+              "font": "Bold 9px Arial",
+              "textAlign": "center",
+              "offsetX": 10,
+              "offsetY": -10,
+              "text": "size",
+              "fill": {
+                "color": "rgba(255,255,255,1.0)"
+              }
+            },
+            "icon": {
+              "size": [14,14],
+              "anchor": [17,17],
+              "anchorXUnits": "pixels",
+              "anchorYUnits": "pixels",            
+              "anchorOrigin": "top-right",
+              "src": "data/png/Svart_14.png",
+              "opacity": 0.65
+            }
+          }
+        ]
+      ],
+      "vagarbeten": [
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Vagarbeten.png"
+        }
+      }
+    	]
+  	  ],
+  	   "vagarbeten_cluster": [
+        [
+          {       
+            "icon": {
+              "size": [32,32],
+              "src": "data/png/Vagarbeten.png"
+            }            
+          },        
+          {            
+            "text": {
+              "font": "Bold 9px Arial",
+              "textAlign": "center",
+              "offsetX": 10,
+              "offsetY": -10,
+              "text": "size",
+              "fill": {
+                "color": "rgba(255,255,255,1.0)"
+              }           
+            },
+            "icon": {
+              "size": [14,14],
+              "anchor": [17,17],
+              "anchorXUnits": "pixels",
+              "anchorYUnits": "pixels",            
+              "anchorOrigin": "top-right",
+              "src": "data/png/Svart_14.png",
+              "opacity": 0.65
+            }             
+          }
+        ]
+      ],
+      "bad": [
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Bad.png"
+        }
+      }
+    	]
+  	  ],
+  	   "bad_cluster": [
+        [
+          {       
+            "icon": {
+              "size": [32,32],
+              "src": "data/png/Bad.png"
+            }            
+          },        
+          {            
+            "text": {
+              "font": "Bold 9px Arial",
+              "textAlign": "center",
+              "offsetX": 10,
+              "offsetY": -10,
+              "text": "size",
+              "fill": {
+                "color": "rgba(255,255,255,1.0)"
+              }           
+            },
+            "icon": {
+              "size": [14,14],
+              "anchor": [17,17],
+              "anchorXUnits": "pixels",
+              "anchorYUnits": "pixels",            
+              "anchorOrigin": "top-right",
+              "src": "data/png/Svart_14.png",
+              "opacity": 0.65
+            }             
+          }
+        ]
+      ],
+      "bibliotek": [
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Bibliotek.png"
+        }
+      }
+    	]
+  	  ],
+  	   "bibliotek_cluster": [
+        [
+          {       
+            "icon": {
+              "size": [32,32],
+              "src": "data/png/Bibliotek.png"
+            }            
+          },        
+          {            
+            "text": {
+              "font": "Bold 9px Arial",
+              "textAlign": "center",
+              "offsetX": 10,
+              "offsetY": -10,
+              "text": "size",
+              "fill": {
+                "color": "rgba(255,255,255,1.0)"
+              }           
+            },
+            "icon": {
+              "size": [14,14],
+              "anchor": [17,17],
+              "anchorXUnits": "pixels",
+              "anchorYUnits": "pixels",            
+              "anchorOrigin": "top-right",
+              "src": "data/png/Svart_14.png",
+              "opacity": 0.65
+            }             
+          }
+        ]
+      ],
+      "boende_aldre": [
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Boende_aldre.png"
+        }
+      }
+    	]
+  	  ],
+  	   "boende_aldre_cluster": [
+        [
+          {       
+            "icon": {
+              "size": [32,32],
+              "src": "data/png/Boende_aldre.png"
+            }            
+          },        
+          {            
+            "text": {
+              "font": "Bold 9px Arial",
+              "textAlign": "center",
+              "offsetX": 10,
+              "offsetY": -10,
+              "text": "size",
+              "fill": {
+                "color": "rgba(255,255,255,1.0)"
+              }           
+            },
+            "icon": {
+              "size": [14,14],
+              "anchor": [17,17],
+              "anchorXUnits": "pixels",
+              "anchorYUnits": "pixels",            
+              "anchorOrigin": "top-right",
+              "src": "data/png/Svart_14.png",
+              "opacity": 0.65
+            }             
+          }
+        ]
+      ],
+  	  "boende_lss": [
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Boende_lss.png"
+        }
+      }
+    	]
+  	  ],
+  	   "boende_lss_cluster": [
+        [
+          {       
+            "icon": {
+              "size": [32,32],
+              "src": "data/png/Boende_lss.png"
+            }            
+          },        
+          {            
+            "text": {
+              "font": "Bold 9px Arial",
+              "textAlign": "center",
+              "offsetX": 10,
+              "offsetY": -10,
+              "text": "size",
+              "fill": {
+                "color": "rgba(255,255,255,1.0)"
+              }           
+            },
+            "icon": {
+              "size": [14,14],
+              "anchor": [17,17],
+              "anchorXUnits": "pixels",
+              "anchorYUnits": "pixels",            
+              "anchorOrigin": "top-right",
+              "src": "data/png/Svart_14.png",
+              "opacity": 0.65
+            }             
+          }
+        ]
+      ],
+      "fixpunkt":[
+    	[
+      	{
+        "icon": {
+          "size": [30,30],
+          "src": "data/png/Fixpunkt.png"
+        		}
+      	}
+      	]
+    	],
+      "fritidsgard": [
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Fritidsgard.png"
+        }
+      }
+    	]
+  	  ],
+  	  "fritidsgard_cluster": [
+        [
+          {       
+            "icon": {
+              "size": [32,32],
+              "src": "data/png/Fritidsgard.png"
+            }            
+          },        
+          {            
+            "text": {
+              "font": "Bold 9px Arial",
+              "textAlign": "center",
+              "offsetX": 10,
+              "offsetY": -10,
+              "text": "size",
+              "fill": {
+                "color": "rgba(255,255,255,1.0)"
+              }           
+            },
+            "icon": {
+              "size": [14,14],
+              "anchor": [17,17],
+              "anchorXUnits": "pixels",
+              "anchorYUnits": "pixels",            
+              "anchorOrigin": "top-right",
+              "src": "data/png/Svart_14.png",
+              "opacity": 0.65
+            }             
+          }
+        ]
+      ],
+  	  "forskola": [
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Forskola.png"
+        }
+      }
+    	]
+  	  ],
+  	   "forskola_cluster": [
+        [
+          {       
+            "icon": {
+              "size": [32,32],
+              "src": "data/png/Forskola.png"
+            }            
+          },        
+          {            
+            "text": {
+              "font": "Bold 9px Arial",
+              "textAlign": "center",
+              "offsetX": 10,
+              "offsetY": -10,
+              "text": "size",
+              "fill": {
+                "color": "rgba(255,255,255,1.0)"
+              }           
+            },
+            "icon": {
+              "size": [14,14],
+              "anchor": [17,17],
+              "anchorXUnits": "pixels",
+              "anchorYUnits": "pixels",            
+              "anchorOrigin": "top-right",
+              "src": "data/png/Svart_14.png",
+              "opacity": 0.65
+            }             
+          }
+        ]
+      ],
+  	  "grundskola": [
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Grundskola.png"
+        }
+      }
+    	]
+  	  ],
+  	   "grundskola_cluster": [
+        [
+          {       
+            "icon": {
+              "size": [32,32],
+              "src": "data/png/Grundskola.png"
+            }            
+          },        
+          {            
+            "text": {
+              "font": "Bold 9px Arial",
+              "textAlign": "center",
+              "offsetX": 10,
+              "offsetY": -10,
+              "text": "size",
+              "fill": {
+                "color": "rgba(255,255,255,1.0)"
+              }           
+            },
+            "icon": {
+              "size": [14,14],
+              "anchor": [17,17],
+              "anchorXUnits": "pixels",
+              "anchorYUnits": "pixels",            
+              "anchorOrigin": "top-right",
+              "src": "data/png/Svart_14.png",
+              "opacity": 0.65
+            }             
+          }
+        ]
+      ],
+  	  "grundsarskola": [
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Grundsarskola.png"
+        }
+      }
+    	]
+  	  ],
+      "gymnasieskola": [
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Gymnasieskola.png"
+        }
+      }
+    	]
+  	  ],
+  	   "gymnasieskola_cluster": [
+        [
+          {       
+            "icon": {
+              "size": [32,32],
+              "src": "data/png/Gymnasieskola.png"
+            }            
+          },        
+          {            
+            "text": {
+              "font": "Bold 9px Arial",
+              "textAlign": "center",
+              "offsetX": 10,
+              "offsetY": -10,
+              "text": "size",
+              "fill": {
+                "color": "rgba(255,255,255,1.0)"
+              }           
+            },
+            "icon": {
+              "size": [14,14],
+              "anchor": [17,17],
+              "anchorXUnits": "pixels",
+              "anchorYUnits": "pixels",            
+              "anchorOrigin": "top-right",
+              "src": "data/png/Svart_14.png",
+              "opacity": 0.65
+            }             
+          }
+        ]
+      ],
+       "hundrastgard":[
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Hundrastgard.png"
+        		}
+      	}
+      	]
+    	],
+    	"hundrastgard_cluster": [
+        [
+          {       
+            "icon": {
+              "size": [32,32],
+              "src": "data/png/Hundrastgard.png"
+            }            
+          },        
+          {            
+            "text": {
+              "font": "Bold 9px Arial",
+              "textAlign": "center",
+              "offsetX": 10,
+              "offsetY": -10,
+              "text": "size",
+              "fill": {
+                "color": "rgba(255,255,255,1.0)"
+              }           
+            },
+            "icon": {
+              "size": [14,14],
+              "anchor": [17,17],
+              "anchorXUnits": "pixels",
+              "anchorYUnits": "pixels",            
+              "anchorOrigin": "top-right",
+              "src": "data/png/Svart_14.png",
+              "opacity": 0.65
+            }             
+          }
+        ]
+      ],
+      "hundrastgard_yta": [
+        [
+          {
+            "fill": {
+               "color": "rgba(175,175,121,0.2)"
+              		},
+              "stroke": {
+                "color": "rgba(186,186,15,1)",
+                "width": 1.4,
+                "lineDash": [
+                12,
+                5
+              ]
+            }
+          }
+        ]	
+      ],
+      "idrottsanl": [
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Idrottsanlaggningar.png"
+        }
+      }
+    	]
+  	  ],
+  	   "idrottsanl_cluster": [
+        [
+          {       
+            "icon": {
+              "size": [32,32],
+              "src": "data/png/Idrottsanlaggningar.png"
+            }            
+          },        
+          {            
+            "text": {
+              "font": "Bold 9px Arial",
+              "textAlign": "center",
+              "offsetX": 10,
+              "offsetY": -10,
+              "text": "size",
+              "fill": {
+                "color": "rgba(255,255,255,1.0)"
+              }           
+            },
+            "icon": {
+              "size": [14,14],
+              "anchor": [17,17],
+              "anchorXUnits": "pixels",
+              "anchorYUnits": "pixels",            
+              "anchorOrigin": "top-right",
+              "src": "data/png/Svart_14.png",
+              "opacity": 0.65
+            }             
+          }
+        ]
+      ],
+      "kulturverksamhet": [
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Kulturverksamhet.png"
+        		}
+      	}
+    	]
+    ],
+     "kulturverksamhet_cluster": [
+        [
+          {       
+            "icon": {
+              "size": [32,32],
+              "src": "data/png/Kulturverksamhet.png"
+            }            
+          },        
+          {            
+            "text": {
+              "font": "Bold 9px Arial",
+              "textAlign": "center",
+              "offsetX": 10,
+              "offsetY": -10,
+              "text": "size",
+              "fill": {
+                "color": "rgba(255,255,255,1.0)"
+              }           
+            },
+            "icon": {
+              "size": [14,14],
+              "anchor": [17,17],
+              "anchorXUnits": "pixels",
+              "anchorYUnits": "pixels",            
+              "anchorOrigin": "top-right",
+              "src": "data/png/Svart_14.png",
+              "opacity": 0.65
+            }             
+          }
+        ]
+      ],
+       "lekplatser":[
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Lekplatser.png"
+        		}
+      	}
+      	]
+    	],
+    	"lekplatser_cluster": [
+        [
+          {       
+            "icon": {
+              "size": [32,32],
+              "src": "data/png/Lekplatser.png"
+            }            
+          },        
+          {            
+            "text": {
+              "font": "Bold 9px Arial",
+              "textAlign": "center",
+              "offsetX": 10,
+              "offsetY": -10,
+              "text": "size",
+              "fill": {
+                "color": "rgba(255,255,255,1.0)"
+              }           
+            },
+            "icon": {
+              "size": [14,14],
+              "anchor": [17,17],
+              "anchorXUnits": "pixels",
+              "anchorYUnits": "pixels",            
+              "anchorOrigin": "top-right",
+              "src": "data/png/Svart_14.png",
+              "opacity": 0.65
+            }             
+          }
+        ]
+      ],
+    	"motesplatser_aof": [
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Motesplatser.png"
+        }
+      }
+    	]
+  	  ],
+  	   "motesplatser_aof_cluster": [
+        [
+          {       
+            "icon": {
+              "size": [32,32],
+              "src": "data/png/Motesplatser.png"
+            }            
+          },        
+          {            
+            "text": {
+              "font": "Bold 9px Arial",
+              "textAlign": "center",
+              "offsetX": 10,
+              "offsetY": -10,
+              "text": "size",
+              "fill": {
+                "color": "rgba(255,255,255,1.0)"
+              }           
+            },
+            "icon": {
+              "size": [14,14],
+              "anchor": [17,17],
+              "anchorXUnits": "pixels",
+              "anchorYUnits": "pixels",            
+              "anchorOrigin": "top-right",
+              "src": "data/png/Svart_14.png",
+              "opacity": 0.65
+            }             
+          }
+        ]
+      ],
+      "motionsspar": [
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Motionsspar.png"
+        }
+      }
+    	]
+  	  ],
+  	   "motionsspar_cluster": [
+        [
+          {       
+            "icon": {
+              "size": [32,32],
+              "src": "data/png/Motionsspar.png"
+            }            
+          },        
+          {            
+            "text": {
+              "font": "Bold 9px Arial",
+              "textAlign": "center",
+              "offsetX": 10,
+              "offsetY": -10,
+              "text": "size",
+              "fill": {
+                "color": "rgba(255,255,255,1.0)"
+              }           
+            },
+            "icon": {
+              "size": [14,14],
+              "anchor": [17,17],
+              "anchorXUnits": "pixels",
+              "anchorYUnits": "pixels",            
+              "anchorOrigin": "top-right",
+              "src": "data/png/Svart_14.png",
+              "opacity": 0.65
+            }             
+          }
+        ]
+      ],
+      "museum": [
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Museum.png"
+        }
+      }
+    	]
+  	  ],
+  	   "museum_cluster": [
+        [
+          {       
+            "icon": {
+              "size": [32,32],
+              "src": "data/png/Museum.png"
+            }            
+          },        
+          {            
+            "text": {
+              "font": "Bold 9px Arial",
+              "textAlign": "center",
+              "offsetX": 10,
+              "offsetY": -10,
+              "text": "size",
+              "fill": {
+                "color": "rgba(255,255,255,1.0)"
+              }           
+            },
+            "icon": {
+              "size": [14,14],
+              "anchor": [17,17],
+              "anchorXUnits": "pixels",
+              "anchorYUnits": "pixels",            
+              "anchorOrigin": "top-right",
+              "src": "data/png/Svart_14.png",
+              "opacity": 0.65
+            }             
+          }
+        ]
+      ],
+       "naturres_forslag": [
+        [
+          {
+            "fill": {
+               "color": "rgba(58,156,164,0.4)"
+                  },
+              "stroke": {
+                "color": "rgba(58,156,164,1)",
+                "width": 2,
+                "lineDash": [
+                6,
+                3
+              ]
+                }
+          }
+        ] 
+      ],
+  	  "ped_omsorg": [
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Ped_omsorg.png"
+        }
+      }
+    	]
+  	  ],
+  	  "ped_omsorg_cluster": [
+        [
+          {       
+            "icon": {
+              "size": [32,32],
+              "src": "data/png/Ped_omsorg.png"
+            }            
+          },        
+          {            
+            "text": {
+              "font": "Bold 9px Arial",
+              "textAlign": "center",
+              "offsetX": 10,
+              "offsetY": -10,
+              "text": "size",
+              "fill": {
+                "color": "rgba(255,255,255,1.0)"
+              }           
+            },
+            "icon": {
+              "size": [14,14],
+              "anchor": [17,17],
+              "anchorXUnits": "pixels",
+              "anchorYUnits": "pixels",            
+              "anchorOrigin": "top-right",
+              "src": "data/png/Svart_14.png",
+              "opacity": 0.65
+            }             
+          }
+        ]
+      ],
+      "polygonpunkt":[
+    	[
+      	{
+        "icon": {
+          "size": [30,30],
+          "src": "data/png/Polygonpunkt.png"
+        		}
+      	}
+      	]
+    	],
+  	  "teater": [
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Teater.png"
+        }
+      }
+    	]
+  	  ],
+      "sarskola": [
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Sarskola.png"
+        }
+      }
+    	]
+  	  ],
+  	  "stompunkt": [
+        [
+          {
+            "circle": {
+              "radius": 5,
+              "stroke": {
+                "color": "rgba(0,0,0,1)",
+                "width": 2
+              },
+              "fill": {
+                "color": "rgba(59,96,156,1)"
+              }       
+            }
+          }
+        ]
+      ],
+      "cykelvag": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(178,108,189,1.0)",
+              "width": 2
+            }
+          }
+        ]
+      ],
+      "vandringsled": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(219,117,49,1.0)",
+              "lineDash": [
+                7,
+                3
+              ],
+              "width": 3
+            }
+          }
+        ]
+      ],
+      "flygbuller_3ban": [
+        [
+          {
+            "filter": "[detaljtyp] == '50_3BAN'",
+            "stroke": {
+              "color": "rgba(255,102,102,1.0)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(255,12,102,0.3)"
+            },
+            "label": "50 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[detaljtyp] == '55_3BAN'",
+            "stroke": {
+              "color": "rgba(255,102,102,1.0)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(255,12,102,0.3)"
+            },
+            "label": "55 dba (2016)"
+          }
+        ],
+        [
+          {
+            "filter": "[detaljtyp] == '60_3BAN'",
+            "stroke": {
+              "color": "rgba(255,102,102,1.0)",
+              "width": 2
+            },
+            "label": "60 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[detaljtyp] == '65_3BAN'",
+            "stroke": {
+              "color": "rgba(255,102,102,1.0)",
+              "width": 2
+            },
+            "label": "65 dba"
+          }
+        ]
+      ],
+      "flygbuller_max70": [
+        [
+          {
+          	 "filter": "[filnamn] == 'mx70dag'",
+            "stroke": {
+              "color": "rgba(255,102,102,1.0)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(255,12,102,0.3)"
+            },
+            "label": "70 dba 1-3 ggr/dygn dagtid"
+          }
+        ],
+        [
+          {
+          	 "filter": "[filnamn] == 'mx70nat'",
+            "stroke": {
+              "color": "rgba(255,102,102,1.0)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(255,12,102,0.3)"
+            },
+            "label": "70 dba 1-3 ggr/dygn natt"
+          }
+        ]
+      ],
+ 	  "flygbuller_max80": [
+		[
+          {
+            "filter": "[filnamn] == 'mx80dag'",
+            "stroke": {
+              "color": "rgba(255,102,102,1.0)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(255,12,102,0.3)"
+            },
+            "label": "80 dba 1-3 ggr/dygn dagtid"
+          }
+        ],
+        [
+          {
+            "filter": "[filnamn] == 'mx80nat'",
+            "stroke": {
+              "color": "rgba(255,102,102,1.0)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(255,12,102,0.3)"
+            },
+            "label": "80 dba 1-3 ggr/dygn nattid"
+          }
+        ]
+    ],
+      "flygbuller_punkt": [
+        [
+          {
+            "circle": {
+              "radius": 4,
+              "stroke": {
+                "color": "rgba(0,0,0,1.0)",
+                "width": 1
+              },
+              "fill": {
+                "color": "rgba(255,102,102,1.0)"
+              }       
+            }
+          }
+        ]
+      ],
+      "flygbuller_nrl": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(255,153,0,1.0)",
+              "width": 3
+            }
+          }
+        ]
+      ],
+      "jarnvagsbuller_eq2m": [
+        [
+          {
+            "filter": "[styrka] == '<45'",
+            "stroke": {
+              "color": "rgba(254,221,205,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(254,221,205,0.7)"
+            },
+            "label": "<45 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '45-50'",
+            "stroke": {
+              "color": "rgba(252,179,152,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(252,179,152,0.7)"
+            },
+            "label": "45-50 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '50-55'",
+            "stroke": {
+              "color": "rgba(252,134,102,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(252,134,102,0.7)"
+            },
+            "label": "50-55 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '55-60'",
+            "stroke": {
+              "color": "rgba(247,87,62,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(247,87,62,0.7)"
+            },
+            "label": "55-60 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '60-65'",
+            "stroke": {
+              "color": "rgba(222,41,36,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(222,41,36,0.7)"
+            },
+            "label": "60-65 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '65-70'",
+            "stroke": {
+              "color": "rgba(179,18,23,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(179,18,23,0.7)"
+            },
+            "label": "65-70 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '70<'",
+            "stroke": {
+              "color": "rgba(103,0,13,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(103,0,13,0.7)"
+            },
+            "label": "70< dba"
+          }
+        ]
+      ],
+      "jarnvagsbuller_eq5m": [
+        [
+          {
+            "filter": "[styrka] == '<45'",
+            "stroke": {
+              "color": "rgba(237,236,244,0.9)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(237,236,244,0.9)"
+            },
+            "label": ">45 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '45-50'",
+            "stroke": {
+              "color": "rgba(212,213,232,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(212,213,232,0.7)"
+            },
+            "label": "45-50 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '50-55'",
+            "stroke": {
+              "color": "rgba(179,179,214,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(179,179,214,0.7)"
+            },
+            "label": "50-55 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '55-60'",
+            "stroke": {
+              "color": "rgba(146,143,195,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(146,143,195,0.7)"
+            },
+            "label": "55-60 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '60-65'",
+            "stroke": {
+              "color": "rgba(114,97,171,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(114,97,171,0.7)"
+            },
+            "label": "60-65 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '65-70'",
+            "stroke": {
+              "color": "rgba(90,51,149,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(90,51,149,0.7)"
+            },
+            "label": "65-70 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '70>'",
+            "stroke": {
+              "color": "rgba(63,0,125,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(63,0,125,0.7)"
+            },
+            "label": "70< dba"
+          }
+        ]
+      ],
+      "jarnvagsbuller_mx2m": [
+        [
+          {
+            "filter": "[styrka] == '<65'",
+            "stroke": {
+              "color": "rgba(220,234,247,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(220,234,247,0.7)"
+            },
+            "label": "<65 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '65-70'",
+            "stroke": {
+              "color": "rgba(190,216,237,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(190,216,237,0.7)"
+            },
+            "label": "65-70 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '70-75'",
+            "stroke": {
+              "color": "rgba(143,194,222,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(143,194,222,0.7)"
+            },
+            "label": "70-75dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '75-80'",
+            "stroke": {
+              "color": "rgba(91,163,208,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(91,163,208,0.7)"
+            },
+            "label": "75-80 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '80-85'",
+            "stroke": {
+              "color": "rgba(49,130,190,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(49,130,190,0.7)"
+            },
+            "label": "80-85 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '85-90'",
+            "stroke": {
+              "color": "rgba(16,92,165,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(16,92,165,0.7)"
+            },
+            "label": "85-90 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '90>'",
+            "stroke": {
+              "color": "rgba(8,48,107,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(8,48,107,0.7)"
+            },
+            "label": "90< dba"
+          }
+        ]
+      ],
+      "jarnvagsbuller_mx5m": [
+        [
+          {
+            "filter": "[styrka] == '<65'",
+            "stroke": {
+              "color": "rgba(226,244,221,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(226,244,221,0.7)"
+            },
+            "label": "<65 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '65-70'",
+            "stroke": {
+              "color": "rgba(192,230,185,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(192,230,185,0.7)"
+            },
+            "label": "65-70 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '70-75'",
+            "stroke": {
+              "color": "rgba(148,211,144,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(148,211,144,0.7)"
+            },
+            "label": "70-75dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '75-80'",
+            "stroke": {
+              "color": "rgba(96,186,108,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(96,186,108,0.7)"
+            },
+            "label": "75-80 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '80-85'",
+            "stroke": {
+              "color": "rgba(50,155,81,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(50,155,81,0.7)"
+            },
+            "label": "80-85 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '85-90'",
+            "stroke": {
+              "color": "rgba(12,120,53,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(12,120,53,0.7)"
+            },
+            "label": "85-90 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '90>'",
+            "stroke": {
+              "color": "rgba(0,68,27,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(0,68,27,0.7)"
+            },
+            "label": "90< dba"
+          }
+        ]
+      ],
+      "vagbuller_eq2m": [
+        [
+          {
+            "filter": "[styrka] == '<45'",
+            "stroke": {
+              "color": "rgba(254,228,202,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(254,228,202,0.7)"
+            },
+            "label": "<45 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '45-50'",
+            "stroke": {
+              "color": "rgba(253,202,151,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(253,202,151,0.7)"
+            },
+            "label": "45-50 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '50-55'",
+            "stroke": {
+              "color": "rgba(253,164,93,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(253,164,93,0.7)"
+            },
+            "label": "50-55 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '55-60'",
+            "stroke": {
+              "color": "rgba(249,127,43,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(249,127,43,0.7)"
+            },
+            "label": "55-60 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '60-65'",
+            "stroke": {
+              "color": "rgba(230,89,10,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(230,89,10,0.7)"
+            },
+            "label": "60-65 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '65-70'",
+            "stroke": {
+              "color": "rgba(184,60,2,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(184,60,2,0.7)"
+            },
+            "label": "65-70 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '>70'",
+            "stroke": {
+              "color": "rgba(127,39,4,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(127,39,4,0.7)"
+            },
+            "label": "70< dba"
+          }
+        ]
+      ],
+      "vagbuller_eq5m": [
+        [
+          {
+            "filter": "[styrka] == '<45'",
+            "stroke": {
+              "color": "rgba(227,206,229,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(227,206,229,0.7)"
+            },
+            "label": "<45 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '45-50'",
+            "stroke": {
+              "color": "rgba(216,170,211,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(216,170,211,0.7)"
+            },
+            "label": "45-50 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '50-55'",
+            "stroke": {
+              "color": "rgba(221,124,188,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(221,124,188,0.7)"
+            },
+            "label": "50-55 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '55-60'",
+            "stroke": {
+              "color": "rgba(223,80,160,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(223,80,160,0.7)"
+            },
+            "label": "55-60 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '60-65'",
+            "stroke": {
+              "color": "rgba(222,38,127,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(222,38,127,0.7)"
+            },
+            "label": "60-65 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '65-70'",
+            "stroke": {
+              "color": "rgba(192,16,97,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(192,16,97,0.7)"
+            },
+            "label": "65-70 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '70>'",
+            "stroke": {
+              "color": "rgba(152,0,67,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(152,0,67,0.7)"
+            },
+            "label": "70< dba"
+          }
+        ]
+      ],
+      "vagbuller_mx2m": [
+         [
+          {
+            "filter": "[styrka] == '<65'",
+            "stroke": {
+              "color": "rgba(255,255,204,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(255,255,204,0.7)"
+            },
+            "label": "<65 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '65-70'",
+            "stroke": {
+              "color": "rgba(202,234,191,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(202,234,191,0.7)"
+            },
+            "label": "65-70 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '70-75'",
+            "stroke": {
+              "color": "rgba(147,213,182,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(147,213,182,0.7)"
+            },
+            "label": "70-75dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '75-80'",
+            "stroke": {
+              "color": "rgba(92,193,192,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(92,193,192,0.7)"
+            },
+            "label": "75-80 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '80-85'",
+            "stroke": {
+              "color": "rgba(59,166,193,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(59,166,193,0.7)"
+            },
+            "label": "80-85 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '85-90'",
+            "stroke": {
+              "color": "rgba(47,135,186,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(47,135,186,0.7)"
+            },
+            "label": "85-90 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '90>'",
+            "stroke": {
+              "color": "rgba(41,95,169,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(41,95,169,0.7)"
+            },
+            "label": "90< dba"
+          }
+        ]
+      ],
+      "vagbuller_mx5m": [
+        [
+          {
+            "filter": "[styrka] == '<65'",
+            "stroke": {
+              "color": "rgba(214,218,235,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(214,218,235,0.7)"
+            },
+            "label": "<65 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '65-70'",
+            "stroke": {
+              "color": "rgba(177,197,223,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(177,197,223,0.7)"
+            },
+            "label": "65-70 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '70-75'",
+            "stroke": {
+              "color": "rgba(128,178,212,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(128,178,212,0.7)"
+            },
+            "label": "70-75dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '75-80'",
+            "stroke": {
+              "color": "rgba(81,162,192,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(81,162,192,0.7)"
+            },
+            "label": "75-80 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '80-85'",
+            "stroke": {
+              "color": "rgba(38,148,161,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(38,148,161,0.7)"
+            },
+            "label": "80-85 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '85-90'",
+            "stroke": {
+              "color": "rgba(16,129,126,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(16,129,126,0.7)"
+            },
+            "label": "85-90 dba"
+          }
+        ],
+        [
+          {
+            "filter": "[styrka] == '90>'",
+            "stroke": {
+              "color": "rgba(1,108,89,0.7)",
+              "width": 0.5
+            },
+            "fill": {
+              "color": "rgba(1,108,89,0.7)"
+            },
+            "label": "90< dba"
+          }
+        ]
+      ],
+      "sgu_markrad_y": [
+        [
+        {
+          "stroke": {
+            "color": "rgba(255,153,0,1)",
+            "width": 2
+          },
+          "fill": {
+            "color": "rgba(255,153,0,0.7)"
+          },
+          "filter": "[detaljtyp_karta] == 'LÅG'",
+          "label": "LÅG"
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(204,255,102,1)",
+            "width": 2
+          },
+          "fill": {
+            "color": "rgba(204,255,102,0.7)"
+          },
+          "filter": "[detaljtyp_karta] == 'NORMAL1'",
+          "label": "NORMAL1"
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(153,255,204,1)",
+            "width": 2
+          },
+          "fill": {
+            "color": "rgba(153,255,204,0.7)"
+          },
+          "filter": "[detaljtyp_karta] == 'NORMAL2'",
+          "label": "NORMAL2"
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(255,0,0,1)",
+            "width": 2
+          },
+          "fill": {
+            "color": "rgba(255,0,0,0.7)"
+          },
+          "filter": "[detaljtyp_karta] == 'HÖG1'",
+          "label": "HÖG1"
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(255,153,153,1)",
+            "width": 2
+          },
+          "fill": {
+            "color": "rgba(255,153,153,0.7)"
+          },
+          "filter": "[detaljtyp_karta] == 'HÖG2'",
+          "label": "HÖG2"
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(204,51,255,1)",
+            "width": 2
+          },
+          "fill": {
+            "color": "rgba(204,51,255,0.7)"
+          },
+          "filter": "[detaljtyp_karta] == 'HÖG3'",
+          "label": "HÖG3"
+        }
+      ]
+    ],
+      "fast_pk": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(0,0,0,1.0)",
+              "lineDash": [
+                7,
+                3
+              ],
+              "width": 2
+            }
+          }
+        ]
+      ],      
+      "upplandsleden": [
+        [
+          {
+            "stroke": {
+              "color": "rgba(31,120,180,1.0)",
+              "lineDash": [
+                7,
+                3
+              ],
+              "width": 3
+            }
+          }
+        ]
+      ],
+  	   "vuxenutbildning": [
+    	[
+      	{
+        "icon": {
+          "size": [32,32],
+          "src": "data/png/Vuxenutbildning.png"
+        }
+      }
+    	]
+  	  ],
+      "vuxenutbildning_cluster": [
+        [
+          {       
+            "icon": {
+              "size": [32,32],
+              "src": "data/png/Vuxenutbildning.png"
+            }            
+          },        
+          {            
+            "text": {
+              "font": "Bold 9px Arial",
+              "textAlign": "center",
+              "offsetX": 10,
+              "offsetY": -10,
+              "text": "size",
+              "fill": {
+                "color": "rgba(255,255,255,1.0)"
+              }           
+            },
+            "icon": {
+              "size": [14,14],
+              "anchor": [17,17],
+              "anchorXUnits": "pixels",
+              "anchorYUnits": "pixels",            
+              "anchorOrigin": "top-right",
+              "src": "data/png/Svart_14.png",
+              "opacity": 0.65
+            }             
+          }
+        ]
+      ],
+      "haradskartan": [
+      [
+        {
+        "icon": {
+          "src": "img/png/haradskartan.png"
+        },
+        "label": "Häradskartan"
+      }
+      ]
+      ],
+      "pk_legend": [
+      [
+          {
+            "stroke": {
+              "color": "rgba(255,255,77,1)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(255,255,77,0.5)"
+            },
+            "label": "Bostadshus takliv"
+          }
+        ],
+        [
+          {
+            "stroke": {
+              "color": "rgba(255,255,77,1)",
+              "width": 2
+            },
+            "label": "Bostadshus fasadliv"
+          }
+        ],
+      [
+          {
+            "stroke": {
+              "color": "rgba(255,153,255,1)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(255,153,255,0.5)"
+            },
+            "label": "Komplementbyggnad takliv"
+          }
+        ],
+        [
+          {
+            "stroke": {
+              "color": "rgba(255,153,255,1)",
+              "width": 2
+            },
+            "label": "Komplementbyggnad fasadliv"
+          }
+        ],
+      [
+          {
+            "stroke": {
+              "color": "rgba(102,255,153,1)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(102,255,153,0.5)"
+            },
+            "label": "Övrig byggnad takliv"
+          }
+        ],
+        [
+          {
+            "stroke": {
+              "color": "rgba(102,255,153,1)",
+              "width": 2
+            },
+            "label": "Övrig byggnad fasadliv"
+          }
+        ]                    
+      ],
+      "terrangskuggning": [
+      [
+        {
+        "icon": {
+          "src": "img/png/terrangskuggning.png"
+        },
+        "label": "Terrängskuggning"
+      }
+      ]
+      ],
+      "terranglutning": [
+      [
+        {
+        "icon": {
+          "src": "img/png/terranglutning.png"
+        },
+        "label": "Terränglutning"
+      }
+      ]
+      ],
+      "kommunikation": [
+      [
+        {
+        "icon": {
+          "src": "img/png/kommunikation.png"
+        },
+        "label": "Kommunikation"
+      }
+      ]
+      ],
+      "sgu_grundvatten": [
+      [
+        {
+        "icon": {
+          "src": "img/png/sgu_grundvatten.png"
+        },
+        "label": "Grundvatten SGU"
+      }
+      ]
+      ],
+      "sgu_brunnar": [
+      [
+        {
+        "icon": {
+          "src": "img/png/sgu_brunnar.png"
+        },
+        "label": "Brunnar SGU"
+      }
+      ]
+      ],      
+      "sgu_kallor": [
+      [
+        {
+        "icon": {
+          "src": "img/png/sgu_kallor.png"
+        },
+        "label": "Källor SGU"
+      }
+      ]
+      ],
+      "sgu_jordarter": [
+      [
+        {
+        "icon": {
+          "src": "img/png/sgu_jordarter.png"
+        },
+        "label": "Jordarter SGU"
+      }
+      ]
+      ],
+      "sgu_genomslapplighet": [
+      [
+        {
+        "icon": {
+          "src": "img/png/sgu_genomslapplighet.png"
+        },
+        "label": "Genomsläpplighet SGU"
+      }
+      ]
+      ],
+      "sgu_berggrund": [
+      [
+        {
+        "icon": {
+          "src": "img/png/sgu_berggrund.png"
+        },
+        "label": "Berggrund 1:50000-250000 SGU"
+      }
+      ]
+      ],
+      "smhi_delavrinningsomraden_SVAR_2016": [
+      [
+        {
+        "icon": {
+          "src": "img/png/smhi_delavrinning.png"
+        },
+        "label": "Delavrinningsområden (SVAR 2016) SMHI"
+      }
+      ]
+      ],      
+      "orto_mini": [
+    	[
+      	{
+        "icon": {
+          "src": "img/png/orto_mini.png"
+        },
+        "label": "Ortofoto"
+      }
+    	]
+  	  ],                  
+      "karta_gra": [
+        [
+          {
+            "image": {
+              "src": "img/png/gra.png"
+            }
+          }
+        ]
+      ],
+      "karta_farg": [
+        [
+          {
+            "image": {
+              "src": "img/png/farg.png"
+            }
+          }
+        ]
+      ],
+      "karta_terrang": [
+        [
+          {
+            "image": {
+              "src": "img/png/terrang.png"
+            }
+          }
+        ]
+      ],
+      "karta_vit": [
+        [
+          {
+            "image": {
+              "src": "img/png/vit_bakgrund.png"
+            }
+          }
+        ]
+      ],
+      "orto": [
+        [
+          {
+            "image": {
+              "src": "img/png/orto.png"
+            }
+          }
+        ]
+      ]  
+  }
+}
