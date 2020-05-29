@@ -44,7 +44,7 @@ const Exportmap = function Exportmap(options = {}) {
         const matrix = transform.match(/^matrix\(([^\(]*)\)$/)[1].split(',').map(Number);
         // Apply the transform to the export map context
         debugger;
-        // CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
+        CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
         mapContext.drawImage(canvas, 0, 0);
         // set dimensions
       }
