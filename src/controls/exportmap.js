@@ -18,11 +18,14 @@ const Exportmap = function Exportmap(options = {}) {
   let viewer;
   let mapMenu;
   let menuItem;
+  let breakWidth;
+  let breakHeight;
   let map;
   let alreadyDrawn = false;
 
   function renderCanvas(oldCanvas) {
     // create a new canvas
+    const layers = document.querySelectorAll('.ol-layer canvas');
     const newCanvas = document.createElement('canvas');
     const mapContext = newCanvas.getContext('2d');
 
@@ -31,6 +34,9 @@ const Exportmap = function Exportmap(options = {}) {
 
     Array.prototype.forEach.call(document.querySelectorAll('.ol-layer canvas'), (canvas) => {
       if (canvas.width > 0) {
+        // Adjust breakpoints.
+        breakWidth = canvas.width < oldCanvas.width && canvas.width > 0 ? canvas.width : oldCanvas.width;
+        breakHeight = canvas.height < oldCanvas.height && canvas.height > 0 ? canvas.height : oldCanvas.height;
         const opacity = canvas.parentNode.style.opacity;
         mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
         const transform = canvas.style.transform;
@@ -98,7 +104,7 @@ const Exportmap = function Exportmap(options = {}) {
   }
 
   function rotateAndPaintImage(canvas, context, image) {
-    context.translate(canvas.width - 150, 20);
+    context.translate(breakWidth - 150, 20);
     context.translate(arrowWidth / 2, arrowHeight / 2);
     context.rotate(map.getView().getRotation());
     context.drawImage(image, -arrowWidth / 2, -arrowHeight / 2, arrowWidth, arrowHeight);
@@ -121,19 +127,19 @@ const Exportmap = function Exportmap(options = {}) {
       ctx.strokeStyle = attributionFontColor;
       // Background for the ol-scaleline
       ctx.fillStyle = scaleLineBgColor;
-      ctx.fillRect((canvas.width - scaleInfo.width - 15), (canvas.height - scaleInfo.height - 10), (scaleInfo.width + 4), (scaleInfo.height + 4));
+      ctx.fillRect((breakWidth - scaleInfo.width - 15), (breakHeight - scaleInfo.height - 10), (scaleInfo.width + 4), (scaleInfo.height + 4));
       ctx.fillStyle = attributionFontColor;
       ctx.font = '10px Arial';
       const textSize = ctx.measureText(scaleInfo.innerHTML); // TextMetrics object
-      ctx.fillText(scaleInfo.innerHTML, canvas.width - 10 - (scaleInfo.width / 2) - (textSize.width / 2), canvas.height - 15);
-      debugger;
-      ctx.fillText(attr, 10, canvas.height - 5);
+      ctx.fillText(scaleInfo.innerHTML, breakWidth - 10 - (scaleInfo.width / 2) - (textSize.width / 2), breakHeight - 15);
+
+      ctx.fillText(attr, 10, breakHeight - 5);
 
       ctx.beginPath();
-      ctx.moveTo((canvas.width - scaleInfo.width - 10), (canvas.height - scaleInfo.height - 9));
-      ctx.lineTo((canvas.width - scaleInfo.width - 10), (canvas.height - 9));
-      ctx.lineTo((canvas.width - 15), (canvas.height - 9));
-      ctx.lineTo((canvas.width - 15), (canvas.height - scaleInfo.height - 9));
+      ctx.moveTo((breakWidth - scaleInfo.width - 10), (breakHeight - scaleInfo.height - 9));
+      ctx.lineTo((breakWidth - scaleInfo.width - 10), (breakHeight - 9));
+      ctx.lineTo((breakWidth - 15), (breakHeight - 9));
+      ctx.lineTo((breakWidth - 15), (breakHeight - scaleInfo.height - 9));
       ctx.stroke();
 
       const logo = new Image();
@@ -143,7 +149,7 @@ const Exportmap = function Exportmap(options = {}) {
         northArrow.onload = function () {
           debugger;
           if (map.getView().getRotation() === 0) {
-            ctx.drawImage(northArrow, canvas.width - 150, 20, arrowWidth, arrowHeight);
+            ctx.drawImage(northArrow, breakWidth - 150, 20, arrowWidth, arrowHeight);
           } else {
             rotateAndPaintImage(canvas, ctx, northArrow);
           }
