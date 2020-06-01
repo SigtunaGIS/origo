@@ -8,6 +8,8 @@ import getCenter from '../geometry/getcenter';
 import getFeature from '../getfeature';
 import mapUtils from '../maputils';
 import popup from '../popup';
+import sidebar from '../sidebar';
+import infowindowManager from '../infowindow';
 import utils from '../utils';
 
 const Search = function Search(options = {}) {
@@ -49,6 +51,7 @@ const Search = function Search(options = {}) {
   let map;
   let projectionCode;
   let overlay;
+  let resultWindow;
   let awesomplete;
   let viewer;
   let featureInfo;
@@ -71,26 +74,66 @@ const Search = function Search(options = {}) {
     obj.title = objTitle;
     obj.content = content;
     clear();
-    featureInfo.render([obj], 'overlay', getCenter(features[0].getGeometry()));
+    featureInfo.render([obj], 'sidebar', getCenter(features[0].getGeometry()));
+    debugger;
     viewer.zoomToExtent(features[0].getGeometry(), maxZoomLevel);
   }
 
+
   function showOverlay(data, coord) {
     clear();
-    const newPopup = popup(`#${viewer.getId()}`);
-    overlay = new Overlay({
-      element: newPopup.getEl()
-    });
-
-    map.addOverlay(overlay);
-
-    overlay.setPosition(coord);
+    // const view = map.getView();
+    const target = viewer.getId();
     const content = data[name];
-    newPopup.setContent({
-      content,
-      title
-    });
-    newPopup.setVisibility(true);
+    const featureId = data[idAttribute];
+    switch (target) {
+      case 'overlay':
+      {
+        resultWindow = popup(`#${viewer.getId()}`);
+        overlay = new Overlay({
+          element: window.getEl()
+        });
+        map.addOverlay(overlay);
+        overlay.setPosition(coord);
+        resultWindow.setContent({
+          content,
+          title
+        });
+        resultWindow.setVisibility(true);
+        break;
+      }
+      case 'sidebar':
+      {
+        resultWindow = sidebar.init(viewer);
+        resultWindow.setContent({
+          content,
+          title
+        });
+        const contentDiv = document.getElementById('o-identify-carousel');
+        content.forEach((item) => {
+          if (item.content instanceof Element) {
+            contentDiv.appendChild(item.content);
+          } else {
+            contentDiv.innerHTML = item.content;
+          }
+        });
+        resultWindow.setVisibility(true);
+        resultWindow.initCarousel('#o-identify-carousel');
+        break;
+      }
+      case 'infowindow':
+      {
+        window.showSelectedList(content);
+        window.expandListElement(featureId);
+        window.highlightListElement(featureId);
+        window.scrollListElementToView(featureId);
+        break;
+      }
+      default:
+      {
+        break;
+      }
+    }
     mapUtils.zoomToExent(new Point(coord), maxZoomLevel);
   }
 
@@ -148,7 +191,7 @@ const Search = function Search(options = {}) {
       // Make sure the response is wrapped in a html element
       content = utils.createElement('div', data[contentAttribute]);
       showFeatureInfo([feature], data[titleAttribute], content);
-    // 4  
+    // 4
     } else if (geometryAttribute && title) {
       feature = mapUtils.wktToFeature(data[geometryAttribute], projectionCode);
       content = utils.createElement('div', data[name]);

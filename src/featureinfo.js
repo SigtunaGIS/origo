@@ -148,6 +148,7 @@ const Featureinfo = function Featureinfo(options = {}) {
         '<span class="icon"><svg class="o-icon-fa-chevron-right"><use xlink:href="#fa-chevron-right"></use></svg></span>'
       ]
     };
+    debugger;
     if (identifyTarget === 'overlay') {
       const popupHeight = $('.o-popup').outerHeight() + 20;
       $('#o-popup').height(popupHeight);
@@ -223,6 +224,7 @@ const Featureinfo = function Featureinfo(options = {}) {
     clear();
     let content = items.map((i) => i.content).join('');
     content = '<div id="o-identify"><div id="o-identify-carousel" class="owl-carousel owl-theme"></div></div>';
+    debugger;
     switch (target) {
       case 'overlay':
       {
@@ -266,12 +268,15 @@ const Featureinfo = function Featureinfo(options = {}) {
         });
         const contentDiv = document.getElementById('o-identify-carousel');
         items.forEach((item) => {
+          debugger;
           if (item.content instanceof Element) {
             contentDiv.appendChild(item.content);
           } else {
             contentDiv.innerHTML = item.content;
           }
         });
+        debugger;
+        init(viewer);
         sidebar.setVisibility(true);
         initCarousel('#o-identify-carousel');
         break;
