@@ -74,6 +74,7 @@ const Selectionmanager = function Selectionmanager(options = {}) {
     } else {
       // add
       selectedItems.push(item);
+      debugger;
       if (selectedItems.getLength() === 1) {
         highlightAndExpandItem(item);
       }

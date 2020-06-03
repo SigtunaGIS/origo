@@ -262,27 +262,26 @@ const Featureinfo = function Featureinfo(options = {}) {
       }
       case 'sidebar':
       {
+        sidebar.init(viewer);
         sidebar.setContent({
           content,
           title: items[0] instanceof SelectedItem ? items[0].getLayer().get('title') : items[0].title
         });
         const contentDiv = document.getElementById('o-identify-carousel');
         items.forEach((item) => {
-          debugger;
           if (item.content instanceof Element) {
             contentDiv.appendChild(item.content);
           } else {
             contentDiv.innerHTML = item.content;
           }
         });
-        debugger;
-        init(viewer);
         sidebar.setVisibility(true);
         initCarousel('#o-identify-carousel');
         break;
       }
       case 'infowindow':
       {
+        debugger;
         if (items.length === 1) {
           selectionManager.addOrHighlightItem(items[0]);
         } else if (items.length > 1) {
@@ -369,6 +368,7 @@ const Featureinfo = function Featureinfo(options = {}) {
       const map = viewer.getMap();
       setUIoutput(viewer);
       selectionLayer = featurelayer(savedFeature, map);
+      debugger;
       selectionManager = viewer.getSelectionManager();
       map.on(clickEvent, onClick);
       viewer.on('toggleClickInteraction', (detail) => {

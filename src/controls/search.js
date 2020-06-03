@@ -74,7 +74,7 @@ const Search = function Search(options = {}) {
     obj.title = objTitle;
     obj.content = content;
     clear();
-    featureInfo.render([obj], 'sidebar', getCenter(features[0].getGeometry()));
+    featureInfo.render([obj], 'infowindow', getCenter(features[0].getGeometry()));
     debugger;
     viewer.zoomToExtent(features[0].getGeometry(), maxZoomLevel);
   }

@@ -121,7 +121,7 @@ function render(viewerId, title) {
   parentElement.appendChild(mainContainer);
   mainContainer.classList.add('hidden');
 
-  // Make the DIV element draggagle:
+  // Make the DIV element draggable:
   makeElementDraggable(mainContainer);
 }
 
@@ -233,7 +233,7 @@ function createSubexportComponent(selectionGroup) {
   if (layerSpecificExportOptions) {
     const exportUrls = layerSpecificExportOptions.exportUrls || [];
     const attributesToSendToExportPerLayer = layerSpecificExportOptions.attributesToSendToExport;
-    //const layerSpecificExportedFileName = layerSpecificExportOptions.exportedFileName || exportedFileName;
+    // const layerSpecificExportedFileName = layerSpecificExportOptions.exportedFileName || exportedFileName;
 
     exportUrls.forEach((obj) => {
       const buttonText = obj.buttonText || 'External Call';
