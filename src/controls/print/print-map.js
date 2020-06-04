@@ -16,7 +16,7 @@ export default function PrintMap(options = {}) {
   let mapControls;
   let projection;
   let resolutions;
-  const mapscaleLimit = 2140;
+  let mapscaleLimit;
   let mapScale = '1:10000';
 
   const bottomLeftMapControls = El({ cls: 'flex column align-start absolute bottom-left transparent z-index-ontop-middle' });
@@ -31,7 +31,8 @@ export default function PrintMap(options = {}) {
 
   const getCurrentMapScale = () => {
     const currentScale = roundScale(mapUtils.resolutionToScale(map.getView().getResolution(), projection));
-    return currentScale >= mapscaleLimit ? currentScale : mapscaleLimit;
+    // return currentScale >= mapscaleLimit ? currentScale : mapscaleLimit;
+    return currentScale;
   };
 
   return Component({
