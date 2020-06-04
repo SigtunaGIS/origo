@@ -34,8 +34,6 @@ const Viewer = function Viewer(targetOption, options = {}) {
     consoleId = 'o-console',
     mapCls = 'o-map',
     controls = [],
-    constrainResolution = false,
-    enableRotation = true,
     featureinfoOptions = {},
     groups: groupOptions = [],
     pageSettings = {},
@@ -386,17 +384,7 @@ const Viewer = function Viewer(targetOption, options = {}) {
 
       tileGrid = maputils.tileGrid(tileGridSettings);
 
-      setMap(Map({
-        extent,
-        getFeatureinfo,
-        projection,
-        center,
-        resolutions,
-        zoom,
-        constrainResolution,
-        enableRotation,
-        target: this.getId()
-      }));
+      setMap(Map(Object.assign(options, { projection, center, zoom, target: this.getId() })));
 
       const layerProps = mergeSavedLayerProps(layerOptions, urlParams.layers);
       this.addLayers(layerProps);
@@ -411,11 +399,11 @@ const Viewer = function Viewer(targetOption, options = {}) {
         const featureId = urlParams.feature;
         const layerName = featureId.split('.')[0];
         const layer = getLayer(layerName);
-        const clusterSource = layer.getSource().source;
         const type = layer.get('type');
-        const id = featureId.split('.')[1];
 
-        if (layer) {
+        if (layer && type !== 'GROUP') {
+          const clusterSource = layer.getSource().source;
+          const id = featureId.split('.')[1];
           layer.once('postrender', () => {
             let feature;
 
@@ -438,9 +426,10 @@ const Viewer = function Viewer(targetOption, options = {}) {
               const centerGeometry = getcenter(feature.getGeometry());
               const infowindowType = featureinfoOptions.showOverlay === false ? 'sidebar' : 'overlay';
               featureinfo.render([obj], infowindowType, centerGeometry);
-              map.getView().animate({
-                center: getcenter(feature.getGeometry()),
-                zoom: getResolutions().length - 2
+              map.getView().fit(feature.getGeometry(), {
+                maxZoom: getResolutions().length - 2,
+                padding: [15, 15, 40, 15],
+                duration: 1000
               });
             }
           });
@@ -455,7 +444,7 @@ const Viewer = function Viewer(targetOption, options = {}) {
           geometry: new geom[urlParams.selection.geometryType](urlParams.selection.coordinates)
         });
       }
-      
+
       if (!urlParams.zoom && !urlParams.mapStateId && startExtent) {
         map.getView().fit(startExtent, { size: map.getSize() });
       }
