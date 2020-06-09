@@ -148,7 +148,6 @@ const Featureinfo = function Featureinfo(options = {}) {
         '<span class="icon"><svg class="o-icon-fa-chevron-right"><use xlink:href="#fa-chevron-right"></use></svg></span>'
       ]
     };
-    debugger;
     if (identifyTarget === 'overlay') {
       const popupHeight = $('.o-popup').outerHeight() + 20;
       $('#o-popup').height(popupHeight);
@@ -224,7 +223,6 @@ const Featureinfo = function Featureinfo(options = {}) {
     clear();
     let content = items.map((i) => i.content).join('');
     content = '<div id="o-identify"><div id="o-identify-carousel" class="owl-carousel owl-theme"></div></div>';
-    debugger;
     switch (target) {
       case 'overlay':
       {
@@ -281,10 +279,14 @@ const Featureinfo = function Featureinfo(options = {}) {
       }
       case 'infowindow':
       {
-        debugger;
         if (items.length === 1) {
-          selectionManager.addOrHighlightItem(items[0]);
+          const item = new SelectedItem(items[0].feature, items[0].layer, map, items[0].name, items[0].title);
+          selectionManager.addOrHighlightItem(item);
         } else if (items.length > 1) {
+          const selectedItems = [];
+          items.forEach(item => {
+            selectedItems.push(new SelectedItem(item.feature, item.layer, map, item.name, item.title));
+          });
           selectionManager.addItems(items);
         }
         break;
@@ -368,7 +370,6 @@ const Featureinfo = function Featureinfo(options = {}) {
       const map = viewer.getMap();
       setUIoutput(viewer);
       selectionLayer = featurelayer(savedFeature, map);
-      debugger;
       selectionManager = viewer.getSelectionManager();
       map.on(clickEvent, onClick);
       viewer.on('toggleClickInteraction', (detail) => {

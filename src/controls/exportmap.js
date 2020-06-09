@@ -43,7 +43,6 @@ const Exportmap = function Exportmap(options = {}) {
         // Get the transform parameters from the style's transform matrix
         const matrix = transform.match(/^matrix\(([^\(]*)\)$/)[1].split(',').map(Number);
         // Apply the transform to the export map context
-        debugger;
         CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
         mapContext.drawImage(canvas, 0, 0);
         // set dimensions
@@ -147,7 +146,6 @@ const Exportmap = function Exportmap(options = {}) {
         ctx.drawImage(logo, 20, 20, logoWidth, logoHeight);
         const northArrow = new Image();
         northArrow.onload = function () {
-          debugger;
           if (map.getView().getRotation() === 0) {
             ctx.drawImage(northArrow, breakWidth - 150, 20, arrowWidth, arrowHeight);
           } else {

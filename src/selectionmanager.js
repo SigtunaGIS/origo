@@ -74,7 +74,6 @@ const Selectionmanager = function Selectionmanager(options = {}) {
     } else {
       // add
       selectedItems.push(item);
-      debugger;
       if (selectedItems.getLength() === 1) {
         highlightAndExpandItem(item);
       }
@@ -124,7 +123,6 @@ const Selectionmanager = function Selectionmanager(options = {}) {
 
   function onItemAdded(event) {
     const item = event.element;
-
     const selectionGroup = event.element.getSelectionGroup();
     const selectionGroupTitle = event.element.getSelectionGroupTitle();
 

@@ -3,7 +3,6 @@ import $ from 'jquery';
 import Featureinfo from './featureinfo';
 
 function setVisibility(visible) {
-  debugger;
   if (visible) {
     $('#o-sidebar').addClass('o-sidebar-show');
   } else {

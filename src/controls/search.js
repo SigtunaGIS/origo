@@ -68,14 +68,16 @@ const Search = function Search(options = {}) {
     }
   }
 
-  function showFeatureInfo(features, objTitle, content) {
+  function showFeatureInfo(features, objTitle, content, layer, name) {
     const obj = {};
     obj.feature = features[0];
     obj.title = objTitle;
     obj.content = content;
+    obj.layer = layer;
+    obj.name = name;
     clear();
+
     featureInfo.render([obj], 'infowindow', getCenter(features[0].getGeometry()));
-    debugger;
     viewer.zoomToExtent(features[0].getGeometry(), maxZoomLevel);
   }
 
@@ -172,7 +174,7 @@ const Search = function Search(options = {}) {
           let featureWkt;
           let coordWkt;
           if (res.length > 0) {
-            showFeatureInfo(res, layer.get('title'), getAttributes(res[0], layer));
+            showFeatureInfo(res, layer.get('title'), getAttributes(res[0], layer), layer, layer.get('name'));
           } else if (geometryAttribute) {
             // Fallback if no geometry in response
             featureWkt = mapUtils.wktToFeature(data[geometryAttribute], projectionCode);
@@ -184,18 +186,18 @@ const Search = function Search(options = {}) {
     } else if (geometryAttribute && layerName) {
       feature = mapUtils.wktToFeature(data[geometryAttribute], projectionCode);
       layer = viewer.getLayer(data[layerName]);
-      showFeatureInfo([feature], layer.get('title'), getAttributes(feature, layer));
+      showFeatureInfo([feature], layer.get('title'), getAttributes(feature, layer), layer, layer.get('name'));
     // 3
     } else if (titleAttribute && contentAttribute && geometryAttribute) {
       feature = mapUtils.wktToFeature(data[geometryAttribute], projectionCode);
       // Make sure the response is wrapped in a html element
       content = utils.createElement('div', data[contentAttribute]);
-      showFeatureInfo([feature], data[titleAttribute], content);
+      showFeatureInfo([feature], data[titleAttribute], content, layer, layer.get('name'));
     // 4
     } else if (geometryAttribute && title) {
       feature = mapUtils.wktToFeature(data[geometryAttribute], projectionCode);
       content = utils.createElement('div', data[name]);
-      showFeatureInfo([feature], title, content);
+      showFeatureInfo([feature], title, content, layer, layer.get('name'));
     // 5
     } else if (easting && northing && title) {
       coord = [data[easting], data[northing]];

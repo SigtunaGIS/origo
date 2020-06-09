@@ -26,7 +26,6 @@ function createSelectedItem(feature, layer, map, groupLayers) {
     selectionGroup = layer.get('name');
     selectionGroupTitle = layer.get('title');
   }
-
   return new SelectedItem(feature, layer, map, selectionGroup, selectionGroupTitle);
 }
 
