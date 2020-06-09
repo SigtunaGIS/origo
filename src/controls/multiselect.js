@@ -85,7 +85,7 @@ const Multiselect = function Multiselect(options = {}) {
     if (circleSelection) {
       document.getElementById(circleSelectionButton.getId()).classList.remove('hidden');
     }
-	if (polygonSelection) {
+    if (polygonSelection) {
       document.getElementById(polygonSelectionButton.getId()).classList.remove('hidden');
     }
     if (bufferSelection) {
@@ -113,7 +113,7 @@ const Multiselect = function Multiselect(options = {}) {
     if (circleSelection) {
       document.getElementById(circleSelectionButton.getId()).classList.add('hidden');
     }
-	if (polygonSelection) {
+    if (polygonSelection) {
       document.getElementById(polygonSelectionButton.getId()).classList.add('hidden');
     }
     if (bufferSelection) {
@@ -143,8 +143,8 @@ const Multiselect = function Multiselect(options = {}) {
       source: selectSource,
       type: 'Circle'
     });
-	
-	polygonInteraction = new DrawInteraction({
+
+    polygonInteraction = new DrawInteraction({
       source: selectSource,
       type: 'Polygon'
     });
@@ -156,7 +156,7 @@ const Multiselect = function Multiselect(options = {}) {
     map.addInteraction(clickInteraction);
     map.addInteraction(boxInteraction);
     map.addInteraction(circleInteraction);
-	map.addInteraction(polygonInteraction);
+    map.addInteraction(polygonInteraction);
     map.addInteraction(bufferInteraction);
 
     boxInteraction.on('drawend', fetchFeatures_Box);
@@ -165,7 +165,7 @@ const Multiselect = function Multiselect(options = {}) {
       createRadiusLengthTooltip();
     });
     circleInteraction.on('drawend', fetchFeatures_Circle);
-	polygonInteraction.on('drawstart', (evt) => { });
+    polygonInteraction.on('drawstart', (evt) => { });
     polygonInteraction.on('drawend', fetchFeatures_Polygon);
   }
 
@@ -205,7 +205,7 @@ const Multiselect = function Multiselect(options = {}) {
       polygonInteraction.setActive(true);
       bufferInteraction.setActive(false);
       map.un('pointermove', pointerMoveHandler);
-    }else if (type === 'buffer') {
+    } else if (type === 'buffer') {
       clickInteraction.setActive(false);
       boxInteraction.setActive(false);
       circleInteraction.setActive(false);
@@ -219,7 +219,7 @@ const Multiselect = function Multiselect(options = {}) {
     map.removeInteraction(clickInteraction);
     map.removeInteraction(boxInteraction);
     map.removeInteraction(circleInteraction);
-	map.removeInteraction(polygonInteraction);
+    map.removeInteraction(polygonInteraction);
     map.removeInteraction(bufferInteraction);
   }
 
@@ -326,9 +326,8 @@ const Multiselect = function Multiselect(options = {}) {
     // const f = new Feature(fromExtent(extent));
     // debugLayer.addFeature(f);
   }
-  
-  function fetchFeatures_Polygon(evt) {
 
+  function fetchFeatures_Polygon(evt) {
     const polygon = evt.feature.getGeometry();
     const extent = polygon.getExtent();
     const layers = viewer.getQueryableLayers();
@@ -342,7 +341,7 @@ const Multiselect = function Multiselect(options = {}) {
     // adding features got from wfs GetFeature
     Promise.all(results.selectedRemoteItemsPromises).then((data) => {
       // data is an array containing corresponding arrays of features for each layer.
-      data.forEach(items => allItems = allItems.concat(getItemsIntersectingGeometry(items, polygon)));
+      data.forEach((items) => allItems = allItems.concat(getItemsIntersectingGeometry(items, polygon)));
 
       if (allItems.length === 1) {
         selectionManager.addOrHighlightItem(allItems[0]);
@@ -694,8 +693,7 @@ const Multiselect = function Multiselect(options = {}) {
   return Component({
     name: 'multiselection',
     onInit() {
-
-      if (clickSelection || boxSelection || circleSelection|| polygonSelection || bufferSelection) {
+      if (clickSelection || boxSelection || circleSelection || polygonSelection || bufferSelection) {
         multiselectElement = El({
           tagName: 'div',
           cls: 'flex column'
@@ -729,7 +727,7 @@ const Multiselect = function Multiselect(options = {}) {
 
         if (boxSelection) {
           boxSelectionButton = Button({
-			  //o-home-in padding-small icon-smaller round light box-shadow o-tooltip
+			  // o-home-in padding-small icon-smaller round light box-shadow o-tooltip
             cls: 'o-multiselect-box padding-small margin-bottom-smaller icon-smaller round light box-shadow hidden',
             click() {
               type = 'box';
@@ -756,8 +754,8 @@ const Multiselect = function Multiselect(options = {}) {
           });
           buttons.push(circleSelectionButton);
         }
-		
-		if (polygonSelection) {
+
+        if (polygonSelection) {
           polygonSelectionButton = Button({
             cls: 'o-multiselect-polygon padding-small margin-bottom-smaller icon-smaller round light box-shadow hidden',
             click() {
@@ -791,7 +789,7 @@ const Multiselect = function Multiselect(options = {}) {
           defaultButton = boxSelectionButton;
         } else if (defaultTool === 'circle') {
           defaultButton = circleSelectionButton;
-		} else if (defaultTool === 'polygon') {
+        } else if (defaultTool === 'polygon') {
           defaultButton = polygonSelectionButton;
         } else if (defaultTool === 'buffer') {
           defaultButton = bufferSelectionButton;
