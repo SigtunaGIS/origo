@@ -121,7 +121,7 @@ function render(viewerId, title) {
   parentElement.appendChild(mainContainer);
   mainContainer.classList.add('hidden');
 
-  // Make the DIV element draggagle:
+  // Make the DIV element draggable:
   makeElementDraggable(mainContainer);
 }
 

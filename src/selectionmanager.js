@@ -123,7 +123,6 @@ const Selectionmanager = function Selectionmanager(options = {}) {
 
   function onItemAdded(event) {
     const item = event.element;
-
     const selectionGroup = event.element.getSelectionGroup();
     const selectionGroupTitle = event.element.getSelectionGroupTitle();
 

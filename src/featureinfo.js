@@ -253,6 +253,7 @@ const Featureinfo = function Featureinfo(options = {}) {
       }
       case 'sidebar':
       {
+        sidebar.init(viewer);
         sidebar.setContent({
           content,
           title: items[0] instanceof SelectedItem ? items[0].getLayer().get('title') : items[0].title
@@ -272,8 +273,13 @@ const Featureinfo = function Featureinfo(options = {}) {
       case 'infowindow':
       {
         if (items.length === 1) {
-          selectionManager.addOrHighlightItem(items[0]);
+          const item = new SelectedItem(items[0].feature, items[0].layer, map, items[0].name, items[0].title);
+          selectionManager.addOrHighlightItem(item);
         } else if (items.length > 1) {
+          const selectedItems = [];
+          items.forEach(item => {
+            selectedItems.push(new SelectedItem(item.feature, item.layer, map, item.name, item.title));
+          });
           selectionManager.addItems(items);
         }
         break;
