@@ -18,10 +18,10 @@ export default function ScaleControl(options = {}) {
   const toggleMapScale = () => {
     const target = document.getElementsByClassName('print-map-scale-text')[0];
     try {
-      if (target.style.visibility == 'visible' || target.style.visibility == '') {
-        target.style.visibility = 'hidden';
+      if (target.style.display === 'block' || target.style.display === '') {
+        target.style.display = 'none';
       } else {
-        target.style.visibility = 'visible';
+        target.style.display = 'block';
       }
     } catch (e) {
       return false;
