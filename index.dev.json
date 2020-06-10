@@ -16,6 +16,14 @@
       "name": "print"
     },
     {
+      "name": "exportmap",
+      "options": {
+        "buttonText": "Spara bild",
+        "attributionFontSize": 12,
+        "attributionFontColor" : "#000000"
+      }
+    },
+    {
       "name": "legend",
       "options": {
         "expanded": false,
@@ -36,14 +44,6 @@
     },
     {
       "name": "printmap"
-    },
-    {
-      "name": "exportmap",
-      "options": {
-        "buttonText": "Spara bild",
-        "attributionFontSize": 12,
-        "attributionFontColor" : "#000000"
-      }
     },
     {
       "name": "link",
