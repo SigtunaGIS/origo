@@ -7,6 +7,7 @@ import proj from './projection';
 import MapSize from './utils/mapsize';
 import Featureinfo from './featureinfo';
 import Selectionmanager from './selectionmanager';
+import getCapabilities from './getCapabilities';
 import maputils from './maputils';
 import utils from './utils';
 import Layer from './layer';
@@ -65,6 +66,15 @@ const Viewer = function Viewer(targetOption, options = {}) {
     resolutions,
     tileSize: [256, 256]
   };
+
+  const getCapabilitiesLayers = {};
+  (Object.keys(source)).forEach(sourceName => {
+    const sourceOptions = source[sourceName];
+    if (sourceOptions && sourceOptions.capabilitiesURL) {
+      getCapabilitiesLayers[sourceName] = getCapabilities(sourceOptions.capabilitiesURL);
+    }
+  });
+
   const tileGridSettings = Object.assign({}, defaultTileGridOptions, tileGridOptions);
   let mapGridCls = '';
   if (pageSettings.mapGrid) {
