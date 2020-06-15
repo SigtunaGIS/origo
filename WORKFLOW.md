@@ -17,11 +17,12 @@ The workflow is not dependent of any extensions.
 
 ### 3.1 The main branches:
 
-Instead of a single master branch, this workflow uses two branches to record the history of the project with an infinite lifetime.
+**Notice:** Instead of a single master branch, this workflow uses two branches to record the history of the project with an infinite lifetime.
 
-**origo-map =** The the latest release of [origo-map/origo](https://github.com/origo-map/origo), the repository the SigtunaGIS/origo is forked from.
+* **master =** The the latest release of [origo-map/origo](https://github.com/origo-map/origo), the repository this repository is forked from. Are only used
+to pull the latest version of origo-map/origo.
 
-* **master =** Stores the official release history
+* **sigtuna-master =** The internal master branch of this repository.
 
 * **develop =** Serves as an integration branch for features. It's also convenient to tag all commits in the master branch with a version number.
 
@@ -34,8 +35,8 @@ They're categorized by how we use them.
 **Types of branches we may use are:**
 
 * **Feature branches =** Are used to develop new features for the upcoming or a distant future release. feature branches use develop as their parent branch. When a feature is complete, it gets merged back into develop. Features should never interact directly with master.
-* **May branch off from:** Develop
-* **Must merge back into:** Develop
+* **May branch off from:** develop
+* **Must merge back into:** develop
 * **Branch naming convention:** feature/* . Your branch name should be descriptive (e.g., refactor-authentication, user-content-cache-key, make-retina-avatars), so that others can see what is being worked on.
   * **How to create:**
   ```
@@ -49,8 +50,8 @@ They're categorized by how we use them.
   ```
 
 * **Release branches =** Are used for preparation of a new production release like minor bug fixes, preparing metadata etc.
-  *  **May branch off from:** Develop
-  * **Must merge back into:** Develop and master
+  *  **May branch off from:** develop
+  * **Must merge back into:** develop and master
   * **Branch naming convention:** release/* . The branch name should also include version number/built dates, release/2020-04-01 etc.
   * **How to create:**
   ```
@@ -75,7 +76,7 @@ They're categorized by how we use them.
   ```
   * **How to finish:**
   ```
-  git checkout master
+  git checkout sigtuna-master
   git merge hotfix_branch
   git checkout develop
   git merge hotfix_branch
@@ -84,27 +85,27 @@ They're categorized by how we use them.
 
   * **fix/bug branches** Are used to solving bugs in found in a production build in the **origo-map/origo** repository. 
 
-  * **May branch off from:** origo-map
-* **Must merge back into:** origo-map
+  * **May branch off from:** master
+* **Must merge back into:** Make a pull request to master in origo-map/origo.
 * **Branch naming convention:** See [the origo documentation](https://github.com/origo-map/origo/blob/master/CONTRIBUTING.md) for more information.
  * **How to create:**
  ```
-  git checkout origo-master
+  git checkout master
   git checkout -b fix
   ```
   * **How to finish:**
   ```
-  git checkout origo-master
+  git checkout master
   git merge fix
   git checkout develop
-  git merge hotfix_branch
-  git branch -D hotfix_branch
+  git merge fix_branch
+  git branch -D fix_branch
   ```
 
 ## 4.Testing and deployment
 
 Before merging a branch into the parent branch it must **always** be tested, to minimize the risk for potential/future issues.
-Preferably when a branch is done a [Code Review/Peer Code Review](https://smartbear.com/learn/code-review/what-is-code-review/) should be done.
+Preferably when a branch is done a [Code Review](https://smartbear.com/learn/code-review/what-is-code-review/) should be done.
 
 
 
