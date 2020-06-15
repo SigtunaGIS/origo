@@ -19,7 +19,7 @@ The workflow is not dependent of any extensions.
 
 **Notice:** Instead of a single master branch, this workflow uses two branches to record the history of the project with an infinite lifetime.
 
-* **master =** The the latest release of [origo-map/origo](https://github.com/origo-map/origo), the repository this repository is forked from. Are only used
+* **master =** The the latest release of [origo-map/origo](https://github.com/origo-map/origo), the repository this project is forked from. Are only used
 to pull the latest version of origo-map/origo.
 
 * **sigtuna-master =** The internal master branch of this repository.
@@ -52,7 +52,7 @@ They're categorized by how we use them.
 * **Release branches =** Are used for preparation of a new production release like minor bug fixes, preparing metadata etc.
   *  **May branch off from:** develop
   * **Must merge back into:** develop and master
-  * **Branch naming convention:** release/* . The branch name should also include version number/built dates, release/2020-04-01 etc.
+  * **Branch naming convention:** release/* . The branch name should also include a distinctive version number/built dates, release/2020-04-01 etc.
   * **How to create:**
   ```
     git checkout develop
