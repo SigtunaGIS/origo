@@ -4,10 +4,10 @@ import geom from 'ol/geom/Geometry';
 import { Component } from './ui';
 import Map from './map';
 import proj from './projection';
+import getCapabilities from './getCapabilities';
 import MapSize from './utils/mapsize';
 import Featureinfo from './featureinfo';
 import Selectionmanager from './selectionmanager';
-import getCapabilities from './getCapabilities';
 import maputils from './maputils';
 import utils from './utils';
 import Layer from './layer';
@@ -35,8 +35,11 @@ const Viewer = function Viewer(targetOption, options = {}) {
     consoleId = 'o-console',
     mapCls = 'o-map',
     controls = [],
+    constrainResolution = false,
+    enableRotation = true,
     featureinfoOptions = {},
     groups: groupOptions = [],
+    mapGrid = true,
     pageSettings = {},
     projectionCode,
     projectionExtent,
@@ -45,6 +48,7 @@ const Viewer = function Viewer(targetOption, options = {}) {
     center: centerOption = [0, 0],
     zoom: zoomOption = 0,
     resolutions = null,
+    capabilitiesURL = null,
     layers: layerOptions = [],
     map: mapName,
     params: urlParams = {},
@@ -60,12 +64,6 @@ const Viewer = function Viewer(targetOption, options = {}) {
   const center = urlParams.center || centerOption;
   const zoom = urlParams.zoom || zoomOption;
   const groups = flattenGroups(groupOptions);
-  const defaultTileGridOptions = {
-    alignBottomLeft: true,
-    extent,
-    resolutions,
-    tileSize: [256, 256]
-  };
 
   const getCapabilitiesLayers = {};
   (Object.keys(source)).forEach(sourceName => {
@@ -75,13 +73,14 @@ const Viewer = function Viewer(targetOption, options = {}) {
     }
   });
 
+  const defaultTileGridOptions = {
+    alignBottomLeft: true,
+    extent,
+    resolutions,
+    tileSize: [256, 256]
+  };
   const tileGridSettings = Object.assign({}, defaultTileGridOptions, tileGridOptions);
-  let mapGridCls = '';
-  if (pageSettings.mapGrid) {
-    if (pageSettings.mapGrid.visible) {
-      mapGridCls = 'o-map-grid';
-    }
-  }
+  const mapGridCls = mapGrid ? 'o-mapgrid' : '';
   const cls = `${clsOptions} ${mapGridCls} ${mapCls} o-ui`.trim();
   const footerData = pageSettings.footer || {};
   const main = Main();
@@ -218,6 +217,13 @@ const Viewer = function Viewer(targetOption, options = {}) {
     throw new Error(`There is no source with name: ${name}`);
   };
 
+  const getSource2 = function getSource2(name) {
+    if (name in source) {
+      return source[name];
+    }
+    return undefined;
+  };
+
   const getGroups = () => groups;
 
   const getProjectionCode = () => projectionCode;
@@ -251,9 +257,28 @@ const Viewer = function Viewer(targetOption, options = {}) {
 
   const getMain = () => main;
 
-  const mergeSavedLayerProps = (initialLayerProps, savedLayerProps) => {
+  const mergeSecuredLayer = (layerlist, capabilitiesLayers) => {
+    if (capabilitiesLayers && Object.keys(capabilitiesLayers).length > 0) {
+      layerlist.forEach((layer) => {
+        const layerSourceOptions = layer.source ? getSource2(layer.source) : undefined;
+        if (layerSourceOptions && layerSourceOptions.capabilitiesURL) {
+          if (capabilitiesLayers[layer.source].indexOf(layer.name) >= 0) {
+            layer.secure = false;
+          } else {
+            layer.secure = true;
+          }
+        } else {
+          layer.secure = false;
+        }
+      });
+    }
+    return layerlist;
+  };
+
+  const mergeSavedLayerProps = (initialLayerProps, savedLayerProps, capabilitiesLayers) => {
+    let mergedLayerProps;
     if (savedLayerProps) {
-      const mergedLayerProps = initialLayerProps.reduce((acc, initialProps) => {
+      mergedLayerProps = initialLayerProps.reduce((acc, initialProps) => {
         const layerName = initialProps.name.split(':').pop();
         const savedProps = savedLayerProps[layerName] || {
           visible: false,
@@ -264,9 +289,9 @@ const Viewer = function Viewer(targetOption, options = {}) {
         acc.push(mergedProps);
         return acc;
       }, []);
-      return mergedLayerProps;
+      return mergeSecuredLayer(mergedLayerProps, capabilitiesLayers);
     }
-    return initialLayerProps;
+    return mergeSecuredLayer(initialLayerProps, capabilitiesLayers);
   };
 
   const removeOverlays = function removeOverlays(overlays) {
@@ -394,9 +419,19 @@ const Viewer = function Viewer(targetOption, options = {}) {
 
       tileGrid = maputils.tileGrid(tileGridSettings);
 
-      setMap(Map(Object.assign(options, { projection, center, zoom, target: this.getId() })));
+      setMap(Map({
+        extent,
+        getFeatureinfo,
+        projection,
+        center,
+        resolutions,
+        zoom,
+        constrainResolution,
+        enableRotation,
+        target: this.getId()
+      }));
 
-      const layerProps = mergeSavedLayerProps(layerOptions, urlParams.layers);
+      const layerProps = mergeSavedLayerProps(layerOptions, urlParams.layers, getCapabilitiesLayers);
       this.addLayers(layerProps);
 
       mapSize = MapSize(map, {
@@ -409,24 +444,23 @@ const Viewer = function Viewer(targetOption, options = {}) {
         const featureId = urlParams.feature;
         const layerName = featureId.split('.')[0];
         const layer = getLayer(layerName);
-        const type = layer.get('type');
-
-        if (layer && type !== 'GROUP') {
-          const clusterSource = layer.getSource().source;
-          const id = featureId.split('.')[1];
+        if (layer) {
           layer.once('postrender', () => {
             let feature;
-
-            if (type === 'WFS' && clusterSource) {
-              feature = clusterSource.getFeatureById(featureId);
-            } else if (type === 'WFS') {
+            const type = layer.get('type');
+            feature = layer.getSource().getFeatureById(featureId);
+            if (type === 'WFS') {
               feature = layer.getSource().getFeatureById(featureId);
-            } else if (clusterSource) {
-              feature = clusterSource.getFeatureById(id);
             } else {
-              feature = layer.getSource().getFeatureById(id);
+              const id = featureId.split('.')[1];
+              let origin = layer.getSource();
+              feature = origin.getFeatureById(id);
+              // feature has no id it is not found it maybe a cluster, therefore try again.
+              if (feature === null && type !== 'TOPOJSON') {
+                origin = origin.getSource();
+                feature = origin.getFeatureById(id);
+              }
             }
-
             if (feature) {
               const obj = {};
               obj.feature = feature;
@@ -436,10 +470,9 @@ const Viewer = function Viewer(targetOption, options = {}) {
               const centerGeometry = getcenter(feature.getGeometry());
               const infowindowType = featureinfoOptions.showOverlay === false ? 'sidebar' : 'overlay';
               featureinfo.render([obj], infowindowType, centerGeometry);
-              map.getView().fit(feature.getGeometry(), {
-                maxZoom: getResolutions().length - 2,
-                padding: [15, 15, 40, 15],
-                duration: 1000
+              map.getView().animate({
+                center: getcenter(feature.getGeometry()),
+                zoom: getResolutions().length - 2
               });
             }
           });
