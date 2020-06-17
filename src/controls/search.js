@@ -81,7 +81,6 @@ const Search = function Search(options = {}) {
     viewer.zoomToExtent(features[0].getGeometry(), maxZoomLevel);
   }
 
-
   function showOverlay(data, coord) {
     clear();
     // const view = map.getView();
