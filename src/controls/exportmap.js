@@ -10,8 +10,8 @@ const Exportmap = function Exportmap(options = {}) {
     logoHeight = options.logoHeight = '50',
     arrowWidth = options.arrowWidth = '100',
     arrowHeight = options.arrowHeight = '150',
-    logoSrc = options.logoSrc = '..\\img\\png\\sigtuna_logo.png',
-    arrowSrc = options.arrowSrc = '..\\img\\png\\north_arrow.png',
+    logoSrc = options.logoSrc = 'img\\png\\sigtuna_logo.png',
+    arrowSrc = options.arrowSrc = 'img\\png\\north_arrow.png',
     icon = '#fa-download'
   } = options;
 
@@ -147,7 +147,7 @@ const Exportmap = function Exportmap(options = {}) {
         const northArrow = new Image();
         northArrow.onload = function () {
           if (map.getView().getRotation() === 0) {
-            ctx.drawImage(northArrow, breakWidth - 150, 20, arrowWidth, arrowHeight);
+            ctx.drawImage(northArrow, 25, 80, arrowWidth, arrowHeight);
           } else {
             rotateAndPaintImage(canvas, ctx, northArrow);
           }
