@@ -4,13 +4,18 @@ import { dom, Component, Element as El } from '../../ui';
 import Logo from './logo';
 import mapUtils from '../../maputils';
 import numberFormatter from '../../utils/numberformatter';
+import NorthArrow from './north-arrow';
 
 export default function PrintMap(options = {}) {
   const {
     baseUrl,
     logo,
+    northArrow,
     map,
     viewer
+  } = options;
+  let {
+    showNorthArrow
   } = options;
 
   let mapControls;
@@ -19,9 +24,11 @@ export default function PrintMap(options = {}) {
   let mapscaleLimit;
   let mapScale = '1:10000';
 
+  const topRightMapControls = El({ cls: 'flex column align-start absolute top-right transparent z-index-ontop-middle' });
   const bottomLeftMapControls = El({ cls: 'flex column align-start absolute bottom-left transparent z-index-ontop-middle' });
   const bottomRightMapControls = El({ cls: 'flex column align-start absolute bottom-right transparent z-index-ontop-middle' });
   const logoComponent = Logo({ baseUrl, logo });
+  const northArrowComponent = NorthArrow({ baseUrl, northArrow, map });
 
   const roundScale = (scale) => {
     const diff = scale % 10;
@@ -39,6 +46,7 @@ export default function PrintMap(options = {}) {
     onInit() {
       this.addComponent(bottomLeftMapControls);
       this.addComponent(bottomRightMapControls);
+      this.on('change:toggleNorthArrow', this.toggleNorthArrow.bind(this));
       projection = map.getView().getProjection();
       resolutions = viewer.getResolutions();
       map.getView().on('change:resolution', this.onZoomChange);
@@ -46,9 +54,18 @@ export default function PrintMap(options = {}) {
     onRender() {
       this.dispatch('render');
     },
+    toggleNorthArrow(display) {
+      showNorthArrow = !showNorthArrow;
+      northArrowComponent.setVisible(display);
+    },
     addPrintControls() {
       const el = document.getElementById(bottomLeftMapControls.getId());
       el.appendChild(dom.html(logoComponent.render()));
+      const el2 = document.getElementById(topRightMapControls.getId());
+      el2.appendChild(dom.html(northArrowComponent.render()));
+      northArrowComponent.onRotationChanged();
+      northArrowComponent.setVisible({ showNorthArrow });
+
       const scaleLine = new olScaleLine({
         className: 'print-scale-line',
         target: bottomRightMapControls.getId()
@@ -81,8 +98,9 @@ export default function PrintMap(options = {}) {
     render() {
       return `
       <div class="flex grow relative no-margin width-full height-full">
+        ${topRightMapControls.render()}
         ${bottomLeftMapControls.render()}
-        ${bottomRightMapControls.render()}    
+        ${bottomRightMapControls.render()}
         <div id="${this.getId()}" class="no-margin width-full height-full">
         </div>
       </div>

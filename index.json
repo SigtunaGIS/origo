@@ -42,7 +42,8 @@
     {
       "name": "legend",
       "options": {
-        "labelOpacitySlider": "Opacity"
+        "labelOpacitySlider": "Opacity",
+        "useGroupIndication" : true
       }
     },
     {
@@ -66,7 +67,7 @@
     "footer": {
       "img": "img/png/logo.png",
       "url": "https://github.com/origo-map/origo",
-      "urlText": "Origo"
+      "text": "Origo"
     },
     "mapGrid": {
       "visible": true

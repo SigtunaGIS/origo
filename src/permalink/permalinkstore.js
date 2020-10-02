@@ -2,6 +2,7 @@ import urlparser from '../utils/urlparser';
 
 let getPin;
 const permalinkStore = {};
+const additionalMapStateParams = {};
 
 function getSaveLayers(layers) {
   const saveLayers = [];
@@ -9,6 +10,7 @@ function getSaveLayers(layers) {
     const saveLayer = {};
     saveLayer.v = layer.getVisible() === true ? 1 : 0;
     saveLayer.s = layer.get('legend') === true ? 1 : 0;
+    saveLayer.o = Number(layer.get('opacity')) * 100;
     if (saveLayer.s || saveLayer.v) {
       saveLayer.name = layer.get('name');
       saveLayers.push(urlparser.stringify(saveLayer, {
@@ -52,12 +54,18 @@ permalinkStore.getState = function getState(viewer, isExtended) {
     state.map = viewer.getMapName().split('.')[0];
   }
 
+  Object.keys(additionalMapStateParams).forEach((key) => additionalMapStateParams[key](state));
+
   return state;
 };
 
 permalinkStore.getUrl = function getUrl(viewer) {
   const url = viewer.getUrl();
   return url;
+};
+
+permalinkStore.AddExternalParams = function AddExternalParams(key, callback) {
+  if (!additionalMapStateParams[key]) additionalMapStateParams[key] = callback;
 };
 
 export default permalinkStore;
