@@ -31,7 +31,7 @@ export default function printTemplate({
     </div>
     <div class="padding-top-large"></div>
     <div class="flex padding-right-small">
-      <div class="grow text-normal">Visa Skala</div>
+      <div class="grow text-normal">Visa skala</div>
       ${scaleControl.render()}
     </div>
     <div class="padding-top-large"></div>
