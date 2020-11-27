@@ -21,6 +21,7 @@ const PrintSettings = function PrintSettings({
   customSize,
   sizes,
   map,
+  showScale,
   showCreated,
   showNorthArrow
 } = {}) {
@@ -91,7 +92,7 @@ const PrintSettings = function PrintSettings({
       const titleControl = TitleControl({});
       const descriptionControl = DescriptionControl();
       const marginControl = MarginControl({ checked: true });
-      const scaleControl = ScaleControl({ checked: true });
+      const scaleControl = ScaleControl({ checked: showScale });
       const createdControl = CreatedControl({ checked: showCreated });
       northArrowControl = NorthArrowControl({ showNorthArrow });
       rotationControl = RotationControl({ rotation: 0, map });

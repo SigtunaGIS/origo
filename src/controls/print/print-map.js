@@ -104,7 +104,6 @@ export default function PrintMap(options = {}) {
         <div id="${this.getId()}" class="no-margin width-full height-full">
         </div>
       </div>
-      <span class="print-map-scale-text">${mapScale}</span>
       `;
     }
   });
