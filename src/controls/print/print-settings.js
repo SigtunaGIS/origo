@@ -132,7 +132,7 @@ const PrintSettings = function PrintSettings({
 
       descriptionControl.on('change', (evt) => this.dispatch('change:description', evt));
       marginControl.on('change:check', (evt) => this.dispatch('change:margin', evt));
-      scaleControl.on('change:check', (evt) => this.dispatch('change:resolution', evt));
+      scaleControl.on('change:check', (evt) => this.dispatch('change:scale', evt));
       orientationControl.on('change:orientation', (evt) => this.dispatch('change:orientation', evt));
       sizeControl.on('change:size', (evt) => this.dispatch('change:size', evt));
       sizeControl.on('change:size', this.onChangeSize.bind(this));

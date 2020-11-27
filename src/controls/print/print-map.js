@@ -84,7 +84,7 @@ export default function PrintMap(options = {}) {
       try {
         const currentMapScale = numberFormatter(getCurrentMapScale());
         mapScale = `1:${currentMapScale}`;
-        document.getElementsByClassName('print-map-scale-text')[0].textContent = mapScale;
+        document.getElementsByClassName('o-print-scale-text')[0].textContent = mapScale;
       } catch (e) {
         console.log();
       }
