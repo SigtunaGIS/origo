@@ -276,7 +276,6 @@ function createExportButtons(
     )
     : createExportButton(buttonText);
   const btn = exportBtn.querySelector('button');
-  // const btn = useCustomButton ? exportBtn[1] : exportBtn;
   btn.addEventListener('click', () => {
     if (!url) {
       createToaster('fail');
