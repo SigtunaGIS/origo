@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import permalink from './permalink/permalink';
 import getUrl from './utils/geturl';
 import isUrl from './utils/isurl';
@@ -33,9 +32,9 @@ const loadSvgSprites = function loadSvgSprites(baseUrl, config) {
   const svgPath = config.svgSpritePath;
   const svgPromises = [];
   svgSprites.forEach((sprite) => {
-    const promise = $.get(baseUrl + svgPath + sprite, (data) => {
+    const promise = fetch(baseUrl + svgPath + sprite).then(res => res.text()).then((data) => {
       const div = document.createElement('div');
-      div.innerHTML = new XMLSerializer().serializeToString(data.documentElement);
+      div.innerHTML = data;
       document.body.insertBefore(div, document.body.childNodes[0]);
     });
     svgPromises.push(promise);
@@ -62,18 +61,26 @@ const loadResources = async function loadResources(mapOptions, config) {
         urlParams = permalink.parsePermalink(window.location.href);
       }
       baseUrl = config.baseUrl || '';
-      map.options = $.extend(config, mapOptions);
+      map.options = Object.assign(config, mapOptions);
+      map.options.controls = config.defaultControls || [];
       if (mapOptions.controls) {
-        map.options.controls = config.defaultControls.concat(mapOptions.controls);
-      } else {
-        map.options.controls = config.defaultControls;
+        mapOptions.controls.forEach((control) => {
+          const matchingControlIndex = map.options.controls.findIndex(
+            (defaultControl) => (defaultControl.name === control.name)
+          );
+          if (matchingControlIndex !== -1) {
+            Object.assign(map.options.controls[matchingControlIndex], control);
+          } else {
+            map.options.controls.push(control);
+          }
+        });
       }
       map.options.url = getUrl();
       map.options.map = undefined;
       map.options.params = urlParams;
       map.options.baseUrl = baseUrl;
 
-      return $.when(loadSvgSprites(baseUrl, config))
+      return Promise.all(loadSvgSprites(baseUrl, config) || [])
         .then(() => map);
     } else if (typeof (mapOptions) === 'string') {
       if (isUrl(mapOptions)) {
@@ -101,17 +108,25 @@ const loadResources = async function loadResources(mapOptions, config) {
         mapUrl = getUrl();
       }
 
-      return $.when(loadSvgSprites(baseUrl, config))
-        .then(() => $.ajax({
-          url,
+      return Promise.all(loadSvgSprites(baseUrl, config) || [])
+        .then(() => fetch(url, {
           dataType: format
         })
+          .then(res => res.json())
           .then((data) => {
-            map.options = $.extend(config, data);
+            map.options = Object.assign(config, data);
+            map.options.controls = config.defaultControls || [];
             if (data.controls) {
-              map.options.controls = config.defaultControls.concat(data.controls);
-            } else {
-              map.options.controls = config.defaultControls;
+              data.controls.forEach((control) => {
+                const matchingControlIndex = map.options.controls.findIndex(
+                  (defaultControl) => (defaultControl.name === control.name)
+                );
+                if (matchingControlIndex !== -1) {
+                  Object.assign(map.options.controls[matchingControlIndex], control);
+                } else {
+                  map.options.controls.push(control);
+                }
+              });
             }
             map.options.url = mapUrl;
             map.options.map = json;
@@ -142,9 +157,7 @@ const loadResources = async function loadResources(mapOptions, config) {
 
   // Check if authorization is required before map options is loaded
   if (config.authorizationUrl) {
-    return $.ajax({
-      url: config.authorizationUrl
-    })
+    return fetch(config.authorizationUrl)
       .then(() => loadMapOptions());
   }
   return loadMapOptions();
