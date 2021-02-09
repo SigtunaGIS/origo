@@ -8,7 +8,7 @@ import LineString from 'ol/geom/LineString';
 import Point from 'ol/geom/Point';
 import Projection from 'ol/proj/Projection';
 import * as Extent from 'ol/extent';
-import { Component, Element as El, Button, dom } from '../ui';
+import { Component, Icon, Element as El, Button, dom } from '../ui';
 import Style from '../style';
 import StyleTypes from '../style/styletypes';
 import replacer from '../utils/replacer';
@@ -19,7 +19,8 @@ const Measure = function Measure({
   elevationServiceURL,
   elevationTargetProjection,
   elevationAttribute,
-  showSegmentLengths = false
+  showSegmentLengths = false,
+  useHectare = true
 } = {}) {
   const style = Style;
   const styleTypes = StyleTypes();
@@ -36,6 +37,8 @@ const Measure = function Measure({
   let measureStyleOptions;
   let helpTooltip;
   let helpTooltipElement;
+  let markerIcon;
+  let markerElement;
   let vector;
   let source;
   let label;
@@ -53,9 +56,12 @@ const Measure = function Measure({
   let lengthToolButton;
   let areaToolButton;
   let elevationToolButton;
+  let addNodeButton;
   let undoButton;
+  let clearButton;
   const buttons = [];
   let target;
+  let touchMode;
 
   function createStyle(feature) {
     const featureType = feature.getGeometry().getType();
@@ -129,7 +135,7 @@ const Measure = function Measure({
 
     if (area > 10000000) {
       output = `${Math.round((area / 1000000) * 100) / 100} km<sup>2</sup>`;
-    } else if (area > 10000) {
+    } else if (area > 10000 && useHectare) {
       output = `${Math.round((area / 10000) * 100) / 100} ha`;
     } else {
       output = `${Math.round(area * 100) / 100} m<sup>2</sup>`;
@@ -225,6 +231,21 @@ const Measure = function Measure({
     map.addOverlay(labelOverlay);
   }
 
+  function centerSketch() {
+    if (sketch) {
+      const geom = (sketch.getGeometry());
+      if (geom instanceof Polygon) {
+        const sketchCoord = geom.getCoordinates()[0];
+        sketchCoord.splice(-2, 1, map.getView().getCenter());
+        sketch.getGeometry().setCoordinates([sketchCoord]);
+      } else if (geom instanceof LineString) {
+        const sketchCoord = geom.getCoordinates();
+        sketchCoord.splice(-1, 1, map.getView().getCenter());
+        sketch.getGeometry().setCoordinates(sketchCoord);
+      }
+    }
+  }
+
   // Display and move tooltips with pointer
   function pointerMoveHandler(evt) {
     const helpMsg = 'Klicka för att börja mäta';
@@ -318,6 +339,17 @@ const Measure = function Measure({
     // unset tooltip so that a new one can be created
     measureTooltipElement = null;
     helpTooltipElement = null;
+    viewer.removeOverlays(tempOverlayArray);
+  }
+
+  function renderMarker() {
+    markerIcon = Icon({
+      icon: '#o_centerposition_24px',
+      cls: 'o-position-marker'
+    });
+
+    markerElement = dom.html(markerIcon.render());
+    document.getElementById(`${viewer.getId()}`).appendChild(markerElement);
   }
 
   function disableInteraction() {
@@ -338,14 +370,25 @@ const Measure = function Measure({
       document.getElementById(elevationToolButton.getId()).classList.add('hidden');
     }
     document.getElementById(measureButton.getId()).classList.add('tooltip');
+    document.getElementById(clearButton.getId()).classList.add('hidden');
+    if (touchMode) {
+      document.getElementById(addNodeButton.getId()).classList.add('hidden');
+      const markerIconElement = document.getElementById(`${markerIcon.getId()}`);
+      markerIconElement.parentNode.removeChild(markerIconElement);
+    }
     setActive(false);
-
     map.un('pointermove', pointerMoveHandler);
     map.removeInteraction(measure);
-    vector.setVisible(false);
-    overlayArray.push(...tempOverlayArray);
-    viewer.removeOverlays(overlayArray);
-    vector.getSource().clear();
+    if (typeof helpTooltipElement !== 'undefined' && helpTooltipElement !== null) {
+      if (helpTooltipElement.parentNode !== null) {
+        helpTooltipElement.outerHTML = '';
+      }
+    }
+    if (typeof measureTooltipElement !== 'undefined' && measureTooltipElement !== null) {
+      if (measureTooltipElement.parentNode !== null) {
+        measureTooltipElement.outerHTML = '';
+      }
+    }
     setActive(false);
     resetSketch();
   }
@@ -362,30 +405,41 @@ const Measure = function Measure({
       document.getElementById(elevationToolButton.getId()).classList.remove('hidden');
     }
     document.getElementById(measureButton.getId()).classList.remove('tooltip');
-    setActive(true);
+    document.getElementById(clearButton.getId()).classList.remove('hidden');
     document.getElementById(defaultButton.getId()).click();
+    if (touchMode) {
+      document.getElementById(addNodeButton.getId()).classList.remove('hidden');
+      renderMarker();
+    }
+    setActive(true);
   }
 
   function addInteraction() {
-    vector.setVisible(true);
-
     measure = new DrawInteraction({
       source,
       type,
-      style: style.createStyleRule(measureStyleOptions.interaction)
+      style: style.createStyleRule(measureStyleOptions.interaction),
+      condition(evt) {
+        return evt.originalEvent.pointerType !== 'touch';
+      }
     });
 
     map.addInteraction(measure);
     createMeasureTooltip();
     createHelpTooltip();
-
-    map.on('pointermove', pointerMoveHandler);
+    if (!touchMode) {
+      map.on('pointermove', pointerMoveHandler);
+    }
 
     measure.on('drawstart', (evt) => {
+      measure.getOverlay().getSource().getFeatures()[1].setStyle([]);
       sketch = evt.feature;
       sketch.on('change', pointerMoveHandler);
-      pointerMoveHandler(evt);
-
+      if (touchMode) {
+        map.getView().on('change:center', centerSketch);
+      } else {
+        pointerMoveHandler(evt);
+      }
       document.getElementsByClassName('o-tooltip-measure')[1].remove();
 
       if (type === 'LineString' || type === 'Polygon') {
@@ -396,6 +450,9 @@ const Measure = function Measure({
     measure.on('drawend', (evt) => {
       const feature = evt.feature;
       sketch.un('change', pointerMoveHandler);
+      if (touchMode) {
+        map.getView().un('change:center', centerSketch);
+      }
       pointerMoveHandler(evt);
       feature.setStyle(createStyle(feature));
       feature.getStyle()[0].getText().setText(label);
@@ -432,14 +489,25 @@ const Measure = function Measure({
     if (activeButton) {
       document.getElementById(activeButton.getId()).classList.remove('active');
     }
-
     document.getElementById(button.getId()).classList.add('active');
     document.getElementById(undoButton.getId()).classList.add('hidden');
     activeButton = button;
     map.removeInteraction(measure);
-    viewer.removeOverlays(tempOverlayArray);
     resetSketch();
     addInteraction();
+  }
+
+  function addNode() {
+    const pixel = map.getPixelFromCoordinate(map.getView().getCenter());
+    const eventObject = {
+      clientX: pixel[0],
+      clientY: pixel[1],
+      bubbles: true
+    };
+    const down = new PointerEvent('pointerdown', eventObject);
+    const up = new PointerEvent('pointerup', eventObject);
+    map.getViewport().dispatchEvent(down);
+    map.getViewport().dispatchEvent(up);
   }
 
   function undoLastPoint() {
@@ -450,6 +518,9 @@ const Measure = function Measure({
     } else {
       if (showSegmentLengths) document.getElementsByClassName('o-tooltip-measure')[1].remove();
       measure.removeLastPoint();
+      if (touchMode) {
+        centerSketch();
+      }
     }
   }
 
@@ -457,6 +528,19 @@ const Measure = function Measure({
     name: 'measure',
     onAdd(evt) {
       viewer = evt.target;
+      touchMode = 'ontouchstart' in document.documentElement;
+      if (touchMode) {
+        addNodeButton = Button({
+          cls: 'o-measure-undo padding-small margin-bottom-smaller icon-smaller round light box-shadow hidden',
+          click() {
+            addNode();
+          },
+          icon: '#ic_add_24px',
+          tooltipText: 'Lägg till punkt',
+          tooltipPlacement: 'east'
+        });
+        buttons.push(addNodeButton);
+      }
       target = `${viewer.getMain().getMapTools().getId()}`;
 
       map = viewer.getMap();
@@ -468,7 +552,7 @@ const Measure = function Measure({
         group: 'none',
         source,
         name: 'measure',
-        visible: false,
+        visible: true,
         zIndex: 6
       });
 
@@ -561,6 +645,18 @@ const Measure = function Measure({
             tooltipPlacement: 'east'
           });
           buttons.push(undoButton);
+          clearButton = Button({
+            cls: 'o-measure-clear padding-small margin-bottom-smaller icon-smaller round light box-shadow hidden',
+            click() {
+              abort();
+              vector.getSource().clear();
+              viewer.removeOverlays(overlayArray);
+            },
+            icon: '#ic_delete_24px',
+            tooltipText: 'Rensa',
+            tooltipPlacement: 'east'
+          });
+          buttons.push(clearButton);
         }
       }
     },
@@ -587,8 +683,16 @@ const Measure = function Measure({
         el = dom.html(htmlString);
         document.getElementById(measureElement.getId()).appendChild(el);
       }
+      if (touchMode) {
+        htmlString = addNodeButton.render();
+        el = dom.html(htmlString);
+        document.getElementById(measureElement.getId()).appendChild(el);
+      }
       if (lengthTool || areaTool) {
         htmlString = undoButton.render();
+        el = dom.html(htmlString);
+        document.getElementById(measureElement.getId()).appendChild(el);
+        htmlString = clearButton.render();
         el = dom.html(htmlString);
         document.getElementById(measureElement.getId()).appendChild(el);
       }
