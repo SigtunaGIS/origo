@@ -84,7 +84,7 @@ export default function PrintMap(options = {}) {
       try {
         const currentMapScale = numberFormatter(getCurrentMapScale());
         mapScale = `1:${currentMapScale}`;
-        document.getElementsByClassName('o-print-scale-text')[0].textContent = mapScale;
+        document.getElementsByClassName('print-map-scale-text')[0].textContent = mapScale;
       } catch (e) {
         console.log();
       }
@@ -104,6 +104,7 @@ export default function PrintMap(options = {}) {
         <div id="${this.getId()}" class="no-margin width-full height-full">
         </div>
       </div>
+      <span class="print-map-scale-text">${mapScale}</span>
       `;
     }
   });

@@ -80,15 +80,3 @@ $print-scale-line-font-size: $font-size-smallest;
     display: none;
   }
 }
-
-// scale text and created text on the same line
-.o-print-scale_o_created {
-  display: inline-block;
-  width: 100%;
-}
-.o-print-scale-text {
-  float: right;
-}
-.o-print-created {
-  float: left;
-}
