@@ -2,8 +2,6 @@ import olAttribution from 'ol/control/Attribution';
 import olScaleLine from 'ol/control/ScaleLine';
 import { dom, Component, Element as El } from '../../ui';
 import Logo from './logo';
-import mapUtils from '../../maputils';
-import numberFormatter from '../../utils/numberformatter';
 import NorthArrow from './north-arrow';
 
 export default function PrintMap(options = {}) {
@@ -11,8 +9,7 @@ export default function PrintMap(options = {}) {
     baseUrl,
     logo,
     northArrow,
-    map,
-    viewer
+    map
   } = options;
   let {
     showNorthArrow
@@ -26,18 +23,6 @@ export default function PrintMap(options = {}) {
   const bottomRightMapControls = El({ cls: 'flex column align-start absolute bottom-right transparent z-index-ontop-middle' });
   const logoComponent = Logo({ baseUrl, logo });
   const northArrowComponent = NorthArrow({ baseUrl, northArrow, map });
-
-  const roundScale = (scale) => {
-    const diff = scale % 10;
-    const scaleValue = diff !== 0 ? scale += (10 - diff) : scale;
-    return scaleValue;
-  };
-
-  const getCurrentMapScale = () => {
-    const currentScale = roundScale(mapUtils.resolutionToScale(map.getView().getResolution(), projection));
-    // return currentScale >= mapscaleLimit ? currentScale : mapscaleLimit;
-    return currentScale;
-  };
 
   return Component({
     onInit() {
@@ -89,20 +74,6 @@ export default function PrintMap(options = {}) {
       map.addControl(scaleLine);
       map.addControl(attribution);
     },
-    onZoomChange() {
-      try {
-        const currentMapScale = numberFormatter(getCurrentMapScale());
-        mapScale = `1:${currentMapScale}`;
-        document.getElementsByClassName('print-map-scale-text')[0].textContent = mapScale;
-      } catch (e) {
-        console.log();
-      }
-    },
-    changeDescription(evt) {
-      description = evt.value;
-      descriptionComponent.update();
-      this.updatePageSize();
-    },
     removePrintControls() { mapControls.forEach((mapControl) => map.removeControl(mapControl)); },
     render() {
       return `
@@ -110,10 +81,8 @@ export default function PrintMap(options = {}) {
         ${topRightMapControls.render()}
         ${bottomLeftMapControls.render()}
         ${bottomRightMapControls.render()}
-        <div id="${this.getId()}" class="no-margin width-full height-full">
-        </div>
+        <div id="${this.getId()}" class="no-margin width-full height-full"></div>
       </div>
-      <span class="print-map-scale-text">${mapScale}</span>
       `;
     }
   });

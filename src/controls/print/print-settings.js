@@ -5,7 +5,6 @@ import printSettingsTemplate from './print-settings.template';
 import CustomSizeControl from './custom-size-control';
 import DescriptionControl from './description-control';
 import MarginControl from './margin-control';
-import ScaleControl from './scale-control';
 import OrientationControl from './orientation-control';
 import SizeControl from './size-control';
 import TitleControl from './title-control';
@@ -100,7 +99,6 @@ const PrintSettings = function PrintSettings({
       const titleControl = TitleControl({ classes, size: defaultClass });
       const descriptionControl = DescriptionControl({ classes, size: defaultClass });
       const marginControl = MarginControl({ checked: true });
-      const scaleControl = ScaleControl({ checked: true });
       const createdControl = CreatedControl({ checked: showCreated });
       const resolutionControl = ResolutionControl({ resolution });
       const showScaleControl = ShowScaleControl({ checked: showScale });
@@ -121,7 +119,6 @@ const PrintSettings = function PrintSettings({
             customSizeControl,
             descriptionControl,
             marginControl,
-            scaleControl,
             orientationControl,
             sizeControl,
             titleControl,
@@ -150,7 +147,6 @@ const PrintSettings = function PrintSettings({
       descriptionControl.on('change:descriptionSize', (evt) => this.dispatch('change:descriptionSize', evt));
       descriptionControl.on('change:descriptionAlign', (evt) => this.dispatch('change:descriptionAlign', evt));
       marginControl.on('change:check', (evt) => this.dispatch('change:margin', evt));
-      scaleControl.on('change:check', (evt) => this.dispatch('change:resolution', evt));
       orientationControl.on('change:orientation', (evt) => this.dispatch('change:orientation', evt));
       sizeControl.on('change:size', (evt) => this.dispatch('change:size', evt));
       sizeControl.on('change:size', this.onChangeSize.bind(this));

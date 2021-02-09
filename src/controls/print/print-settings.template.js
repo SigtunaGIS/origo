@@ -3,7 +3,6 @@ export default function printTemplate({
   customSizeControl,
   descriptionControl,
   marginControl,
-  scaleControl,
   orientationControl,
   sizeControl,
   titleControl,
@@ -36,11 +35,6 @@ export default function printTemplate({
     <div class="flex padding-right-small">
       <div class="grow text-normal">Använd marginaler</div>
       ${marginControl.render()}
-    </div>
-    <div class="padding-top-large"></div>
-    <div class="flex padding-right-small">
-      <div class="grow text-normal">Visa skala</div>
-      ${scaleControl.render()}
     </div>
     <div class="padding-top-large"></div>
     <div class="flex padding-right-small">
