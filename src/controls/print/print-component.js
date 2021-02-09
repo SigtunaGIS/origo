@@ -9,6 +9,8 @@ import PrintSettings from './print-settings';
 import PrintToolbar from './print-toolbar';
 import { downloadPNG, downloadPDF } from '../../utils/download';
 import { afterRender, beforeRender } from './download-callback';
+import mapUtils from '../../maputils';
+import numberFormatter from '../../utils/numberformatter';
 
 const PrintComponent = function PrintComponent(options = {}) {
   const {
@@ -25,6 +27,7 @@ const PrintComponent = function PrintComponent(options = {}) {
     size = 'a4',
     orientation = 'portrait',
     showCreated,
+    showScale,
     showNorthArrow
   } = options;
 
@@ -39,6 +42,9 @@ const PrintComponent = function PrintComponent(options = {}) {
   const printMarginClass = 'print-margin';
   let usePrintMargins = true;
   let today = new Date(Date.now());
+  let projection;
+  let resolutions;
+  let mapScale = '1:10000';
 
   const sizes = {
     a3: [420, 297],
@@ -55,6 +61,22 @@ const PrintComponent = function PrintComponent(options = {}) {
     }
   };
 
+  const scale = function scale() {
+    const roundScale = (scale) => {
+      const diff = scale % 10;
+      const scaleValue = diff !== 0 ? scale += (10 - diff) : scale;
+      return scaleValue;
+    };
+    const getCurrentMapScale = () => {
+      const currentScale = roundScale(mapUtils.resolutionToScale(map.getView().getResolution(), projection));
+      // return currentScale >= mapscaleLimit ? currentScale : mapscaleLimit;
+      return currentScale;
+    };
+    const currentMapScale = numberFormatter(getCurrentMapScale());
+    mapScale = `1:${currentMapScale}`;
+    return showScale ? `${mapScale}` : '';
+  };
+
   const created = function created() {
     return showCreated ? `${createdPrefix}${today.toLocaleDateString()} ${today.toLocaleTimeString()}` : '';
   };
@@ -68,6 +90,10 @@ const PrintComponent = function PrintComponent(options = {}) {
     update() { dom.replace(document.getElementById(this.getId()), this.render()); },
     render() { return `<div id="${this.getId()}" class="o-print-description padding-y text-grey-dark empty">${description}</div>`; }
   });
+  const scaleComponent = Component({
+  update() { dom.replace(document.getElementById(this.getId()), this.render()); },
+  render() { return `<div id="${this.getId()}" class="o-print-scale-text padding-right text-grey-dark text-align-right text-smaller empty">${scale()}</div>`; }
+  });
   const createdComponent = Component({
     update() { dom.replace(document.getElementById(this.getId()), this.render()); },
     render() { return `<div id="${this.getId()}" class="o-print-created padding-right text-grey-dark text-align-right text-smaller empty">${created()}</div>`; }
@@ -80,6 +106,7 @@ const PrintComponent = function PrintComponent(options = {}) {
     initialSize: size,
     sizes: Object.keys(sizes),
     map,
+    showScale,
     showCreated,
     showNorthArrow
   });
@@ -92,6 +119,8 @@ const PrintComponent = function PrintComponent(options = {}) {
   return Component({
     name: 'printComponent',
     onInit() {
+      projection = map.getView().getProjection();
+      resolutions = viewer.getResolutions();
       this.on('render', this.onRender);
       this.addComponent(printSettings);
       this.addComponent(printToolbar);
@@ -104,6 +133,7 @@ const PrintComponent = function PrintComponent(options = {}) {
       printSettings.on('change:size', this.changeSize.bind(this));
       printSettings.on('change:size-custom', this.changeCustomSize.bind(this));
       printSettings.on('change:title', this.changeTitle.bind(this));
+      printSettings.on('change:scale', this.toggleScale.bind(this));
       printSettings.on('change:created', this.toggleCreated.bind(this));
       printSettings.on('change:northarrow', this.toggleNorthArrow.bind(this));
       closeButton.on('click', this.close.bind(this));
@@ -136,6 +166,11 @@ const PrintComponent = function PrintComponent(options = {}) {
     toggleMargin() {
       pageElement.classList.toggle(printMarginClass);
       usePrintMargins = !usePrintMargins;
+      this.updatePageSize();
+    },
+    toggleScale() {
+      showScale = !showScale;
+      scaleComponent.update();
       this.updatePageSize();
     },
     toggleCreated() {
@@ -230,7 +265,7 @@ const PrintComponent = function PrintComponent(options = {}) {
             style="margin-bottom: 4rem;">
             <div class="flex column no-margin width-full height-full overflow-hidden">
   ${pageTemplate({
-    descriptionComponent, printMapComponent, titleComponent, createdComponent
+    descriptionComponent, printMapComponent, titleComponent, scaleComponent, createdComponent
   })}
             </div>
           </div>

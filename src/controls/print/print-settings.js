@@ -21,6 +21,7 @@ const PrintSettings = function PrintSettings({
   customSize,
   sizes,
   map,
+  showScale,
   showCreated,
   showNorthArrow
 } = {}) {
@@ -91,7 +92,7 @@ const PrintSettings = function PrintSettings({
       const titleControl = TitleControl({});
       const descriptionControl = DescriptionControl();
       const marginControl = MarginControl({ checked: true });
-      const scaleControl = ScaleControl({ checked: true });
+      const scaleControl = ScaleControl({ checked: showScale });
       const createdControl = CreatedControl({ checked: showCreated });
       northArrowControl = NorthArrowControl({ showNorthArrow });
       rotationControl = RotationControl({ rotation: 0, map });
@@ -119,7 +120,7 @@ const PrintSettings = function PrintSettings({
           });
         }
       });
-      contentComponent.addComponents([customSizeControl, marginControl, orientationControl, sizeControl, titleControl, descriptionControl, createdControl, northArrowControl, rotationControl]);
+      contentComponent.addComponents([customSizeControl, marginControl, orientationControl, sizeControl, titleControl, descriptionControl, scaleControl, createdControl, northArrowControl, rotationControl]);
       printSettingsContainer = Collapse({
         cls: 'no-print fixed flex column top-left rounded box-shadow bg-white overflow-hidden z-index-ontop-high',
         collapseX: true,
@@ -131,7 +132,7 @@ const PrintSettings = function PrintSettings({
 
       descriptionControl.on('change', (evt) => this.dispatch('change:description', evt));
       marginControl.on('change:check', (evt) => this.dispatch('change:margin', evt));
-      scaleControl.on('change:check', (evt) => this.dispatch('change:resolution', evt));
+      scaleControl.on('change:check', (evt) => this.dispatch('change:scale', evt));
       orientationControl.on('change:orientation', (evt) => this.dispatch('change:orientation', evt));
       sizeControl.on('change:size', (evt) => this.dispatch('change:size', evt));
       sizeControl.on('change:size', this.onChangeSize.bind(this));
