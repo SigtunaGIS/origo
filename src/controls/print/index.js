@@ -8,6 +8,7 @@ const Print = function Print(options = {}) {
     northArrow = {},
     title = 'Skriv ut',
     showCreated = false,
+    showScale = true,
     createdPrefix = ''
   } = options;
   let {
@@ -35,6 +36,7 @@ const Print = function Print(options = {}) {
         viewer,
         showCreated,
         createdPrefix,
+        showScale,
         showNorthArrow
       });
       mapMenu = viewer.getControlByName('mapmenu');
