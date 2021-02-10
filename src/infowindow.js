@@ -203,7 +203,7 @@ function createCustomExportButton(customButtonIcon, customButtonTooltipText) {
   );
   button.style = 'position: relative';
 
-  button.innerHTML = `<span class="icon" style="z-index: 10000">${iconComponent.render()}</span><span data-tooltip="${customButtonTooltipText}" data-placement="east"></span>`;
+  button.innerHTML = `<span class="icon" style="z-index: 10000">${iconComponent.render()}</span><span data-tooltip="${customButtonTooltipText}" data-placement="south"></span>`;
 
   container.appendChild(button);
   const spinner = document.createElement('img');
