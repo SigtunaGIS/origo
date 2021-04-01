@@ -1,6 +1,6 @@
 import Button from '../../ui/button';
 
-export default function ShowScaleControl(options = {}) {
+export default function ScaleControl(options = {}) {
   let {
     checked
   } = options;

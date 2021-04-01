@@ -1,6 +1,8 @@
 import { Button, ToggleGroup } from '../../ui';
-import round2 from '../../utils/round';
-import titleCase from '../../utils/titlecase';
+
+const titleCase = function titleCase(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
 
 export default function SizeControl({ initialSize, sizes }) {
   const sizeButtons = sizes.map((size) => {
@@ -8,15 +10,15 @@ export default function SizeControl({ initialSize, sizes }) {
       return Button({
         cls: 'grow light text-smaller',
         text: 'Anpassa',
-        state: initialSize === size ? 'active' : 'initial',
-        style: { width: `${String(round2(100 - round2(100 / sizes.length, 1) * (sizes.length - 1), 1))}%` }
+        state: 'initial',
+        style: { width: '34%' }
       });
     }
     return Button({
       cls: 'grow light text-smaller',
       text: titleCase(size),
       state: initialSize === size ? 'active' : 'initial',
-      style: { width: `${String(round2(100 / sizes.length, 1))}%` }
+      style: { width: '33%' }
     });
   });
 

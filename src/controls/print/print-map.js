@@ -2,20 +2,26 @@ import olAttribution from 'ol/control/Attribution';
 import olScaleLine from 'ol/control/ScaleLine';
 import { dom, Component, Element as El } from '../../ui';
 import Logo from './logo';
+import mapUtils from '../../maputils';
+import numberFormatter from '../../utils/numberformatter';
 import NorthArrow from './north-arrow';
 
 export default function PrintMap(options = {}) {
   const {
     logo,
     northArrow,
-    map
+    map,
+    viewer
   } = options;
   let {
     showNorthArrow
   } = options;
 
   let mapControls;
-  let scaleLine;
+  let projection;
+  let resolutions;
+  let mapscaleLimit;
+  let mapScale = '1:10000';
 
   const topRightMapControls = El({ cls: 'flex column align-start absolute top-right transparent z-index-ontop-middle' });
   const bottomLeftMapControls = El({ cls: 'flex column align-start absolute bottom-left transparent z-index-ontop-middle' });
@@ -23,31 +29,33 @@ export default function PrintMap(options = {}) {
   const logoComponent = Logo({ logo });
   const northArrowComponent = NorthArrow({ northArrow, map });
 
+  const roundScale = (scale) => {
+    const diff = scale % 10;
+    const scaleValue = diff !== 0 ? scale += (10 - diff) : scale;
+    return scaleValue;
+  };
+
+  const getCurrentMapScale = () => {
+    const currentScale = roundScale(mapUtils.resolutionToScale(map.getView().getResolution(), projection));
+    // return currentScale >= mapscaleLimit ? currentScale : mapscaleLimit;
+    return currentScale;
+  };
+
   return Component({
     onInit() {
       this.addComponent(bottomLeftMapControls);
       this.addComponent(bottomRightMapControls);
       this.on('change:toggleNorthArrow', this.toggleNorthArrow.bind(this));
-      this.on('change:toggleScale', this.toggleScale.bind(this));
-      this.on('change:setDPI', this.setDpi.bind(this));
+      projection = map.getView().getProjection();
+      resolutions = viewer.getResolutions();
+      map.getView().on('change:resolution', this.onZoomChange);
     },
     onRender() {
       this.dispatch('render');
     },
-    setDpi(resolution) {
-      scaleLine.setDpi(resolution.resolution);
-    },
     toggleNorthArrow(display) {
       showNorthArrow = !showNorthArrow;
       northArrowComponent.setVisible(display);
-    },
-    toggleScale(display) {
-      const elScale = document.getElementById(bottomRightMapControls.getId());
-      if (display.showScale === false) {
-        elScale.style.display = 'none';
-      } else {
-        elScale.style.display = 'block';
-      }
     },
     addPrintControls() {
       const el = document.getElementById(bottomLeftMapControls.getId());
@@ -57,11 +65,9 @@ export default function PrintMap(options = {}) {
       northArrowComponent.onRotationChanged();
       northArrowComponent.setVisible({ showNorthArrow });
 
-      scaleLine = new olScaleLine({
-        target: bottomRightMapControls.getId(),
-        bar: true,
-        text: true,
-        steps: 2
+      const scaleLine = new olScaleLine({
+        className: 'print-scale-line',
+        target: bottomRightMapControls.getId()
       });
       const attribution = new olAttribution({
         className: 'print-attribution',
@@ -73,6 +79,21 @@ export default function PrintMap(options = {}) {
       map.addControl(scaleLine);
       map.addControl(attribution);
     },
+    onZoomChange() {
+      try {
+        const currentMapScale = numberFormatter(getCurrentMapScale());
+        mapScale = `1:${currentMapScale}`;
+        // document.getElementsByClassName('print-map-scale-text')[0].textContent = mapScale;
+        document.getElementsByClassName('o-print-scale-map')[0].textContent = mapScale;
+      } catch (e) {
+        console.log();
+      }
+    },
+    changeDescription(evt) {
+      description = evt.value;
+      descriptionComponent.update();
+      this.updatePageSize();
+    },
     removePrintControls() { mapControls.forEach((mapControl) => map.removeControl(mapControl)); },
     render() {
       return `
@@ -80,7 +101,8 @@ export default function PrintMap(options = {}) {
         ${topRightMapControls.render()}
         ${bottomLeftMapControls.render()}
         ${bottomRightMapControls.render()}
-        <div id="${this.getId()}" class="no-margin width-full height-full"></div>
+        <div id="${this.getId()}" class="no-margin width-full height-full">
+        </div>
       </div>
       `;
     }

@@ -2,9 +2,9 @@ import { InputRange, Component } from '../../ui';
 
 export default function RotationControl(options = {}) {
   const {
-    rotation,
-    rotationStep,
-    map
+    rotation = 0,
+    map,
+    rotationEnable
   } = options;
 
   const rotationSlider = InputRange({
@@ -12,13 +12,18 @@ export default function RotationControl(options = {}) {
     minValue: 0,
     maxValue: 360,
     initialValue: rotation,
-    step: rotationStep,
+    step: 1,
     style: {
       'align-self': 'center'
-    },
-    unit: '&deg;',
-    label: 'Rotera karta'
+    }
   });
+
+  let showRotationComponent = '';
+  if(!rotationEnable){
+    showRotationComponent = 'hidden';
+  }else{
+    showRotationComponent = '';
+  }
 
   return Component({
     onInit() {
@@ -28,9 +33,6 @@ export default function RotationControl(options = {}) {
     },
     onRender() {
       this.dispatch('render');
-      if (rotation) {
-        map.getView().setRotation((rotation * Math.PI) / 180);
-      }
     },
     onChangeRotation(evt) {
       map.getView().setRotation((evt.value * Math.PI) / 180);
@@ -56,10 +58,15 @@ export default function RotationControl(options = {}) {
       }
     },
     render() {
+      // if control "rotationEnable" is false, add hidden attribute
       return `
       <div class="padding-top-large"></div>
-      <div class="padding-right-small o-tooltip active">
+      <div id="o-print-rotation" ${showRotationComponent}>
+      <h6>Rotera karta</h6>
+      <div class="padding-smaller o-tooltip active">
         ${rotationSlider.render()}
+      <div class="text-align-center"><span class="text-smaller float-left">0&deg;</span><span class="text-smaller float-right">360&deg;</span></div>
+      </div>
       </div>`;
     }
   });
