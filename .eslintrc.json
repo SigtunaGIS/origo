@@ -4,10 +4,7 @@
     "browser": true
   },
   "rules": {
-    "comma-dangle": [
-      "error",
-      "never"
-    ],
+    "comma-dangle": ["error", "never"],
     "global-require": 0,
     "import/no-unresolved": "off",
     "import/no-cycle": "off",
@@ -27,19 +24,13 @@
     "no-console": [
       "error",
       {
-        "allow": [
-          "warn",
-          "error",
-          "log"
-        ]
+        "allow": ["warn", "error", "log"]
       }
     ],
     "import/no-extraneous-dependencies": [
       "error",
       {
-        "devDependencies": [
-          "tasks/**"
-        ],
+        "devDependencies": ["tasks/**"],
         "optionalDependencies": false
       }
     ]

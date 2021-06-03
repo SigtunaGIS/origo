@@ -1,10 +1,7 @@
 {
   "controls": [
     {
-      "name": "home",
-      "options": {
-        "zoomOnStart": true
-      }
+      "name": "geoposition"
     },
     {
       "name": "mapmenu",
@@ -16,37 +13,29 @@
       "name": "sharemap"
     },
     {
-      "name": "geoposition"
-    },
-    {
       "name": "print"
     },
     {
-      "name": "about",
+      "name": "exportmap",
       "options": {
-        "buttonText": "Om Origo",
-        "title": "Om Origo",
-        "content": "<p>Origo är ett ramverk för webbkartor. Ramverket bygger på JavaScript-biblioteket OpenLayers. Du kan använda Origo för att skapa egna webbaserade kartapplikationer.</p><br><p>Projektet drivs och underhålls av ett antal svenska kommuner. Besök gärna <a href='https://github.com/origo-map/origo' target='_blank'>Origo på GitHub</a> för mer information.</p>"
-      }
-    },
-    {
-      "name": "link",
-      "options": {
-        "title": "Origo",
-        "url": "https://github.com/origo-map/origo"
+        "buttonText": "Spara bild",
+        "attributionFontSize": 12,
+        "attributionFontColor": "#000000"
       }
     },
     {
       "name": "legend",
       "options": {
-        "labelOpacitySlider": "Opacity",
-        "useGroupIndication" : true
+        "expanded": false,
+        "contentStyle": {
+          "width": "280px"
+        }
       }
     },
     {
       "name": "position",
       "options": {
-        "title": "Web Mercator",
+        "title": "Sweref99 18 00",
         "projections": {
           "EPSG:4326": "WGS84",
           "EPSG:3006": "Sweref99 TM"
@@ -54,73 +43,213 @@
       }
     },
     {
-      "name": "measure"
+      "name": "link",
+      "options": {
+        "title": "Sigtuna kommun",
+        "url": "http://www.sigtuna.se"
+      }
+    },
+    {
+      "name": "home",
+      "options": {
+        "zoomOnStart": true
+      }
+    },
+    {
+      "name": "externalurl",
+      "options": {
+        "tooltipText": "Kartlänkar",
+        "links": [
+          {
+            "name": "google",
+            "tooltipText": "Google maps",
+            "method": "LatLon",
+            "url": "https://www.google.com/maps/@?api=1&map_action=map&center={{LAT}},{{LON}}&zoom=18&basemap=terrain",
+            "buttonImage": "img/png/google_maps.png"
+          },
+          {
+            "name": "googlestreet",
+            "tooltipText": "Google street view",
+            "method": "LatLon",
+            "url": "https://www.google.com/maps/@?api=1&map_action=pano&viewpoint={{LAT}},{{LON}}&heading=-45&pitch=10&fov=80",
+            "buttonImage": "img/png/google_street_view.png"
+          }
+        ]
+      }
+    },
+    {
+      "name": "multiselect"
+    },
+    {
+      "name": "scale"
+    },
+    {
+      "name": "search",
+      "options": {
+        "searchAttribute": "NAMN",
+        "geometryAttribute": "GEOM",
+        "idAttribute": "GID",
+        "layerNameAttribute": "TYPE",
+        "url": "https://karta.sigtuna.se/origoserver/search",
+        "hintText": "Sök...",
+        "title": "Sökresultat",
+        "limit": 10,
+        "maxZoomLevel": 10
+      }
+    },
+    {
+      "name": "measure",
+      "options": {
+        "snap": true, 
+        "snapRadius": 20
+      }
     }
   ],
   "pageSettings": {
     "footer": {
       "img": "img/png/logo.png",
-      "url": "https://github.com/origo-map/origo",
-      "text": "Origo"
+      "url": "http://www.sigtuna.se",
+      "urlText": "Sigtuna kommun"
     },
     "mapGrid": {
       "visible": true
     }
   },
-  "projectionCode": "EPSG:3857",
-  "projectionExtent": [
-    -20026376.39,
-    -20048966.10,
-    20026376.39,
-    20048966.10
-  ],
+  "projectionCode": "EPSG:3011",
+  "projectionExtent": [-1806490.0, 4631510.0, 2157127.28, 8595127.28],
   "proj4Defs": [
     {
+      "code": "EPSG:3011",
+      "alias": "urn:ogc:def:crs:EPSG::3011",
+      "projection": "+proj=tmerc +lat_0=0 +lon_0=18 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
+    },
+    {
       "code": "EPSG:3006",
+      "alias": "urn:ogc:def:crs:EPSG::3006",
       "projection": "+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
     }
   ],
-  "extent": [
-    -20026376.39,
-    -20048966.10,
-    20026376.39,
-    20048966.10
-  ],
-  "center": [
-    1770000,
-    8770000
-  ],
-  "zoom": 7,
+  "extent": [115160.07, 6588840.23, 172504.07, 6637992.23],
+  "center": [142476, 6614452],
+  "zoom": 5,
   "resolutions": [
-    156543.03,
-    78271.52,
-    39135.76,
-    19567.88,
-    9783.94,
-    4891.97,
-    2445.98,
-    1222.99,
-    611.50,
-    305.75,
-    152.87,
-    76.437,
-    38.219,
-    19.109,
-    9.5546,
-    4.7773,
-    2.3887,
-    1.1943,
-    0.5972
+    573.4399999999999,
+    286.71999999999997,
+    143.35999999999999,
+    71.67999999999999,
+    35.839999999999996,
+    17.919999999999998,
+    8.959999999999999,
+    4.4799999999999995,
+    2.2399999999999998,
+    1.1199999999999999,
+    0.5599999999999999,
+    0.27999999999999997,
+    0.13999999999999999,
+    0.055999999999999994
   ],
+  "enableRotation": true,
   "featureinfoOptions": {
-    "infowindow": "overlay"
+    "clusterFeatureinfoLevel": 2,
+    "pinning": false,
+    "hitTolerance": 4,
+    "infowindow": "infowindow",
+    "infowindowOptions": {
+      "export": {
+        "simpleExportLayers": ["buf_skolplacering_y"],
+        "simpleExportButtonText": "Simple export layer",
+        "useCustomSimpleExportButton": true, 
+        "customSimpleButtonIcon": "#fa-floppy-o", 
+        "customSimpleButtonTooltipText": "Simple tooltip text",
+        "simpleExportUrl": "https://localhost:9966",
+        "layerSpecificExport": [
+          {
+            "layer": "buf_skolplacering_y",
+            "attributesToSendToExport": ["arskurs"],
+            "exportUrls": [
+              {
+                "url": "https://localhost:9966",
+                "buttonText": "Save1",
+                "useCustomButton": true,
+                "customButtonIcon": "img/png/farg.png",
+                "customButtonTooltipText": "A tooltip text 1",
+                "exportedFileName": "Filename.csv"
+              },
+              {
+                "url": "https://localhost:9966",
+                "buttonText": "Save2",
+                "useCustomButton": true,
+                "customButtonIcon": "#fa-print",
+                "customButtonTooltipText": "A tooltip text 2",
+                "exportedFileName": "Filename.csv"
+              },
+              {
+                "url": "https://localhost:9966",
+                "buttonText": "Save by use of a service of some kind",
+                "useCustomButton": false,
+                "customButtonIcon": "#fa-check",
+                "customButtonTooltipText": "A tooltip text 3",
+                "exportedFileName": "Filename.csv"
+              },
+              {
+                "url": "https://localhost:9966",
+                "buttonText": "Save3",
+                "useCustomButton": true,
+                "customButtonIcon": "#fa-pencil",
+                "customButtonTooltipText": "A tooltip text 4",
+                "exportedFileName": "Filename.csv"
+              },
+              {
+                "url": "https://localhost:9966",
+                "buttonText": "Save3",
+                "useCustomButton": true,
+                "customButtonIcon": "#fa-download",
+                "customButtonTooltipText": "A tooltip text 5",
+                "exportedFileName": "Filename.csv"
+              },
+              {
+                "url": "https://localhost:9966",
+                "buttonText": "Save by using some service",
+                "useCustomButton": false,
+                "customButtonIcon": "#fa-file-excel",
+                "customButtonTooltipText": "A tooltip text 6",
+                "exportedFileName": "Filename.csv"
+              }
+            ]
+          }
+        ]
+      }
+    }
   },
   "source": {
-    "local": {
-      "url": "http://localhost/geoserver/wms"
+    "sigtuna": {
+      "url": "https://karta.sigtuna.se/geoserver/ows"
+    },
+    "basemap_sigtunakarta": {
+      "url": "https://karta.sigtuna.se/geoserver/gwc/service/wmts"
     }
   },
   "groups": [
+    {
+      "name": "wfs",
+      "title": "WFS",
+      "expanded": false
+    },
+    {
+      "name": "wms",
+      "title": "WMS/WMTS",
+      "expanded": false
+    },
+    {
+      "name": "grupp",
+      "title": "Grupplager",
+      "expanded": false
+    },
+    {
+      "name": "cluster",
+      "title": "Cluster",
+      "expanded": false
+    },
     {
       "name": "background",
       "title": "Bakgrundskartor",
@@ -129,41 +258,525 @@
   ],
   "layers": [
     {
-      "name": "origo-cities",
-      "title": "Origokommuner",
-      "group": "root",
-      "source": "data/origo-cities-3857.geojson",
-      "style": "origo-logo",
-      "type": "GEOJSON",
+      "name": "sok_fast_y",
+      "title": "Fastighetsytor",
+      "group": "none",
+      "source": "sigtuna",
+      "style": "default",
+      "type": "WFS",
+      "visible": false,
       "attributes": [
         {
-          "name": "name"
+          "name": "namn"
+        },
+        {
+          "html": "<br><i>Ytan är endast illustrativ och saknar juridisk verkan.</i>"
         }
-      ],
+      ]
+    },
+    {
+      "name": "sok_adress_p",
+      "title": "Adresser",
+      "group": "none",
+      "source": "sigtuna",
+      "style": "dp_pagaende",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn"
+        }
+      ]
+    },
+    {
+      "name": "sok_ortnamn_p",
+      "title": "Ortnamn",
+      "group": "none",
+      "source": "sigtuna",
+      "style": "default",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn"
+        }
+      ]
+    },
+    {
+      "name": "forskola",
+      "title": "Punkter cluster (WFS)",
+      "group": "cluster",
+      "source": "sigtuna",
+      "style": "akt_sbproj_cirkel",
+      "clusterStyle": "akt_sbproj_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        },
+        {
+          "name": "regi",
+          "title": "Regi: "
+        }
+      ]
+    },
+    {
+      "name": "dp_gallande",
+      "title": "Origo grupplager punkter",
+      "group": "grupp",
+      "type": "GROUP",
+      "source": "sigtuna",
+      "style": "default",
+      "visible": false,
+      "layers": [
+        {
+          "name": "grundsarskola",
+          "title": "Grundsärskola",
+          "source": "sigtuna",
+          "style": "default",
+          "type": "WFS",
+          "visible": true,
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            },
+            {
+              "name": "regi",
+              "title": "Regi: "
+            },
+            {
+              "name": "arskurser",
+              "title": "Årskurser: "
+            }
+          ]
+        },
+        {
+          "name": "gymnasium",
+          "title": "Gymnasium",
+          "source": "sigtuna",
+          "style": "cirkel",
+          "type": "WFS",
+          "visible": true,
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            }
+          ]
+        },
+        {
+          "name": "vuxenutbildning",
+          "title": "Vuxenutbildning",
+          "source": "sigtuna",
+          "style": "cirkel",
+          "type": "WFS",
+          "visible": true,
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "sbk_inf_parkering_p__husbil",
+      "title": "Punkter (WFS)",
+      "group": "wfs",
+      "source": "sigtuna",
+      "style": "cirkel",
+      "type": "WFS",
+      "visible": false,
+      "filter": "typ = 'Husbil'",
+      "attributes": [
+        {
+          "html": "<b>{{namn}}</b><br></br>"
+        },
+        {
+          "name": "platser",
+          "title": "Antal platser: "
+        },
+        {
+          "html": "<br><b>Fordon: </b>På särskilt markerade platser inom parkeringsområdet får endast personbil klass II (husbilar) parkeras. Se skyltning på plats.</br>"
+        },
+        {
+          "html": "<br><b>Tidsbegränsning: </b>{{info}}<br></br>"
+        }
+      ]
+    },
+    {
+      "name": "sbk_inf_parkering_p__infart",
+      "title": "Punkter (WMS)",
+      "group": "wms",
+      "source": "sigtuna",
+      "style": "fir_adress_p",
+      "type": "WMS",
+      "visible": false,
+      "filter": "typ = 'Infartsparkering'",
+      "attributes": [
+        {
+          "html": "<b>{{nummer}}. {{namn}}</b><br></br>"
+        },
+        {
+          "name": "platser",
+          "title": "Antal platser: "
+        },
+        {
+          "html": "<br><b>Fordon: </b>På markerade platser inom parkeringsområdet får endast lätt lastbil, moped, motorcykel, traktor a och personbil klass I parkeras.</br>"
+        },
+        {
+          "html": "<br><b>Parkeringsförbud gäller följande tider:</b></br>"
+        },
+        {
+          "name": "tid_1"
+        },
+        {
+          "name": "tid_2"
+        },
+        {
+          "name": "tid_3"
+        },
+        {
+          "html": "<a href='https://www.sigtuna.se/trafik-och-resor/trafik-och-gator/parkering-och-tillstand/parkeringsplatser-allmanna.html' target='_blank'>Läs mer...</a>"
+        }
+      ]
+    },
+    {
+      "name": "LstAB_utv_strandskydd_begransningslinjer",
+      "title": "LstAB_utv_strandskydd_begransningslinjer",
+      "group": "wms",
+      "source": "sigtuna",
+      "style": "fir_adress_p",
+      "type": "WMS",
       "visible": true
     },
     {
-      "name": "origo-mask",
-      "opacity": 0.25,
-      "title": "origo-mask",
+      "name": "LstAB_Skyddsomrade_kring_enskilda_byggnadsminnen",
+      "title": "LstAB_Skyddsomrade_kring_enskilda_byggnadsminnen",
+      "group": "wms",
+      "source": "sigtuna",
+      "style": "fir_adress_p",
+      "type": "WMS",
+      "visible": true
+    },
+    {
+      "name": "dpgallande",
+      "title": "Origo grupplager ytor",
+      "group": "grupp",
+      "type": "GROUP",
+      "source": "sigtuna",
+      "style": "dp_gallande",
+      "visible": false,
+      "layers": [
+        {
+          "name": "dp_pagaende",
+          "source": "sigtuna",
+          "style": "dp_pagaende",
+          "type": "WFS",
+          "visible": true,
+          "attributes": [
+            {
+              "name": "projekt",
+              "url": "url"
+            }
+          ]
+        },
+        {
+          "name": "dp_gallande",
+          "source": "sigtuna",
+          "style": "dp_gallande",
+          "maxScale": 35000,
+          "type": "WFS",
+          "visible": true,
+          "attributes": [
+            {
+              "name": "plannr",
+              "title": "Detaljplan: ",
+              "url": "url"
+            }
+          ]
+        },
+        {
+          "name": "dp_gallande_over",
+          "source": "sigtuna",
+          "type": "WFS",
+          "style": "dp_gallande",
+          "minScale": 35000,
+          "queryable": false,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "name": "sbk_inf_cykel_l",
+      "title": "Linjer (WFS)",
+      "group": "wfs",
+      "source": "sigtuna",
+      "style": "cykelvag",
+      "type": "WFS",
+      "visible": false,
+      "queryable": true
+    },
+    {
+      "name": "tn_vandringsled",
+      "title": "Linjer (WMS)",
+      "group": "wms",
+      "source": "sigtuna",
+      "style": "vandringsled",
+      "type": "WMS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ]
+    },
+    {
+      "name": "buf_skolplacering_y",
+      "title": "Ytor (WFS)",
+      "group": "wfs",
+      "source": "sigtuna",
+      "style": "dp_gallande",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "skola",
+          "title": "Skolplacering: ",
+          "url": "url"
+        },
+        {
+          "name": "arskurs",
+          "title": "Årskurser: "
+        },
+        {
+          "html": "<br>{{info}}"
+        }
+      ]
+    },
+    {
+      "name": "dp_pagaende",
+      "title": "Ytor (WMS)",
+      "group": "wms",
+      "source": "sigtuna",
+      "style": "dp_pagaende",
+      "type": "WMS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "projekt",
+          "url": "url"
+        }
+      ]
+    },
+    {
+      "name": "mask",
+      "opacity": 0.15,
+      "title": "mask",
       "group": "none",
       "queryable": false,
-      "source": "data/origo-mask-3857.geojson",
+      "source": "data/mask.geojson",
       "style": "mask",
       "type": "GEOJSON",
       "visible": true
     },
     {
-      "name": "osm",
-      "title": "OpenStreetMap",
-      "group": "background",
+      "name": "SIG:orto_2008",
+      "source": "basemap_sigtunakarta",
+      "title": "Ortofoto, 2008 (WMTS)",
+      "group": "wms",
+      "format": "image/png",
+      "type": "WMTS",
+      "style": "orto",
+      "visible": false,
       "queryable": false,
-      "style": "karta_osm",
-      "type": "OSM",
+      "attribution": "&copy Lantmäteriet Geodatasamverkan",
+      "abstract": "Lantmäteriet ortofoto 2008"
+    },
+    {
+      "attribution": "&copy Lantmäteriet Geodatasamverkan",
+      "format": "image/png",
+      "group": "background",
+      "name": "SIG:topowebbkartan",
+      "source": "basemap_sigtunakarta",
+      "title": "Karta, färg",
+      "type": "WMTS",
+      "style": "karta_farg",
+      "queryable": false,
+      "opacity": 0.5,
       "visible": true
+    },
+    {
+      "attribution": "&copy Lantmäteriet Geodatasamverkan",
+      "format": "image/png",
+      "group": "background",
+      "name": "SIG:orto025",
+      "source": "basemap_sigtunakarta",
+      "title": "Ortofoto, 2017",
+      "type": "WMTS",
+      "style": "orto",
+      "queryable": false,
+      "visible": false,
+      "abstract": "Lantmäteriet ortofoto 2017"
+    },
+    {
+      "group": "background",
+      "name": "blank",
+      "source": "",
+      "title": "Ingen bakgrundskarta",
+      "type": "WMTS",
+      "style": "karta_vit",
+      "queryable": false,
+      "visible": false
     }
   ],
   "styles": {
+    "default": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(0,0,0,1)",
+            "width": 3
+          },
+          "fill": {
+            "color": "rgba(128,128,128,1)"
+          },
+          "circle": {
+            "radius": 6,
+            "stroke": {
+              "color": "rgba(0,0,0,1)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(0,0,0,0.5)"
+            }
+          }
+        }
+      ]
+    ],
+    "fir_adress_p": [
+      [
+        {
+          "circle": {
+            "radius": 2,
+            "stroke": {
+              "color": "rgba(61,61,92,1.0)",
+              "width": 1
+            },
+            "fill": {
+              "color": "rgba(61,61,92,0.5)"
+            }
+          },
+          "label": "Adresspunkter"
+        }
+      ]
+    ],
+    "nv_naturreservat_y": [
+      [
+        {
+          "label": "Naturreservat",
+          "stroke": {
+            "color": "rgba(51,102,0,1.0)",
+            "width": 3
+          },
+          "fill": {
+            "color": "rgba(51,102,0,0.5)"
+          }
+        }
+      ]
+    ],
+    "skolplacering": [
+      [
+        {
+          "minScale": 140000,
+          "fill": {
+            "color": "rgba(150,100,52,0.1)"
+          },
+          "stroke": {
+            "color": "rgba(188,77,0,0.9)",
+            "width": 2
+          },
+          "filter": "[skola] != 'Centralskolan'",
+          "text": {
+            "font": "Bold 16px Arial",
+            "textAlign": "end",
+            "exceedLength": true,
+            "offsetX": -40,
+            "offsetY": 40,
+            "text": "{{omrade}}",
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            },
+            "stroke": {
+              "color": "rgba(255,255,255,0.7)",
+              "width": 2
+            }
+          }
+        }
+      ],
+      [
+        {
+          "minScale": 140000,
+          "fill": {
+            "color": "rgba(150,100,52,0.1)"
+          },
+          "stroke": {
+            "color": "rgba(188,77,0,0.9)",
+            "width": 2
+          },
+          "filter": "[skola] == 'Centralskolan'",
+          "text": {
+            "font": "Bold 16px Arial",
+            "textAlign": "center",
+            "exceedLength": true,
+            "offsetX": 60,
+            "offsetY": 10,
+            "text": "{{omrade}}",
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            },
+            "stroke": {
+              "color": "rgba(255,255,255,0.7)",
+              "width": 2
+            }
+          }
+        }
+      ]
+    ],
+    "dp_pagaende": [
+      [
+        {
+          "label": "Pågående detaljplaner",
+          "fill": {
+            "color": "rgba(255,196,105,0.8)"
+          },
+          "stroke": {
+            "color": "rgba(229,109,30,0.7)",
+            "width": 1.2,
+            "lineDash": [15, 8]
+          }
+        }
+      ]
+    ],
+    "dp_gallande": [
+      [
+        {
+          "fill": {
+            "color": "rgba(66,89,179,0.5)"
+          },
+          "stroke": {
+            "color": "rgba(229,109,30,0.7)",
+            "width": 1
+          }
+        }
+      ]
+    ],
     "mask": [
       [
         {
@@ -176,31 +789,43 @@
         }
       ]
     ],
-    "origo-logo": [
+    "vallokal": [
       [
         {
-          "label": "Origokommuner",
-          "circle": {
-            "radius": 10,
-            "stroke": {
-              "color": "rgba(0,0,0,1)",
-              "width": 2.5
-            },
-            "fill": {
-              "color": "rgba(255,255,255,0.9)"
-            }
+          "icon": {
+            "size": [23, 36],
+            "src": "img/png/droppe_orange.png"
+          }
+        }
+      ]
+    ],
+    "vallokal_cluster": [
+      [
+        {
+          "icon": {
+            "size": [23, 36],
+            "src": "img/png/droppe_orange.png"
           }
         },
         {
-          "circle": {
-            "radius": 2.5,
-            "stroke": {
-              "color": "rgba(0,0,0,0)",
-              "width": 1
-            },
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
             "fill": {
-              "color": "rgba(37,129,196,1)"
+              "color": "rgba(255,255,255,1.0)"
             }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
           }
         }
       ]
@@ -221,11 +846,101 @@
         }
       ]
     ],
-    "karta_osm": [
+    "akt_sbproj_cirkel": [
       [
         {
-          "image": {
-            "src": "img/png/osm.png"
+          "circle": {
+            "radius": 8,
+            "stroke": {
+              "color": "rgba(43,90,143,1)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(56,115,185,0.8)"
+            }
+          }
+        }
+      ]
+    ],
+    "akt_sbproj_cluster": [
+      [
+        {
+          "circle": {
+            "radius": 8,
+            "stroke": {
+              "color": "rgba(43,90,143,1)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(56,115,185,0.8)"
+            }
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "naturres_forslag": [
+      [
+        {
+          "fill": {
+            "color": "rgba(58,156,164,0.4)"
+          },
+          "stroke": {
+            "color": "rgba(58,156,164,1)",
+            "width": 2,
+            "lineDash": [6, 3]
+          }
+        }
+      ]
+    ],
+    "cykelvag": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(178,108,189,1.0)",
+            "width": 2
+          }
+        }
+      ]
+    ],
+    "vandringsled": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(219,117,49,1.0)",
+            "lineDash": [7, 3],
+            "width": 3
+          }
+        }
+      ]
+    ],
+    "upplandsleden": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(31,120,180,1.0)",
+            "lineDash": [7, 3],
+            "width": 3
           }
         }
       ]
@@ -244,6 +959,15 @@
         {
           "image": {
             "src": "img/png/farg.png"
+          }
+        }
+      ]
+    ],
+    "karta_vit": [
+      [
+        {
+          "image": {
+            "src": "img/png/vit_bakgrund.png"
           }
         }
       ]

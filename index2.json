@@ -1,0 +1,3433 @@
+{
+  "controls": [
+    {
+      "name": "geoposition"
+    },
+    {
+      "name": "mapmenu"
+    },
+    {
+      "name": "sharemap"
+    },
+    {
+      "name": "print",
+      "options": {
+        "rotation": true,
+        "northArrow": {
+          "cls": "padding-right-small printmap-north-arrow",
+          "src": "css/png/north_arrow_print_sigtuna.png",
+          "visible": true,
+          "style": {
+            "height": "2.5rem"
+          }
+        }
+      }
+    },
+    {
+      "name": "exportmap",
+      "options": {
+        "buttonText": "Spara bild",
+        "attributionFontSize": 12,
+        "attributionFontColor": "#000000",
+        "logoWidth": 40,
+        "logoHeight": 40,
+        "arrowWidth": 30,
+        "arrowHeight": 30
+      }
+    },
+    {
+      "name": "position",
+      "options": {
+        "title": "Sweref99 18 00",
+        "projections": {
+          "EPSG:4326": "WGS84",
+          "EPSG:3006": "Sweref99 TM"
+        },
+        "noPositionText": ""
+      }
+    },
+    {
+      "name": "about",
+      "options": {
+        "buttontext": "Om Sigtunakartan",
+        "title": "Om Sigtunakartan",
+        "content": "<p>Sigtunakartan är kommunens webbkarta och här kan du hitta olika typer av samhällsinformation.</p><p>Om du saknar något i kartan eller hittar fel så skicka gärna information till <a href='mailto:sigtunakartan@sigtuna.se' target='_blank'>sigtunakartan@sigtuna.se</a>.</p><p>Sigtunakartan bygger på Origo som är ett ramverk för webbkartor. Besök gärna <a href='https://github.com/origo-map/origo' target='_blank'>Origo på GitHub</a> för mer information.</p>"
+      }
+    },
+    {
+      "name": "legend",
+      "options": {
+        "expanded": true,
+        "turnOffLayersControl": true,
+        "labelOpacitySlider": "opacitet",
+        "autohide": "mobile",
+        "contentStyle": {
+          "width": "240px"
+        }
+      }
+    },
+    {
+      "name": "home"
+    },
+    {
+      "name": "measure", 
+      "options": {
+          "snap": "false",
+          "snapRadius": 30, 
+          "snapLayers": ["layer-name"]
+      }
+    },
+    {
+      "name": "scalepicker"
+    },
+    {
+      "name": "progressbar"
+    },
+    {
+      "name": "externalurl",
+      "options": {
+        "tooltipText": "Kartlänkar",
+        "links": [
+          {
+            "name": "osm",
+            "tooltipText": "OpenStreetMap",
+            "method": "LatLon",
+            "url": "https://www.openstreetmap.org/#map=17/{{LAT}}/{{LON}}",
+            "buttonImage": "img/png/osm.png"
+          },
+          {
+            "name": "googlestreet",
+            "tooltipText": "Google street view",
+            "method": "LatLon",
+            "url": "https://www.google.com/maps/@?api=1&map_action=pano&viewpoint={{LAT}},{{LON}}&heading=-45&pitch=10&fov=80",
+            "buttonImage": "img/png/google_street_view.png"
+          }
+        ]
+      }
+    },
+    {
+      "name": "search",
+      "options": {
+        "searchAttribute": "NAMN",
+        "geometryAttribute": "GEOM",
+        "idAttribute": "GID",
+        "layerNameAttribute": "TYPE",
+        "groupSuggestions": true,
+        "url": "https://karta.sigtuna.se/origoserver/search",
+        "hintText": "Sök...",
+        "title": "Sökresultat",
+        "limit": 10,
+        "maxZoomLevel": 10
+      }
+    }
+  ],
+  "pageSettings": {
+    "footer": {
+      "img": "img/png/sigtuna_logo.png",
+      "url": "http://www.sigtuna.se",
+      "urlText": "Sigtuna kommun"
+    },
+    "mapGrid": {
+      "visible": true
+    }
+  },
+  "projectionCode": "EPSG:3011",
+  "projectionExtent": [-1806490.0, 4631510.0, 2157127.28, 8595127.28],
+  "proj4Defs": [
+    {
+      "code": "EPSG:3011",
+      "alias": "urn:ogc:def:crs:EPSG::3011",
+      "projection": "+proj=tmerc +lat_0=0 +lon_0=18 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
+    },
+    {
+      "code": "EPSG:3006",
+      "alias": "urn:ogc:def:crs:EPSG::3006",
+      "projection": "+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
+    }
+  ],
+  "extent": [-1806490.0, 4631510.0, 2157127.28, 8595127.28],
+  "center": [142476, 6614452],
+  "zoom": 4,
+  "resolutions": [
+    573.4399999999999,
+    286.71999999999997,
+    143.35999999999999,
+    71.67999999999999,
+    35.839999999999996,
+    17.919999999999998,
+    8.959999999999999,
+    4.4799999999999995,
+    2.2399999999999998,
+    1.1199999999999999,
+    0.5599999999999999,
+    0.27999999999999997,
+    0.13999999999999999
+  ],
+  "constrainResolution": true,
+  "enableRotation": true,
+  "featureinfoOptions": {
+    "clusterFeatureinfoLevel": 2,
+    "pinning": true,
+    "hitTolerance": 3,
+    "infowindow": "overlay"
+  },
+  "source": {
+    "sigtuna": {
+      "url": "https://karta.sigtuna.se/geoserver/ows"
+    },
+    "basemap": {
+      "url": "https://karta.sigtuna.se/geoserver/gwc/service/wmts"
+    }
+  },
+  "groups": [
+    {
+      "name": "barn_utbildning",
+      "title": "Utbildning och barnomsorg",
+      "expanded": false
+    },
+    {
+      "name": "bygga_bo_miljo",
+      "title": "Bygga, bo och miljö",
+      "expanded": false,
+      "groups": [
+        {
+          "name": "stompunkter",
+          "title": "Stompunkter"
+        }
+      ]
+    },
+    {
+      "name": "kultur_fritid",
+      "title": "Kultur och fritid",
+      "expanded": false,
+      "groups": [
+        {
+          "name": "fritid",
+          "title": "Idrott, motion och friluftsliv"
+        },
+        {
+          "name": "kultur",
+          "title": "Kultur"
+        }
+      ]
+    },
+    {
+      "name": "trafik_resor",
+      "title": "Trafik och resor",
+      "expanded": false,
+      "groups": [
+        {
+          "name": "cykel",
+          "title": "Cykel"
+        },
+        { "name": "parkering", "title": "Parkering" }
+      ]
+    },
+    {
+      "name": "omsorg_stod",
+      "title": "Omsorg och stöd",
+      "expanded": false,
+      "groups": [
+        {
+          "name": "aldreomsorg",
+          "title": "Ansökan om äldreomsorg"
+        }
+      ]
+    },
+    {
+      "name": "dialog",
+      "title": "Dialogresultat",
+      "expanded": false,
+      "groups": [
+        {
+          "name": "strandpromenaden",
+          "title": "Strandpromenaden"
+        }
+      ]
+    },
+    {
+      "name": "flygbilder",
+      "title": "Flygbilder",
+      "expanded": false
+    },
+    {
+      "name": "background",
+      "title": "Bakgrundskartor",
+      "expanded": true
+    }
+  ],
+  "layers": [
+    {
+      "name": "forskola",
+      "title": "Förskolor",
+      "group": "barn_utbildning",
+      "source": "sigtuna",
+      "style": "forskola",
+      "clusterStyle": "forskola_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        },
+        {
+          "name": "regi",
+          "title": "Regi: "
+        }
+      ]
+    },
+    {
+      "name": "ped_omsorg",
+      "title": "Pedagogisk omsorg",
+      "group": "barn_utbildning",
+      "source": "sigtuna",
+      "style": "ped_omsorg",
+      "clusterStyle": "ped_omsorg_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        },
+        {
+          "name": "regi",
+          "title": "Regi: "
+        }
+      ]
+    },
+    {
+      "name": "grundskola",
+      "title": "Grundskolor",
+      "group": "barn_utbildning",
+      "source": "sigtuna",
+      "style": "grundskola",
+      "clusterStyle": "grundskola_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        },
+        {
+          "name": "regi",
+          "title": "Regi: "
+        },
+        {
+          "name": "arskurser",
+          "title": "Årskurser: "
+        }
+      ]
+    },
+    {
+      "name": "grundsarskola",
+      "title": "Grundsärskolor",
+      "group": "barn_utbildning",
+      "source": "sigtuna",
+      "style": "grundsarskola",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        },
+        {
+          "name": "regi",
+          "title": "Regi: "
+        },
+        {
+          "name": "arskurser",
+          "title": "Årskurser: "
+        }
+      ]
+    },
+    {
+      "name": "gymnasium",
+      "title": "Gymnasium",
+      "group": "barn_utbildning",
+      "source": "sigtuna",
+      "style": "gymnasieskola",
+      "clusterStyle": "gymnasieskola_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ]
+    },
+    {
+      "name": "vuxenutbildning",
+      "title": "Vuxenutbildning",
+      "group": "none",
+      "source": "sigtuna",
+      "style": "vuxenutbildning",
+      "clusterStyle": "vuxenutbildning_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ]
+    },
+    {
+      "name": "sok_fast_y",
+      "title": "Fastighetsytor",
+      "group": "none",
+      "source": "sigtuna",
+      "style": "dp_pagaende",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn"
+        },
+        {
+          "html": "<br><i>Ytan är endast illustrativ och saknar juridisk verkan.</i>"
+        }
+      ]
+    },
+    {
+      "name": "sok_adress_p",
+      "title": "Adresser",
+      "group": "none",
+      "source": "sigtuna",
+      "style": "dp_pagaende",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn"
+        }
+      ]
+    },
+    {
+      "name": "sok_ortnamn_p",
+      "title": "Ortnamn",
+      "group": "none",
+      "source": "sigtuna",
+      "style": "cirkel",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn"
+        }
+      ]
+    },
+    {
+      "name": "buf_skolplacering_y",
+      "title": "Skolplacering årskurs 7-9",
+      "group": "none",
+      "source": "sigtuna",
+      "style": "skolplacering",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "skola",
+          "title": "Skolplacering: ",
+          "url": "url"
+        },
+        {
+          "name": "arskurs",
+          "title": "Årskurser: "
+        },
+        {
+          "html": "<br>{{info}}"
+        }
+      ]
+    },
+    {
+      "name": "sbk_akt_sbproj_p",
+      "title": "Aktuella stadsbyggnadsprojekt",
+      "group": "bygga_bo_miljo",
+      "source": "sigtuna",
+      "style": "sbk_projekt",
+      "clusterStyle": "sbk_projekt_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "projekt",
+          "url": "url"
+        },
+        {
+          "name": "rubrik"
+        },
+        {
+          "html": "<br>"
+        },
+        {
+          "name": "kommentar"
+        }
+      ]
+    },
+    {
+      "name": "sbk_taplaner_p",
+      "title": "Vägarbeten",
+      "group": "trafik_resor",
+      "source": "sigtuna",
+      "style": "vagarbeten",
+      "clusterStyle": "vagarbeten_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "abstract": "Godkända vägarbeten som utförs på kommunal mark.",
+      "visible": false,
+      "attributes": [
+        {
+          "html": "<b>{{plats}}</b>"
+        },
+        {
+          "name": "typ"
+        },
+        {
+          "html": "<br>"
+        },
+        {
+          "name": "sokande",
+          "title": "Ansvarig: "
+        },
+        {
+          "name": "startdatum",
+          "title": "Start: "
+        },
+        {
+          "name": "slutdatum",
+          "title": "Slut: "
+        },
+        {
+          "html": "<br>Vid frågor om arbete på väg kontakta Trafikdriftsenheten på telefonnummer 08-597 838 00."
+        }
+      ]
+    },
+    {
+      "name": "sbk_inf_cykel_p__Cykelparkering",
+      "title": "Cykelparkering",
+      "group": "cykel",
+      "source": "sigtuna",
+      "style": "pcykel",
+      "clusterStyle": "pcykel_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "filter": "typ = 'Cykelparkering'",
+      "attributes": [
+        {
+          "name": "info"
+        }
+      ]
+    },
+    {
+      "name": "sbk_inf_cykel_p__Cykelpump",
+      "title": "Cykelpump",
+      "group": "cykel",
+      "source": "sigtuna",
+      "style": "cykelpump",
+      "type": "WFS",
+      "visible": false,
+      "filter": "typ = 'Cykelpump'",
+      "attributes": [
+        {
+          "name": "info"
+        }
+      ]
+    },
+    {
+      "name": "sbk_inf_parkering_p__laddplatser",
+      "title": "Laddplatser för elbilar",
+      "group": "parkering",
+      "source": "sigtuna",
+      "style": "parkering_laddplatser",
+      "clusterStyle": "parkering_laddplatser_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "filter": "typ = 'Laddplatser'",
+      "attributes": [
+        {
+          "html": "<b>{{namn}}</b><br></br>"
+        },
+        {
+          "name": "platser",
+          "title": "Antal platser: "
+        },
+        {
+          "html": "<a href='https://www.sigtuna.se/trafik-och-resor/trafik-och-gator/parkering-och-tillstand/parkeringsplatser-allmanna.html#h-Laddplatser' target='blank'>Läs mer...</a>"
+        }
+      ]
+    },
+    {
+      "name": "sbk_inf_parkering_p__infart",
+      "title": "Infartsparkering",
+      "group": "parkering",
+      "source": "sigtuna",
+      "style": "infart",
+      "clusterStyle": "infart_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "filter": "typ = 'Infartsparkering'",
+      "attributes": [
+        {
+          "html": "<b>{{nummer}}. {{namn}}</b><br></br>"
+        },
+        {
+          "name": "platser",
+          "title": "Antal platser: "
+        },
+        {
+          "html": "<br>"
+        },
+        {
+          "name": "avgift",
+          "title": "Avgift: "
+        },
+        {
+          "html": "<br><b>Fordon: </b>På markerade platser inom parkeringsområdet får endast lätt lastbil, moped, motorcykel, traktor a och personbil klass I parkeras.</br>"
+        },
+        {
+          "html": "<br><b>Parkeringsförbud gäller följande tider:</b></br>"
+        },
+        {
+          "name": "tid_1"
+        },
+        {
+          "name": "tid_2"
+        },
+        {
+          "name": "tid_3"
+        },
+        {
+          "html": "<a href='https://www.sigtuna.se/trafik-och-resor/trafik-och-gator/parkering-och-tillstand/parkeringsplatser-allmanna.html' target='blank'>Läs mer...</a>"
+        }
+      ]
+    },
+    {
+      "name": "sbk_inf_parkering_p__husbil",
+      "title": "Husbilsparkering",
+      "group": "parkering",
+      "source": "sigtuna",
+      "style": "parkering",
+      "clusterStyle": "parkering_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "filter": "typ = 'Husbil'",
+      "attributes": [
+        {
+          "html": "<b>{{namn}}</b><br></br>"
+        },
+        {
+          "name": "platser",
+          "title": "Antal platser: "
+        },
+        {
+          "html": "<br><b>Fordon: </b>På särskilt markerade platser inom parkeringsområdet får endast personbil klass II (husbilar) parkeras. Se skyltning på plats.</br>"
+        },
+        {
+          "html": "<br><b>Tidsbegränsning: </b>{{info}}<br></br>"
+        }
+      ]
+    },
+    {
+      "name": "sbk_inf_cykel_l",
+      "title": "Cykelvägar",
+      "group": "cykel",
+      "source": "sigtuna",
+      "style": "cykelvag",
+      "type": "WFS",
+      "visible": false,
+      "queryable": false
+    },
+    {
+      "name": "mbd_2020_strandpromenaden__favorit",
+      "title": "Favoritplats",
+      "group": "strandpromenaden",
+      "type": "GROUP",
+      "style": "strandpromenaden_favorit",
+      "visible": false,
+      "abstract": "Redovisar favoritplatser inom området. <br>Observera att endast synpunkter inom den svarta avgränsningen redovisas i kartan.",
+      "layers": [
+        {
+          "name": "omr_strandpromenaden",
+          "title": "Områdesbegränsning",
+          "source": "data/omr_strandpromenaden.geojson",
+          "type": "GEOJSON",
+          "style": "strandpromenaden_omr",
+          "queryable": false,
+          "visible": true
+        },
+        {
+          "name": "mbd_2020_strandpromenaden_favorit__ejbesk",
+          "title": "Favoritplats",
+          "source": "sigtuna",
+          "style": "strandpromenaden_favorit",
+          "maxScale": 2000,
+          "type": "WFS",
+          "visible": true,
+          "queryable": false,
+          "filter": "finns_beskrivning = 'Nej'"
+        },
+        {
+          "name": "mbd_2020_strandpromenaden_favorit__besk",
+          "title": "Favoritplats",
+          "source": "sigtuna",
+          "style": "strandpromenaden_favorit",
+          "clusterStyle": "strandpromenaden_favoritplats_cluster",
+          "layerType": "cluster",
+          "type": "WFS",
+          "visible": true,
+          "filter": "finns_beskrivning = 'Ja'",
+          "attributes": [
+            {
+              "name": "beskrivning",
+              "title": "Vad gillar du med platsen? "
+            },
+            {
+              "name": "tid_ar",
+              "title": "<br>När under året och hur ofta brukar du besöka platsen? "
+            },
+            {
+              "name": "tid_dygn",
+              "title": "<br>Vilken tid är vanligast att du är på platsen? "
+            },
+            {
+              "html": "<br><a href='https://www.sigtuna.se/bygga-bo-och-miljo/byggprojekt-i-kommunen/stadsbyggnadsprojekt/strandpromenaden.html' target='blank'>Läs mer...</a></br>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "mbd_2020_strandpromenaden__utveckling",
+      "title": "Plats för utveckling",
+      "group": "strandpromenaden",
+      "type": "GROUP",
+      "style": "strandpromenaden_utveckling",
+      "visible": false,
+      "abstract": "Redovisar de platser som bör förbättras och utvecklas. <br>Observera att endast synpunkter inom den svarta avgränsningen redovisas i kartan.",
+      "layers": [
+        {
+          "name": "omr_strandpromenaden",
+          "title": "Områdesbegränsning",
+          "source": "data/omr_strandpromenaden.geojson",
+          "type": "GEOJSON",
+          "style": "strandpromenaden_omr",
+          "queryable": false,
+          "visible": true
+        },
+        {
+          "name": "mbd_2020_strandpromenaden_utveckling__ejbesk",
+          "title": "Plats att utveckla2",
+          "source": "sigtuna",
+          "style": "strandpromenaden_utveckling",
+          "maxScale": 2000,
+          "type": "WFS",
+          "visible": true,
+          "queryable": false,
+          "filter": "finns_beskrivning = 'Nej'"
+        },
+        {
+          "name": "mbd_2020_strandpromenaden_utveckling__besk",
+          "title": "Plats att utveckla",
+          "source": "sigtuna",
+          "style": "strandpromenaden_utveckling",
+          "clusterStyle": "strandpromenaden_utveckling_cluster",
+          "layerType": "cluster",
+          "type": "WFS",
+          "visible": true,
+          "filter": "finns_beskrivning = 'Ja'",
+          "attributes": [
+            {
+              "name": "beskrivning",
+              "title": "Vad gillar du inte med platsen eller vad vill du förbättra? "
+            },
+            {
+              "name": "tid_ar",
+              "title": "<br>När under året och hur ofta brukar du besöka platsen? "
+            },
+            {
+              "name": "tid_dygn",
+              "title": "<br>Vilken tid är vanligast att du är på platsen? "
+            },
+            {
+              "html": "<br><a href='https://www.sigtuna.se/bygga-bo-och-miljo/byggprojekt-i-kommunen/stadsbyggnadsprojekt/strandpromenaden.html' target='blank'>Läs mer...</a></br>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "dp_pagaende",
+      "title": "Pågående detaljplaner",
+      "group": "bygga_bo_miljo",
+      "source": "sigtuna",
+      "style": "dp_pagaende_ny",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "projekt",
+          "url": "url"
+        }
+      ]
+    },
+    {
+      "name": "dp_gallande",
+      "title": "Gällande detaljplaner",
+      "group": "bygga_bo_miljo",
+      "type": "GROUP",
+      "source": "sigtuna",
+      "style": "dp_gallande_main",
+      "visible": false,
+      "layers": [
+        {
+          "name": "dp_gallande",
+          "title": "Gällande detaljplaner",
+          "group": "bygga_bo_trafik",
+          "source": "sigtuna",
+          "style": "dp_gallande",
+          "maxScale": 35000,
+          "type": "WFS",
+          "attributes": [
+            {
+              "name": "plannr",
+              "title": "Detaljplan: ",
+              "url": "url"
+            }
+          ],
+          "visible": true
+        },
+        {
+          "name": "dp_gallande_over",
+          "title": "Gällande detaljplaner",
+          "group": "bygga_bo_trafik",
+          "source": "sigtuna",
+          "type": "WFS",
+          "style": "dp_gallande",
+          "minScale": 35000,
+          "queryable": false,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "name": "sbk_utredningar_planer",
+      "title": "Utredningar/planer",
+      "group": "bygga_bo_miljo",
+      "source": "sigtuna",
+      "style": "sbk_utredningar_planer",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "html": "{{datamangd}}"
+        },
+        {
+          "url": "url",
+          "title": "Läs mer..."
+        }
+      ]
+    },
+    {
+      "name": "kommunal_mark",
+      "title": "Kommunal mark",
+      "group": "bygga_bo_miljo",
+      "source": "sigtuna",
+      "style": "komm_mark",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "title": "Ägare: "
+        },
+        {
+          "html": "<br><i>Ytan är endast illustrativ och saknar juridisk verkan.</i>"
+        }
+      ]
+    },
+    {
+      "name": "sigtunahem_mark",
+      "title": "SigtunaHems mark",
+      "group": "bygga_bo_miljo",
+      "source": "sigtuna",
+      "style": "sigtunahem_mark",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "title": "Ägare: "
+        },
+        {
+          "html": "<br><i>Ytan är endast illustrativ och saknar juridisk verkan.</i>"
+        }
+      ]
+    },
+    {
+      "name": "sbk_inf_tbo_y",
+      "title": "Tättbebyggt område",
+      "group": "trafik_resor",
+      "source": "sigtuna",
+      "style": "tbo",
+      "type": "WFS",
+      "abstract": "Inom tättbebyggda områden (TBO) gäller särskilda regler för hastighet och parkering enligt Trafikförordningen (1998:1276). <a href='https://www.sigtuna.se/trafik-och-resor/trafik-och-gator/trafikregler-och-sakerhet/trafikregler.html' target='blank'>Läs mer...</a>",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn"
+        },
+        {
+          "html": "<a href='https://www.sigtuna.se/trafik-och-resor/trafik-och-gator/trafikregler-och-sakerhet/trafikregler.html' target='blank'>Läs mer...</a>"
+        }
+      ]
+    },
+    {
+      "name": "km_fixpunkt",
+      "title": "Fixpunkt",
+      "group": "stompunkter",
+      "source": "sigtuna",
+      "style": "fixpunkt",
+      "type": "WFS",
+      "visible": false,
+      "abstract": "Kommunens stomnät redovisas i SWEREF99 18 00 och RH2000.</br><br><a href='https://karta.sigtuna.se/geoserver/ows?SERVICE=WFS&REQUEST=GetFeature&typeName=km_fixpunkt&crs=EPSG:3011&outputformat=CSV'>Ladda ner alla fixpunkter</a></br><br>Om du upptäcker att stompunkt är förstörd eller borttagen, vänligen informera oss via <a href='mailto:geodata@sigtuna.se' target='_blank'>e-post</a>.",
+      "attributes": [
+        {
+          "name": "punktnr",
+          "title": "Punktnummer: "
+        },
+        {
+          "name": "n",
+          "title": "N: "
+        },
+        {
+          "name": "e",
+          "title": "E: "
+        },
+        {
+          "name": "z",
+          "title": "Z: "
+        },
+        {
+          "name": "pkt_markering",
+          "title": "Punktmarkering: "
+        },
+        {
+          "html": "<br><i>SWEREF99 18 00, RH2000</i>"
+        }
+      ]
+    },
+    {
+      "name": "km_polygonpunkt",
+      "title": "Polygonpunkt",
+      "group": "stompunkter",
+      "source": "sigtuna",
+      "style": "polygonpunkt",
+      "type": "WFS",
+      "visible": false,
+      "abstract": "Kommunens stomnät redovisas i SWEREF99 18 00 och RH2000.</br><br><a href='https://karta.sigtuna.se/geoserver/ows?SERVICE=WFS&REQUEST=GetFeature&typeName=km_polygonpunkt&crs=EPSG:3011&outputformat=CSV'>Ladda ner alla polygonpunkter</a></br><br>Om du upptäcker att stompunkt är förstörd eller borttagen, vänligen informera oss via <a href='mailto:geodata@sigtuna.se' target='_blank'>e-post</a>.",
+      "attributes": [
+        {
+          "name": "punktnr",
+          "title": "Punktnummer: "
+        },
+        {
+          "name": "n",
+          "title": "N: "
+        },
+        {
+          "name": "e",
+          "title": "E: "
+        },
+        {
+          "name": "z",
+          "title": "Z: "
+        },
+        {
+          "name": "pkt_markering",
+          "title": "Punktmarkering: "
+        },
+        {
+          "html": "<br><i>SWEREF99 18 00, RH2000</i>"
+        }
+      ]
+    },
+    {
+      "name": "tn_vandringsled_main",
+      "title": "Vandringsleder",
+      "group": "fritid",
+      "style": "vandringsled_main",
+      "type": "GROUP",
+      "visible": false,
+      "layers": [
+        {
+          "name": "tn_vandringsled",
+          "title": "Vandringsleder",
+          "source": "sigtuna",
+          "style": "vandringsled_main",
+          "type": "WFS",
+          "visible": true,
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            }
+          ]
+        },
+        {
+          "name": "tn_upplandsleden",
+          "title": "Upplandsleden",
+          "source": "sigtuna",
+          "style": "vandringsled_main",
+          "type": "WFS",
+          "visible": true,
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "bad",
+      "title": "Bad",
+      "group": "fritid",
+      "source": "sigtuna",
+      "style": "bad",
+      "clusterStyle": "bad_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ]
+    },
+    {
+      "name": "bibliotek",
+      "title": "Bibliotek",
+      "group": "kultur",
+      "source": "sigtuna",
+      "style": "bibliotek",
+      "clusterStyle": "bibliotek_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ]
+    },
+    {
+      "name": "fritidsgardar",
+      "title": "Fritidsgårdar",
+      "group": "kultur_fritid",
+      "source": "sigtuna",
+      "style": "fritidsgard",
+      "clusterStyle": "fritidsgard_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ]
+    },
+    {
+      "name": "hundrastgard_p__main",
+      "title": "Hundrastgårdar",
+      "group": "fritid",
+      "type": "GROUP",
+      "source": "sigtuna",
+      "style": "hundrastgard",
+      "visible": false,
+      "layers": [
+        {
+          "name": "hundrastgard_p",
+          "title": "Hundrastgårdar",
+          "source": "sigtuna",
+          "style": "hundrastgard",
+          "clusterStyle": "hundrastgard_cluster",
+          "layerType": "cluster",
+          "type": "WFS",
+          "visible": true,
+          "attributes": [
+            {
+              "html": "<a href='https://www.sigtuna.se/kultur-och-fritid/idrott-motion-och-friluftsliv/friluftsliv-och-motion/hundrastgardar.html' target='blank'>Läs mer...</a>"
+            }
+          ]
+        },
+        {
+          "name": "hundrastgard_y",
+          "title": "Hundrastgårdar",
+          "source": "sigtuna",
+          "type": "WFS",
+          "style": "hundrastgard_yta",
+          "maxScale": 5000,
+          "queryable": false,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "name": "idrottsanl",
+      "title": "Idrottsanläggningar",
+      "group": "fritid",
+      "source": "sigtuna",
+      "style": "idrottsanl",
+      "clusterStyle": "idrottsanl_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ]
+    },
+    {
+      "name": "kulturverksamhet",
+      "title": "Kulturverksamhet",
+      "group": "kultur",
+      "source": "sigtuna",
+      "style": "kulturverksamhet",
+      "clusterStyle": "kulturverksamhet_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ]
+    },
+    {
+      "name": "lekplats_p",
+      "title": "Lekplatser",
+      "group": "fritid",
+      "source": "sigtuna",
+      "style": "lekplatser",
+      "clusterStyle": "lekplatser_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "html": "<a href='https://www.sigtuna.se/kultur-och-fritid/idrott-motion-och-friluftsliv/friluftsliv-och-motion/lekplatser.html' target='blank'>Läs mer...</a>"
+        }
+      ]
+    },
+    {
+      "name": "motionsspar",
+      "title": "Motionsspår",
+      "group": "fritid",
+      "source": "sigtuna",
+      "style": "motionsspar",
+      "clusterStyle": "motionsspar_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        },
+        {
+          "name": "belyst",
+          "title": "Belyst: "
+        },
+        {
+          "name": "ej_belyst",
+          "title": "Ej belyst: "
+        }
+      ]
+    },
+    {
+      "name": "museum",
+      "title": "Museum",
+      "group": "kultur",
+      "source": "sigtuna",
+      "style": "museum",
+      "clusterStyle": "museum_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ]
+    },
+    {
+      "name": "parker_p",
+      "title": "Parker",
+      "group": "fritid",
+      "source": "sigtuna",
+      "style": "parker",
+      "clusterStyle": "parker_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn"
+        },
+        {
+          "html": "<a href='https://www.sigtuna.se/kultur-och-fritid/idrott-motion-och-friluftsliv/friluftsliv-och-motion/parker-och-gronomraden.html' target='blank'>Läs mer...</a>"
+        }
+      ]
+    },
+    {
+      "name": "sbk_isbana",
+      "title": "Spolade isbanor",
+      "group": "fritid",
+      "source": "sigtuna",
+      "style": "isbana",
+      "clusterStyle": "isbana_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ]
+    },
+    {
+      "name": "teater",
+      "title": "Teater",
+      "group": "kultur",
+      "source": "sigtuna",
+      "style": "teater",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ]
+    },
+    {
+      "name": "boende_aldre",
+      "title": "Boende för äldre",
+      "group": "omsorg_stod",
+      "source": "sigtuna",
+      "style": "boende_aldre",
+      "clusterStyle": "boende_aldre_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ]
+    },
+    {
+      "name": "boende_lss",
+      "title": "Boende med särskild service, LSS",
+      "group": "omsorg_stod",
+      "source": "sigtuna",
+      "style": "boende_lss",
+      "clusterStyle": "boende_lss_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ]
+    },
+    {
+      "name": "motesplatser_aof",
+      "title": "Mötesplatser",
+      "group": "omsorg_stod",
+      "source": "sigtuna",
+      "style": "motesplatser_aof",
+      "clusterStyle": "motesplatser_aof_cluster",
+      "layerType": "cluster",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ]
+    },
+    {
+      "name": "aof_b_handlaggare_y",
+      "title": "Biståndshandläggare",
+      "group": "aldreomsorg",
+      "source": "sigtuna",
+      "style": "bistand_omr",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "html": "<b>Telefonnummer till handläggare:</b><br>{{telnr}}"
+        },
+        {
+          "html": "<br><b>Telefontid:</b><br>Alla vardagar kl 9.00-10.00"
+        },
+        {
+          "html": "<br><i>Övrig tid är du välkommen att höra av dig till <a href='https://www.sigtuna.se/kontakta-oss/kontaktuppgifter.html' target='blank'>kontaktcenter</a>.</i>"
+        }
+      ]
+    },
+    {
+      "name": "sbk_inf_vattenkva_l",
+      "title": "Vattenkvalité",
+      "group": "bygga_bo_miljo",
+      "type": "GROUP",
+      "source": "sigtuna",
+      "style": "vattenkva_main",
+      "visible": false,
+      "layers": [
+        {
+          "name": "sbk_inf_vattenkva_l",
+          "title": "Vattenkvalité",
+          "source": "sigtuna",
+          "style": "vattenkva_l",
+          "type": "WFS",
+          "visible": true,
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            },
+            {
+              "name": "eko_status",
+              "title": "Ekologisk status: "
+            }
+          ]
+        },
+        {
+          "name": "sbk_inf_vattenkva_y",
+          "title": "Vattenkvalité",
+          "source": "sigtuna",
+          "style": "vattenkva_y",
+          "type": "WFS",
+          "visible": true,
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            },
+            {
+              "name": "eko_status",
+              "title": "Ekologisk status: "
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "sbk_naturreservat_gallande_lst",
+      "title": "Naturreservat",
+      "group": "fritid",
+      "source": "sigtuna",
+      "style": "naturreservat_y",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn"
+        },
+        {
+          "html": "<a href='https://www.sigtuna.se/kultur-och-fritid/idrott-motion-och-friluftsliv/friluftsliv-och-motion/naturomraden-och-naturreservat.html' target='blank'>Läs mer...</a>"
+        }
+      ]
+    },
+    {
+      "name": "mask",
+      "opacity": 0.15,
+      "title": "mask",
+      "group": "none",
+      "queryable": false,
+      "source": "data/mask.geojson",
+      "style": "mask",
+      "type": "GEOJSON",
+      "visible": true
+    },
+    {
+      "attribution": "&copy Lantmäteriet Geodatasamverkan",
+      "format": "image/png",
+      "group": "flygbilder",
+      "name": "SIG:orto_2017",
+      "source": "basemap",
+      "title": "Flygbilder, 2017",
+      "type": "WMTS",
+      "style": "orto_mini",
+      "visible": false
+    },
+    {
+      "attribution": "&copy Lantmäteriet Geodatasamverkan",
+      "format": "image/png",
+      "group": "flygbilder",
+      "name": "SIG:orto_2015",
+      "source": "basemap",
+      "title": "Flygbilder, 2015",
+      "type": "WMTS",
+      "style": "orto_mini",
+      "visible": false
+    },
+    {
+      "attribution": "&copy Lantmäteriet Geodatasamverkan",
+      "format": "image/png",
+      "group": "flygbilder",
+      "name": "SIG:orto_2013",
+      "source": "basemap",
+      "title": "Flygbilder, 2013",
+      "type": "WMTS",
+      "style": "orto_mini",
+      "visible": false
+    },
+    {
+      "attribution": "&copy Lantmäteriet Geodatasamverkan",
+      "format": "image/png",
+      "group": "flygbilder",
+      "name": "SIG:orto_2011",
+      "source": "basemap",
+      "title": "Flygbilder, 2011",
+      "type": "WMTS",
+      "style": "orto_mini",
+      "visible": false
+    },
+    {
+      "attribution": "&copy Lantmäteriet Geodatasamverkan",
+      "format": "image/png",
+      "group": "flygbilder",
+      "name": "SIG:orto_2008",
+      "source": "basemap",
+      "title": "Flygbilder, 2008",
+      "type": "WMTS",
+      "style": "orto_mini",
+      "visible": false
+    },
+    {
+      "attribution": "&copy Lantmäteriet geodatasamverkan",
+      "format": "image/png",
+      "group": "background",
+      "name": "SIG:topowebbkartan_nedtonad",
+      "source": "basemap",
+      "title": "Karta, grå",
+      "type": "WMTS",
+      "style": "karta_gra",
+      "visible": true
+    },
+    {
+      "attribution": "&copy Lantmäteriet Geodatasamverkan",
+      "format": "image/png",
+      "group": "background",
+      "name": "SIG:topowebbkartan",
+      "source": "basemap",
+      "title": "Karta, färg",
+      "type": "WMTS",
+      "style": "karta_farg",
+      "visible": false
+    },
+    {
+      "name": "SIG:topowebbkartan_terrang",
+      "title": "Terrängskuggning",
+      "group": "background",
+      "type": "GROUP",
+      "source": "basemap",
+      "style": "karta_terrang",
+      "visible": false,
+      "layers": [
+        {
+          "attribution": "&copy Lantmäteriet Geodatasamverkan",
+          "format": "image/png",
+          "name": "SIG:topowebbkartan",
+          "source": "basemap",
+          "type": "WMTS",
+          "visible": true
+        },
+        {
+          "attribution": "&copy Lantmäteriet Geodatasamverkan",
+          "format": "image/png",
+          "name": "SIG:terrangskuggning",
+          "source": "basemap",
+          "type": "WMTS",
+          "opacity": 0.7,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "attribution": "&copy Lantmäteriet Geodatasamverkan",
+      "format": "image/png",
+      "group": "background",
+      "name": "SIG:orto_2019_016",
+      "source": "basemap",
+      "title": "Flygbilder, 2019",
+      "type": "WMTS",
+      "style": "orto",
+      "visible": false
+    }
+  ],
+  "styles": {
+    "yta_test": [
+      [
+        {
+          "fill": {
+            "color": "rgba(66,89,179,0.7)"
+          },
+          "stroke": {
+            "color": "rgba(229,109,30,0.7)",
+            "width": 0.6
+          }
+        }
+      ]
+    ],
+    "bistand_omr": [
+      [
+        {
+          "fill": {
+            "color": "rgba(0,0,0,0.0)"
+          },
+          "stroke": {
+            "color": "rgba(184,124,150,1)",
+            "width": 2
+          },
+          "label": "Områden indelat per handläggare"
+        }
+      ]
+    ],
+    "hemtjanst_omr": [
+      [
+        {
+          "fill": {
+            "color": "rgba(0,0,0,0.0)"
+          },
+          "stroke": {
+            "color": "rgba(124,84,100,1)",
+            "width": 4
+          },
+          "label": "Områden för hemtjänst"
+        }
+      ]
+    ],
+    "sbk_bev_forny_plan": [
+      [
+        {
+          "fill": {
+            "color": "rgba(198,22,32,0.4)"
+          },
+          "stroke": {
+            "color": "rgba(198,22,32,0.4)",
+            "width": 1
+          }
+        }
+      ]
+    ],
+    "sbk_utredningar_planer": [
+      [
+        {
+          "fill": {
+            "color": "rgba(198,22,32,0.4)"
+          },
+          "stroke": {
+            "color": "rgba(198,22,32,0.4)",
+            "width": 1
+          }
+        }
+      ]
+    ],
+    "strandpromenaden_omr": [
+      [
+        {
+          "fill": {
+            "color": "rgba(0,0,0,0.0)"
+          },
+          "stroke": {
+            "color": "rgba(0,0,0,1)",
+            "width": 4
+          }
+        }
+      ]
+    ],
+    "strandpromenaden_favorit": [
+      [
+        {
+          "icon": {
+            "size": [26, 26],
+            "src": "img/png/favoritplats_skugga_26.png"
+          },
+          "header": true,
+          "label": "Favoritplats",
+          "filter": "[finns_beskrivning] == 'Ja'"
+        }
+      ],
+      [
+        {
+          "icon": {
+            "size": [20, 20],
+            "src": "img/png/favoritplats_gra_skugga_20.png"
+          },
+          "label": "Favoritplats (kommentar saknas)",
+          "filter": "[finns_beskrivning] == 'Nej'"
+        }
+      ]
+    ],
+    "strandpromenaden_favoritplats_cluster": [
+      [
+        {
+          "icon": {
+            "size": [26, 26],
+            "src": "img/png/favoritplats_skugga_26.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "strandpromenaden_utveckling": [
+      [
+        {
+          "icon": {
+            "size": [26, 26],
+            "src": "img/png/utveckling_skugga_26.png"
+          },
+          "header": true,
+          "label": "Plats att utveckla",
+          "filter": "[finns_beskrivning] == 'Ja'"
+        }
+      ],
+      [
+        {
+          "icon": {
+            "size": [20, 20],
+            "src": "img/png/utveckling_gra_skugga_20.png"
+          },
+          "label": "Plats att utveckla (kommentar saknas)",
+          "filter": "[finns_beskrivning] == 'Nej'"
+        }
+      ]
+    ],
+    "strandpromenaden_utveckling_cluster": [
+      [
+        {
+          "icon": {
+            "size": [26, 26],
+            "src": "img/png/utveckling_skugga_26.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "vaghallare": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(154,29,31,1)",
+            "width": 2
+          },
+          "filter": "[vaghallare] == 'Kommunal'",
+          "label": "Kommunal"
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(31,120,180,1)",
+            "width": 2
+          },
+          "filter": "[vaghallare] == 'Statlig'",
+          "label": "Statlig"
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(186,186,56,1)",
+            "width": 2
+          },
+          "filter": "[vaghallare] == 'Enskild'",
+          "label": "Enskild"
+        }
+      ]
+    ],
+    "skolval_omr": [
+      [
+        {
+          "fill": {
+            "color": "rgba(130,187,219,0.1)"
+          },
+          "stroke": {
+            "color": "rgba(53,60,120,1)",
+            "width": 1.8
+          },
+          "text": {
+            "font": "Bold 10px Arial",
+            "textAlign": "center",
+            "exceedLength": true,
+            "offsetX": -4,
+            "offsetY": 4,
+            "text": "{{skola}}",
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            },
+            "stroke": {
+              "color": "rgba(255,255,255,0.7)",
+              "width": 2
+            }
+          }
+        }
+      ]
+    ],
+    "skolplacering": [
+      [
+        {
+          "minScale": 140000,
+          "fill": {
+            "color": "rgba(150,100,52,0.1)"
+          },
+          "stroke": {
+            "color": "rgba(188,77,0,0.9)",
+            "width": 2
+          },
+          "filter": "[skola] != 'Centralskolan'",
+          "text": {
+            "font": "Bold 16px Arial",
+            "textAlign": "end",
+            "exceedLength": true,
+            "offsetX": -40,
+            "offsetY": 40,
+            "text": "{{omrade}}",
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            },
+            "stroke": {
+              "color": "rgba(255,255,255,0.7)",
+              "width": 2
+            }
+          }
+        }
+      ],
+      [
+        {
+          "minScale": 140000,
+          "fill": {
+            "color": "rgba(150,100,52,0.1)"
+          },
+          "stroke": {
+            "color": "rgba(188,77,0,0.9)",
+            "width": 2
+          },
+          "filter": "[skola] == 'Centralskolan'",
+          "text": {
+            "font": "Bold 16px Arial",
+            "textAlign": "center",
+            "exceedLength": true,
+            "offsetX": 60,
+            "offsetY": 10,
+            "text": "{{omrade}}",
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            },
+            "stroke": {
+              "color": "rgba(255,255,255,0.7)",
+              "width": 2
+            }
+          }
+        }
+      ]
+    ],
+    "komm_mark": [
+      [
+        {
+          "minScale": 35000,
+          "fill": {
+            "color": "rgba(178,100,52,0.4)"
+          },
+          "stroke": {
+            "color": "rgba(132,77,0,0.9)",
+            "width": 0.5
+          },
+          "label": "Sigtuna kommun"
+        }
+      ]
+    ],
+    "sigtunahem_mark": [
+      [
+        {
+          "minScale": 35000,
+          "fill": {
+            "color": "rgba(31,120,180,0.5)"
+          },
+          "stroke": {
+            "color": "rgba(132,77,0,0.9)",
+            "width": 0.5
+          },
+          "label": "SigtunaHem AB"
+        }
+      ]
+    ],
+    "dp_pagaende_ny": [
+      [
+        {
+          "fill": {
+            "color": "rgba(255, 196, 105,0.5)"
+          },
+          "stroke": {
+            "color": "rgba(229,109,30,1.0)",
+            "width": 2,
+            "lineDash": [15, 8]
+          },
+          "label": "Pågående detaljplaner"
+        }
+      ]
+    ],
+    "dp_pagaende": [
+      [
+        {
+          "maxScale": 500000,
+          "fill": {
+            "color": "rgba(255,196,105,0.8)"
+          },
+          "stroke": {
+            "color": "rgba(229,109,30,0.7)",
+            "width": 1.2,
+            "lineDash": [3, 1]
+          }
+        }
+      ],
+      [
+        {
+          "maxScale": 68000,
+          "minScale": 499999,
+          "fill": {
+            "color": "rgba(255, 196, 105,0.5)"
+          },
+          "stroke": {
+            "color": "rgba(229,109,30,1.0)",
+            "width": 1.2,
+            "lineDash": [7, 5]
+          }
+        }
+      ],
+      [
+        {
+          "maxScale": 17000,
+          "minScale": 67999,
+          "fill": {
+            "color": "rgba(255, 196, 105,0.5)"
+          },
+          "stroke": {
+            "color": "rgba(229,109,30,1.0)",
+            "width": 1.6,
+            "lineDash": [12, 5]
+          }
+        }
+      ],
+      [
+        {
+          "minScale": 16999,
+          "fill": {
+            "color": "rgba(255, 196, 105,0.5)"
+          },
+          "stroke": {
+            "color": "rgba(229,109,30,1.0)",
+            "width": 2,
+            "lineDash": [15, 8]
+          }
+        }
+      ]
+    ],
+    "dp_gallande_main": [
+      [
+        {
+          "fill": {
+            "color": "rgba(66,89,179,0.7)"
+          },
+          "stroke": {
+            "color": "rgba(229,109,30,1)",
+            "width": 1.5
+          },
+          "label": "Gällande detaljplaner"
+        }
+      ]
+    ],
+    "dp_gallande": [
+      [
+        {
+          "maxScale": 500000,
+          "fill": {
+            "color": "rgba(66,89,179,0.7)"
+          },
+          "stroke": {
+            "color": "rgba(229,109,30,0.7)",
+            "width": 1
+          }
+        }
+      ],
+      [
+        {
+          "maxScale": 68000,
+          "minScale": 499999,
+          "fill": {
+            "color": "rgba(66,89,179,0.5)"
+          },
+          "stroke": {
+            "color": "rgba(229,109,30,1.0)",
+            "width": 0.5
+          }
+        }
+      ],
+      [
+        {
+          "maxScale": 17000,
+          "minScale": 67999,
+          "fill": {
+            "color": "rgba(66,89,179,0.5)"
+          },
+          "stroke": {
+            "color": "rgba(229,109,30,1.0)",
+            "width": 0.8
+          }
+        }
+      ],
+      [
+        {
+          "minScale": 16999,
+          "fill": {
+            "color": "rgba(66,89,179,0.5)"
+          },
+          "stroke": {
+            "color": "rgba(229,109,30,1.0)",
+            "width": 1
+          }
+        }
+      ]
+    ],
+    "tbo": [
+      [
+        {
+          "fill": {
+            "color": "rgba(150,121,148,0.7)"
+          },
+          "stroke": {
+            "color": "rgba(150,121,148,1.0)"
+          },
+          "label": "Tättbebyggt område"
+        }
+      ]
+    ],
+    "mask": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(0,0,0,1.0)"
+          },
+          "fill": {
+            "color": "rgba(0,0,0,1.0)"
+          }
+        }
+      ]
+    ],
+    "cirkel": [
+      [
+        {
+          "circle": {
+            "radius": 6,
+            "stroke": {
+              "color": "rgba(0,0,0,1)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(0,0,0,0.5)"
+            }
+          }
+        }
+      ]
+    ],
+    "sbk_projekt": [
+      [
+        {
+          "icon": {
+            "size": [23, 36],
+            "src": "img/png/droppe_orange.png"
+          },
+          "label": "Stadsbyggnadsprojekt"
+        }
+      ]
+    ],
+    "sbk_projekt_cluster": [
+      [
+        {
+          "icon": {
+            "size": [23, 36],
+            "src": "img/png/droppe_orange.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "valdistrikt": [
+      [
+        {
+          "fill": {
+            "color": "rgba(88,107,95,0.1)"
+          },
+          "stroke": {
+            "color": "rgba(188,107,31,1)",
+            "width": 2.5
+          },
+          "label": "valdistrikt"
+        }
+      ]
+    ],
+    "vallokal": [
+      [
+        {
+          "icon": {
+            "size": [23, 36],
+            "src": "img/png/droppe_orange.png"
+          },
+          "label": "Vallokal"
+        }
+      ]
+    ],
+    "vallokal_cluster": [
+      [
+        {
+          "icon": {
+            "size": [23, 36],
+            "src": "img/png/droppe_orange.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "fortidslokal": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "img/png/droppe_black.png"
+          },
+          "label": "Förtidslokal"
+        }
+      ]
+    ],
+    "fortidslokal_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "img/png/droppe_black.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "pcykel": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Pcykel.png"
+          },
+          "label": "Cykelparkering"
+        }
+      ]
+    ],
+    "pcykel_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Pcykel.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "cykelpump": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Cykelpump.png"
+          },
+          "label": "Cykelpump"
+        }
+      ]
+    ],
+    "infart": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Pinfart.png"
+          },
+          "label": "Infartsparkering"
+        }
+      ]
+    ],
+    "infart_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Pinfart.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "parkering": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Parkering.png"
+          },
+          "label": "Husbilsparkering"
+        }
+      ]
+    ],
+    "parkering_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Parkering.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "parkering_laddplatser": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Parkering_laddplatser.png"
+          },
+          "label": "Laddplatser för elbilar"
+        }
+      ]
+    ],
+    "parkering_laddplatser_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Parkering_laddplatser.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "vagarbeten": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Vagarbeten.png"
+          },
+          "label": "Vägarbeten"
+        }
+      ]
+    ],
+    "vagarbeten_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Vagarbeten.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "bad": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Bad_gron.png"
+          },
+          "label": "Badplatser"
+        }
+      ]
+    ],
+    "bad_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Bad_gron.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "bibliotek": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Bibliotek.png"
+          },
+          "label": "Bibliotek"
+        }
+      ]
+    ],
+    "bibliotek_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Bibliotek.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "boende_aldre": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Boende_aldre.png"
+          },
+          "label": "Boende för äldre"
+        }
+      ]
+    ],
+    "boende_aldre_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Boende_aldre.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "boende_lss": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Boende_lss.png"
+          },
+          "label": "Boende för LSS"
+        }
+      ]
+    ],
+    "boende_lss_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Boende_lss.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "fixpunkt": [
+      [
+        {
+          "icon": {
+            "size": [30, 30],
+            "src": "data/png/Fixpunkt.png"
+          },
+          "label": "Fixpunkt"
+        }
+      ]
+    ],
+    "fritidsgard": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Fritidsgard_gron.png"
+          },
+          "label": "Fritidsgård"
+        }
+      ]
+    ],
+    "fritidsgard_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Fritidsgard_gron.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "forskola": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Forskola.png"
+          },
+          "label": "Förskola"
+        }
+      ]
+    ],
+    "forskola_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Forskola.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "grundskola": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Grundskola.png"
+          },
+          "label": "Grundskola"
+        }
+      ]
+    ],
+    "grundskola_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Grundskola.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "grundsarskola": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Grundsarskola.png"
+          },
+          "label": "Grundsärskola"
+        }
+      ]
+    ],
+    "gymnasieskola": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Gymnasieskola.png"
+          },
+          "label": "Gymnasieskola"
+        }
+      ]
+    ],
+    "gymnasieskola_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Gymnasieskola.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "hundrastgard": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Hundrastgard.png"
+          },
+          "label": "Hundrastgård"
+        }
+      ]
+    ],
+    "hundrastgard_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Hundrastgard.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "hundrastgard_yta": [
+      [
+        {
+          "fill": {
+            "color": "rgba(175,175,121,0.2)"
+          },
+          "stroke": {
+            "color": "rgba(186,186,15,1)",
+            "width": 1.4,
+            "lineDash": [12, 5]
+          }
+        }
+      ]
+    ],
+    "idrottsanl": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Idrottsanlaggningar_gron.png"
+          },
+          "label": "Idrottsanläggning"
+        }
+      ]
+    ],
+    "idrottsanl_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Idrottsanlaggningar_gron.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "isbana": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Skridsko_gron.png"
+          },
+          "label": "Spolade isbanor"
+        }
+      ]
+    ],
+    "isbana_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Skridsko_gron.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "kulturverksamhet": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Kulturverksamhet.png"
+          },
+          "label": "Kulturverksamhet"
+        }
+      ]
+    ],
+    "kulturverksamhet_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Kulturverksamhet.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "lekplatser": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Lekplatser.png"
+          },
+          "label": "Lekplatser"
+        }
+      ]
+    ],
+    "lekplatser_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Lekplatser.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "motesplatser_aof": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Motesplatser.png"
+          },
+          "label": "Mötesplatser"
+        }
+      ]
+    ],
+    "motesplatser_aof_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Motesplatser.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "motionsspar": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Motionsspar_gron.png"
+          },
+          "label": "Motionsspår"
+        }
+      ]
+    ],
+    "motionsspar_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Motionsspar_gron.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "museum": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Museum.png"
+          },
+          "label": "Museum"
+        }
+      ]
+    ],
+    "museum_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Museum.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "naturres_forslag": [
+      [
+        {
+          "fill": {
+            "color": "rgba(58,156,164,0.4)"
+          },
+          "stroke": {
+            "color": "rgba(58,156,164,1)",
+            "width": 2,
+            "lineDash": [6, 3]
+          },
+          "label": "Naturreservat"
+        }
+      ]
+    ],
+    "parker": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Park.png"
+          },
+          "label": "Parker"
+        }
+      ]
+    ],
+    "parker_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Park.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "ped_omsorg": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Ped_omsorg.png"
+          },
+          "label": "Pedagogisk omsorg"
+        }
+      ]
+    ],
+    "ped_omsorg_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Ped_omsorg.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "polygonpunkt": [
+      [
+        {
+          "icon": {
+            "size": [30, 30],
+            "src": "data/png/Polygonpunkt.png"
+          },
+          "label": "Polygonpunkt"
+        }
+      ]
+    ],
+    "teater": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Teater.png"
+          },
+          "label": "Teater"
+        }
+      ]
+    ],
+    "sarskola": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Sarskola.png"
+          }
+        }
+      ]
+    ],
+    "stompunkt": [
+      [
+        {
+          "circle": {
+            "radius": 5,
+            "stroke": {
+              "color": "rgba(0,0,0,1)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(59,96,156,1)"
+            }
+          }
+        }
+      ]
+    ],
+    "cykelvag": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(178,108,189,1.0)",
+            "width": 2
+          },
+          "label": "Cykelvägar"
+        }
+      ]
+    ],
+    "vandringsled_main": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(219,117,49,1.0)",
+            "lineDash": [7, 3],
+            "width": 3
+          },
+          "header": true,
+          "label": "Vandringsled",
+          "filter": "[datamangd] == 'Vandringsled'"
+        }
+      ],
+      [
+        {
+          "stroke": {
+            "color": "rgba(106,133,70,1.0)",
+            "lineDash": [7, 3],
+            "width": 3
+          },
+          "label": "Upplandsleden",
+          "filter": "[datamangd] == 'Upplandsleden'"
+        }
+      ]
+    ],
+    "vandringsled": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(219,117,49,1.0)",
+            "lineDash": [7, 3],
+            "width": 3
+          },
+          "label": "Vandringsled"
+        }
+      ]
+    ],
+    "upplandsleden": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(106,133,70,1.0)",
+            "lineDash": [7, 3],
+            "width": 3
+          },
+          "label": "Upplandsleden"
+        }
+      ]
+    ],
+    "vattenkva_main": [
+      [
+        {
+          "fill": {
+            "color": "rgba(36,81,152,0.7)"
+          },
+          "stroke": {
+            "color": "rgba(36,81,152,0.7)",
+            "width": 1
+          },
+          "label": "Vattenkvalité"
+        }
+      ]
+    ],
+    "vattenkva_y": [
+      [
+        {
+          "fill": {
+            "color": "rgba(36,81,152,0.7)"
+          },
+          "label": "Vatten"
+        }
+      ]
+    ],
+    "vattenkva_l": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(36,81,152,0.7)",
+            "width": 5
+          }
+        }
+      ]
+    ],
+    "naturreservat_y": [
+      [
+        {
+          "fill": {
+            "color": "rgba(104,105,2,0.6)"
+          },
+          "stroke": {
+            "color": "rgba(104,105,2,1)",
+            "width": 2
+          },
+          "label": "Naturreservat"
+        }
+      ]
+    ],
+    "vuxenutbildning": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Vuxenutbildning.png"
+          },
+          "label": "Vuxenutbildning"
+        }
+      ]
+    ],
+    "vuxenutbildning_cluster": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "data/png/Vuxenutbildning.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 10,
+            "offsetY": -10,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [14, 14],
+            "anchor": [17, 17],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "orto_mini": [
+      [
+        {
+          "icon": {
+            "size": [32, 32],
+            "src": "img/png/orto_mini.png"
+          },
+          "label": "Ortofoto"
+        }
+      ]
+    ],
+    "karta_gra": [
+      [
+        {
+          "image": {
+            "src": "img/png/gra.png"
+          },
+          "label": "Topografiska webbkartan, nedtonad"
+        }
+      ]
+    ],
+    "karta_farg": [
+      [
+        {
+          "image": {
+            "src": "img/png/farg.png"
+          },
+          "label": "Topografiska webbkartan"
+        }
+      ]
+    ],
+    "karta_terrang": [
+      [
+        {
+          "image": {
+            "src": "img/png/terrang.png"
+          },
+          "label": "Terrängskuggning"
+        }
+      ]
+    ],
+    "orto": [
+      [
+        {
+          "image": {
+            "src": "img/png/orto.png"
+          },
+          "label": "Ortofoto"
+        }
+      ]
+    ]
+  }
+}
