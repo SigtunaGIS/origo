@@ -1,7 +1,9 @@
 import defaultStyle from './stylefunctions/default';
+import hovaStyle from './stylefunctions/hova';
 
 const customStyles = {
-  default: defaultStyle
+  default: defaultStyle,
+  hova: hovaStyle
 };
 
 export default function styleFunctions(customStyle, params) {
