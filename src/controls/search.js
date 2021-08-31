@@ -60,7 +60,6 @@ const Search = function Search(options = {}) {
   let containerElement;
   let wrapperElement;
 
-
   function clear() {
     featureInfo.clear();
     if (overlay) {
@@ -168,7 +167,7 @@ const Search = function Search(options = {}) {
       layer = viewer.getLayer(data[layerNameAttribute]);
       id = data[idAttribute];
       getFeature(id, layer, source, projCode, proj)
-        .done((res) => {
+        .then((res) => {
           let featureWkt;
           let coordWkt;
           if (res.length > 0) {

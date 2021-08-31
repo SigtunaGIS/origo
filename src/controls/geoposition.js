@@ -10,21 +10,31 @@ const Geoposition = function Geoposition(options = {}) {
 
   const {
     active = false,
-    panTo = true
+    panTo = true,
+    enableTracking = false
   } = options;
+
+  const geolocationIcon = '#ic_near_me_24px';
+  const trackingIcon = '#ic_navigation_24px';
 
   let viewer;
   let positionButton;
-  let baseUrl;
   let markerOverlay;
   let geolocation;
-  // const tooltipText = 'Visa nuvarande position i kartan';
 
   const centerPosition = () => {
     if (geolocation.getTracking()) {
       viewer.getMap().getView().animate({
         center: geolocation.getPosition(),
         zoom: zoomLevel
+      });
+    }
+  };
+
+  const trackingPosition = () => {
+    if (geolocation.getTracking()) {
+      viewer.getMap().getView().animate({
+        center: geolocation.getPosition()
       });
     }
   };
@@ -51,34 +61,53 @@ const Geoposition = function Geoposition(options = {}) {
   const toggleState = function toggleState() {
     if (positionButton.getState() === 'initial') {
       positionButton.dispatch('change', { state: 'active' });
+    } else if (positionButton.getState() === 'active' && enableTracking) {
+      positionButton.dispatch('change', { state: 'tracking' });
     } else {
       positionButton.dispatch('change', { state: 'initial' });
     }
   };
 
-  const onActive = function onActive() {
-    const markerEl = dom.createElement('img', '', {
-      src: `${baseUrl}img/geolocation_marker.png`
-    });
-    viewer.getMap().getTargetElement().appendChild(markerEl);
-    markerOverlay = new Overlay({
-      positioning: 'center-center',
-      element: markerEl,
-      stopEvent: false
-    });
-    viewer.getMap().addOverlay(markerOverlay);
+  const onPointerDrag = function onMapMove() {
+    geolocation.un('change', trackingPosition);
+    positionButton.setIcon(geolocationIcon);
+    positionButton.dispatch('change', { state: 'active' });
+  };
 
-    geolocation.on('change', updatePosition);
-    if (panTo) {
-      geolocation.once('change', centerPosition);
+  const onActive = function onActive() {
+    if (!geolocation.getTracking()) {
+      const markerEl = dom.createElement('img', '', {
+        src: 'img/geolocation_marker.png'
+      });
+      viewer.getMap().getTargetElement().appendChild(markerEl);
+      markerOverlay = new Overlay({
+        positioning: 'center-center',
+        element: markerEl,
+        stopEvent: false
+      });
+      viewer.getMap().addOverlay(markerOverlay);
+
+      geolocation.on('change', updatePosition);
+      if (panTo) {
+        geolocation.once('change', centerPosition);
+      }
+      geolocation.setTracking(true);
     }
-    geolocation.setTracking(true);
   };
 
   const onInitial = function onInitial() {
     geolocation.setTracking(false);
     geolocation.un('change', updatePosition);
+    geolocation.un('change', trackingPosition);
+    viewer.getMap().un('pointerdrag', onPointerDrag);
     viewer.getMap().removeOverlay(markerOverlay);
+    positionButton.setIcon(geolocationIcon);
+  };
+
+  const onTracking = function onTracking() {
+    geolocation.on('change', trackingPosition);
+    positionButton.setIcon(trackingIcon);
+    viewer.getMap().on('pointerdrag', onPointerDrag);
   };
 
   return Component({
@@ -87,7 +116,6 @@ const Geoposition = function Geoposition(options = {}) {
       viewer = evt.target;
       if (!target) target = `${viewer.getMain().getNavigation().getId()}`;
       if (!zoomLevel) zoomLevel = viewer.getResolutions().length - 3 || 0;
-      baseUrl = viewer.getBaseUrl();
       this.on('render', this.onRender);
       this.addComponents([positionButton]);
 
@@ -108,12 +136,13 @@ const Geoposition = function Geoposition(options = {}) {
         click() {
           toggleState();
         },
-        icon: '#ic_near_me_24px',
+        icon: geolocationIcon,
         tooltipText: 'Visa din nuvarande position i kartan',
         tooltipPlacement: 'east',
         methods: {
           active: onActive,
-          initial: onInitial
+          initial: onInitial,
+          tracking: onTracking
         }
       });
     },

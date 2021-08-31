@@ -16,6 +16,7 @@ import Footer from './components/footer';
 import flattenGroups from './utils/flattengroups';
 import getAttributes from './getattributes';
 import getcenter from './geometry/getcenter';
+import isEmbedded from './utils/isembedded';
 
 const Viewer = function Viewer(targetOption, options = {}) {
   let map;
@@ -28,7 +29,6 @@ const Viewer = function Viewer(targetOption, options = {}) {
   } = options;
 
   const {
-    baseUrl = '',
     breakPoints,
     breakPointsPrefix,
     clsOptions = '',
@@ -91,7 +91,9 @@ const Viewer = function Viewer(targetOption, options = {}) {
 
   const addControl = function addControl(control) {
     if (control.onAdd && control.dispatch) {
-      this.addComponent(control);
+      if (!control.options.hideWhenEmbedded || !isEmbedded(this.getTarget())) {
+        this.addComponent(control);
+      }
     } else {
       throw new Error('Valid control must have onAdd and dispatch methods');
     }
@@ -104,8 +106,6 @@ const Viewer = function Viewer(targetOption, options = {}) {
   };
 
   const getExtent = () => extent;
-
-  const getBaseUrl = () => baseUrl;
 
   const getBreakPoints = function getBreakPoints(size) {
     return size && size in breakPoints ? breakPoints[size] : breakPoints;
@@ -181,7 +181,17 @@ const Viewer = function Viewer(targetOption, options = {}) {
     return layers;
   };
 
-  const getLayer = layerName => getLayers().filter(layer => layer.get('name') === layerName)[0];
+  const getLayer = function getLayer(layerName) {
+    const layerArray = getLayers();
+    if (layerArray.some(layer => layer.get('name') === layerName)) {
+      return layerArray.find(layer => layer.get('name') === layerName);
+    } else if (layerArray.some(layer => layer.get('type') === 'GROUP')) {
+      const groupLayerArray = layerArray.filter(layer => layer.get('type') === 'GROUP');
+      const layersFromGroupLayersArray = groupLayerArray.map(groupLayer => groupLayer.getLayers().getArray());
+      return layersFromGroupLayersArray.flat().find(layer => layer.get('name') === layerName);
+    }
+    return undefined;
+  };
 
   const getQueryableLayers = function getQueryableLayers() {
     const queryableLayers = getLayers().filter(layer => layer.get('queryable') && layer.getVisible());
@@ -260,9 +270,16 @@ const Viewer = function Viewer(targetOption, options = {}) {
   const mergeSecuredLayer = (layerlist, capabilitiesLayers) => {
     if (capabilitiesLayers && Object.keys(capabilitiesLayers).length > 0) {
       layerlist.forEach((layer) => {
+        // remove double underscore plus a suffix from layer name
+        let layername = '';
+        if (layer.name.includes('__')) {
+          layername = layer.name.substring(0,layer.name.lastIndexOf('__'));
+        }else{
+          layername = layer.name
+        }
         const layerSourceOptions = layer.source ? getSource2(layer.source) : undefined;
         if (layerSourceOptions && layerSourceOptions.capabilitiesURL) {
-          if (capabilitiesLayers[layer.source].indexOf(layer.name) >= 0) {
+          if (capabilitiesLayers[layer.source].indexOf(layername) >= 0) {
             layer.secure = false;
           } else {
             layer.secure = true;
@@ -441,15 +458,19 @@ const Viewer = function Viewer(targetOption, options = {}) {
       });
 
       if (urlParams.feature) {
-        const featureId = urlParams.feature;
+        let featureId = urlParams.feature;
         const layerName = featureId.split('.')[0];
         const layer = getLayer(layerName);
         if (layer) {
           layer.once('postrender', () => {
             let feature;
-            const type = layer.get('type');
-            feature = layer.getSource().getFeatureById(featureId);
-            if (type === 'WFS') {
+
+            if (type === 'WFS' && clusterSource) {
+              feature = clusterSource.getFeatureById(featureId);
+            } else if (type === 'WFS') {
+              if (featureId.includes('__')) {
+                featureId = featureId.replace(featureId.substring(featureId.lastIndexOf('__'), featureId.lastIndexOf('.')), '');
+              }
               feature = layer.getSource().getFeatureById(featureId);
             } else {
               const id = featureId.split('.')[1];
@@ -521,7 +542,6 @@ const Viewer = function Viewer(targetOption, options = {}) {
     addLayers,
     addSource,
     addStyle,
-    getBaseUrl,
     getBreakPoints,
     getCenter,
     getClusterOptions,

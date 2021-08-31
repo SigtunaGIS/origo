@@ -3,11 +3,11 @@ export default function printTemplate({
   customSizeControl,
   descriptionControl,
   marginControl,
-  scaleControl,
   orientationControl,
   sizeControl,
   titleControl,
   createdControl,
+  scaleControl,
   northArrowControl,
   rotationControl
 }) {
@@ -43,7 +43,7 @@ export default function printTemplate({
     </div>
     <div class="padding-top-large"></div>
     <div class="flex padding-right-small">
-      <div class="grow text-normal">Visa Norrpil</div>
+      <div class="grow text-normal">Visa norrpil</div>
       ${northArrowControl.render()}
     </div>
       ${rotationControl.render()}

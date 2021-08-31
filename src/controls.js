@@ -1,5 +1,6 @@
 export { default as About } from './controls/about';
 export { default as Attribution } from './controls/attribution';
+export { default as Bookmarks } from './controls/bookmarks';
 export { default as Draganddrop } from './controls/draganddrop';
 export { default as Editor } from './controls/editor';
 export { default as Fullscreen } from './controls/fullscreen';
@@ -20,7 +21,6 @@ export { default as Sharemap } from './controls/sharemap';
 export { default as Splash } from './controls/splash';
 export { default as Zoom } from './controls/zoom';
 export { default as Externalurl } from './controls/externalurl';
-export { default as Multiselect } from './controls/multiselect';
 export { default as Scalepicker } from './controls/scalepicker';
 export { default as Keepexternalsessionalive } from './controls/keepexternalsessionalive';
 export { default as Exportmap } from './controls/exportmap';

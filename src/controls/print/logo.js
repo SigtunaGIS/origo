@@ -2,7 +2,6 @@ import { Element as El } from '../../ui';
 
 export default function Logo(options = {}) {
   const {
-    baseUrl,
     logo
   } = options;
   let {
@@ -23,7 +22,7 @@ export default function Logo(options = {}) {
   }
 
   return El({
-    attributes: { src: `${baseUrl}${src}` },
+    attributes: { src: `${src}` },
     cls,
     tagName: 'img',
     style

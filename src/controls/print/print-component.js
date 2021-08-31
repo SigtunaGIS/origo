@@ -20,7 +20,8 @@ const PrintComponent = function PrintComponent(options = {}) {
     map,
     target,
     viewer,
-    createdPrefix
+    createdPrefix,
+    rotationEnable
   } = options;
 
   let {
@@ -30,6 +31,7 @@ const PrintComponent = function PrintComponent(options = {}) {
     showScale,
     showNorthArrow
   } = options;
+
 
   let pageElement;
   let pageContainerElement;
@@ -61,6 +63,10 @@ const PrintComponent = function PrintComponent(options = {}) {
     }
   };
 
+  const created = function created() {
+    return showCreated ? `${createdPrefix}${today.toLocaleDateString()} ${today.toLocaleTimeString()}` : '';
+  };
+
   const scale = function scale() {
     const roundScale = (scale) => {
       const diff = scale % 10;
@@ -77,10 +83,6 @@ const PrintComponent = function PrintComponent(options = {}) {
     return showScale ? `${mapScale}` : '';
   };
 
-  const created = function created() {
-    return showCreated ? `${createdPrefix}${today.toLocaleDateString()} ${today.toLocaleTimeString()}` : '';
-  };
-
 
   const titleComponent = Component({
     update() { dom.replace(document.getElementById(this.getId()), this.render()); },
@@ -91,14 +93,15 @@ const PrintComponent = function PrintComponent(options = {}) {
     render() { return `<div id="${this.getId()}" class="o-print-description padding-y text-grey-dark empty">${description}</div>`; }
   });
   const scaleComponent = Component({
-  update() { dom.replace(document.getElementById(this.getId()), this.render()); },
-  render() { return `<div id="${this.getId()}" class="o-print-scale-text padding-right text-grey-dark text-align-right text-smaller empty">${scale()}</div>`; }
+    update() { dom.replace(document.getElementById(this.getId()), this.render()); },
+    render() { return `<div id="${this.getId()}" class="o-print-scale-map padding-right text-grey-dark text-align-right text-smaller empty">${scale()}</div>`; }
   });
   const createdComponent = Component({
     update() { dom.replace(document.getElementById(this.getId()), this.render()); },
-    render() { return `<div id="${this.getId()}" class="o-print-created padding-right text-grey-dark text-align-right text-smaller empty">${created()}</div>`; }
+    render() { return `<div id="${this.getId()}" class="o-print-created padding-right text-grey-dark text-align-left text-smaller empty">${created()}</div>`; }
   });
-  const printMapComponent = PrintMap({ baseUrl: viewer.getBaseUrl(), logo, northArrow, map, viewer, showNorthArrow });
+
+  const printMapComponent = PrintMap({ logo, northArrow, map, viewer, showNorthArrow });
 
   const printSettings = PrintSettings({
     orientation,
@@ -108,7 +111,8 @@ const PrintComponent = function PrintComponent(options = {}) {
     map,
     showScale,
     showCreated,
-    showNorthArrow
+    showNorthArrow,
+    rotationEnable: options.rotationEnable
   });
   const printToolbar = PrintToolbar();
   const closeButton = Button({

@@ -1,12 +1,17 @@
-.errorMsg {
-  color: $orange;
-}
-:optional {
-  border-color: $grey-lightest;
-}
-:required:invalid {
-  border-color: $orange;
-}
-:invalid {
-  border-color: $orange;
+.validate > {
+  .errorMsg {
+    color: $orange;
+  }
+
+  input:optional {
+    border-color: $grey-lightest;
+  }
+
+  input:required:invalid {
+    border-color: $orange;
+  }
+
+  input:invalid {
+    border-color: $orange;
+  }
 }

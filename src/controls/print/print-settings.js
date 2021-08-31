@@ -5,11 +5,11 @@ import printSettingsTemplate from './print-settings.template';
 import CustomSizeControl from './custom-size-control';
 import DescriptionControl from './description-control';
 import MarginControl from './margin-control';
-import ScaleControl from './scale-control';
 import OrientationControl from './orientation-control';
 import SizeControl from './size-control';
 import TitleControl from './title-control';
 import CreatedControl from './created-control';
+import ScaleControl from './scale-control';
 import NorthArrowControl from './north-arrow-control';
 import RotationControl from './rotation-control';
 
@@ -21,9 +21,10 @@ const PrintSettings = function PrintSettings({
   customSize,
   sizes,
   map,
-  showScale,
   showCreated,
-  showNorthArrow
+  showScale,
+  showNorthArrow,
+  rotationEnable
 } = {}) {
   let headerComponent;
   let contentComponent;
@@ -76,7 +77,6 @@ const PrintSettings = function PrintSettings({
         icon: closeIcon,
         state: 'hidden',
         validStates: ['initial', 'hidden'],
-        ariaLabel: 'Stäng',
         click() {
           toggle();
         }
@@ -92,10 +92,10 @@ const PrintSettings = function PrintSettings({
       const titleControl = TitleControl({});
       const descriptionControl = DescriptionControl();
       const marginControl = MarginControl({ checked: true });
-      const scaleControl = ScaleControl({ checked: showScale });
       const createdControl = CreatedControl({ checked: showCreated });
+      const scaleControl = ScaleControl({ checked: showScale });
       northArrowControl = NorthArrowControl({ showNorthArrow });
-      rotationControl = RotationControl({ rotation: 0, map });
+      rotationControl = RotationControl({ rotation: 0, map, rotationEnable });
       customSizeControl = CustomSizeControl({
         state: initialSize === 'custom' ? 'active' : 'inital',
         height: customSize[0],
@@ -120,7 +120,7 @@ const PrintSettings = function PrintSettings({
           });
         }
       });
-      contentComponent.addComponents([customSizeControl, marginControl, orientationControl, sizeControl, titleControl, descriptionControl, scaleControl, createdControl, northArrowControl, rotationControl]);
+      contentComponent.addComponents([customSizeControl, marginControl, orientationControl, sizeControl, titleControl, descriptionControl, createdControl, scaleControl, northArrowControl, rotationControl]);
       printSettingsContainer = Collapse({
         cls: 'no-print fixed flex column top-left rounded box-shadow bg-white overflow-hidden z-index-ontop-high',
         collapseX: true,
@@ -132,13 +132,13 @@ const PrintSettings = function PrintSettings({
 
       descriptionControl.on('change', (evt) => this.dispatch('change:description', evt));
       marginControl.on('change:check', (evt) => this.dispatch('change:margin', evt));
-      scaleControl.on('change:check', (evt) => this.dispatch('change:scale', evt));
       orientationControl.on('change:orientation', (evt) => this.dispatch('change:orientation', evt));
       sizeControl.on('change:size', (evt) => this.dispatch('change:size', evt));
       sizeControl.on('change:size', this.onChangeSize.bind(this));
       customSizeControl.on('change:size', (evt) => this.dispatch('change:size-custom', evt));
       titleControl.on('change', (evt) => this.dispatch('change:title', evt));
       createdControl.on('change:check', (evt) => this.dispatch('change:created', evt));
+      scaleControl.on('change:check', (evt) => this.dispatch('change:scale', evt));
       northArrowControl.on('change:check', (evt) => this.dispatch('change:northarrow', evt));
     },
     onChangeSize(evt) {

@@ -1,4 +1,5 @@
 @import './variables';
+
 .o-ui {
   @import './utils/mixins';
   @import './base/base';
@@ -9,7 +10,6 @@
   @import './grid';
   @import './box';
   @import './input';
-  @import './input-range';
   @import './button';
   @import './collapse';
   @import './icon';
@@ -29,7 +29,7 @@
 }
 
 .app {
-  background-color: rgba(0,0,0,0.1);
+  background-color: rgba(0, 0, 0, 0.1);
   height: 100%;
   width: 100%;
 }

@@ -8,7 +8,6 @@ import NorthArrow from './north-arrow';
 
 export default function PrintMap(options = {}) {
   const {
-    baseUrl,
     logo,
     northArrow,
     map,
@@ -27,8 +26,8 @@ export default function PrintMap(options = {}) {
   const topRightMapControls = El({ cls: 'flex column align-start absolute top-right transparent z-index-ontop-middle' });
   const bottomLeftMapControls = El({ cls: 'flex column align-start absolute bottom-left transparent z-index-ontop-middle' });
   const bottomRightMapControls = El({ cls: 'flex column align-start absolute bottom-right transparent z-index-ontop-middle' });
-  const logoComponent = Logo({ baseUrl, logo });
-  const northArrowComponent = NorthArrow({ baseUrl, northArrow, map });
+  const logoComponent = Logo({ logo });
+  const northArrowComponent = NorthArrow({ northArrow, map });
 
   const roundScale = (scale) => {
     const diff = scale % 10;
@@ -84,7 +83,8 @@ export default function PrintMap(options = {}) {
       try {
         const currentMapScale = numberFormatter(getCurrentMapScale());
         mapScale = `1:${currentMapScale}`;
-        document.getElementsByClassName('o-print-scale-text')[0].textContent = mapScale;
+        // document.getElementsByClassName('print-map-scale-text')[0].textContent = mapScale;
+        document.getElementsByClassName('o-print-scale-map')[0].textContent = mapScale;
       } catch (e) {
         console.log();
       }

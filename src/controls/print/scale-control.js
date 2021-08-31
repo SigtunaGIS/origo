@@ -5,7 +5,6 @@ export default function ScaleControl(options = {}) {
     checked
   } = options;
 
-
   const checkIcon = '#ic_check_circle_24px';
   const uncheckIcon = '#ic_radio_button_unchecked_24px';
 

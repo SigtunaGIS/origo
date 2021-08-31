@@ -3,7 +3,8 @@ import { InputRange, Component } from '../../ui';
 export default function RotationControl(options = {}) {
   const {
     rotation = 0,
-    map
+    map,
+    rotationEnable
   } = options;
 
   const rotationSlider = InputRange({
@@ -16,6 +17,13 @@ export default function RotationControl(options = {}) {
       'align-self': 'center'
     }
   });
+
+  let showRotationComponent = '';
+  if(!rotationEnable){
+    showRotationComponent = 'hidden';
+  }else{
+    showRotationComponent = '';
+  }
 
   return Component({
     onInit() {
@@ -50,12 +58,15 @@ export default function RotationControl(options = {}) {
       }
     },
     render() {
+      // if control "rotationEnable" is false, add hidden attribute
       return `
       <div class="padding-top-large"></div>
+      <div id="o-print-rotation" ${showRotationComponent}>
       <h6>Rotera karta</h6>
       <div class="padding-smaller o-tooltip active">
         ${rotationSlider.render()}
       <div class="text-align-center"><span class="text-smaller float-left">0&deg;</span><span class="text-smaller float-right">360&deg;</span></div>
+      </div>
       </div>`;
     }
   });
