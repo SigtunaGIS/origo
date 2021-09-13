@@ -100,7 +100,7 @@
     {
       "name": "measure",
       "options": {
-        "snap": true, 
+        "snap": true,
         "snapRadius": 20
       }
     }
@@ -133,20 +133,11 @@
   "center": [142476, 6614452],
   "zoom": 5,
   "resolutions": [
-    573.4399999999999,
-    286.71999999999997,
-    143.35999999999999,
-    71.67999999999999,
-    35.839999999999996,
-    17.919999999999998,
-    8.959999999999999,
-    4.4799999999999995,
-    2.2399999999999998,
-    1.1199999999999999,
-    0.5599999999999999,
-    0.27999999999999997,
-    0.13999999999999999,
-    0.055999999999999994
+    573.4399999999999, 286.71999999999997, 143.35999999999999,
+    71.67999999999999, 35.839999999999996, 17.919999999999998,
+    8.959999999999999, 4.4799999999999995, 2.2399999999999998,
+    1.1199999999999999, 0.5599999999999999, 0.27999999999999997,
+    0.13999999999999999, 0.055999999999999994
   ],
   "enableRotation": true,
   "featureinfoOptions": {
@@ -156,10 +147,10 @@
     "infowindow": "infowindow",
     "infowindowOptions": {
       "export": {
-        "simpleExportLayers": ["buf_skolplacering_y"],
+        "simpleExportLayers": ["sbk_inf_cykel_l"],
         "simpleExportButtonText": "Simple export layer",
-        "useCustomSimpleExportButton": true, 
-        "customSimpleButtonIcon": "#fa-floppy-o", 
+        "useCustomSimpleExportButton": true,
+        "customSimpleButtonIcon": "#fa-floppy-o",
         "customSimpleButtonTooltipText": "Simple tooltip text",
         "simpleExportUrl": "https://localhost:9966",
         "layerSpecificExport": [
@@ -169,50 +160,62 @@
             "exportUrls": [
               {
                 "url": "https://localhost:9966",
-                "buttonText": "Save1",
-                "useCustomButton": true,
-                "customButtonIcon": "img/png/farg.png",
-                "customButtonTooltipText": "A tooltip text 1",
+                "buttons": {
+                  "buttonText": "Save1",
+                  "roundButton": true,
+                  "roundButtonIcon": "img/png/farg.png",
+                  "roundButtonTooltipText": "A tooltip text 1"
+                },
                 "exportedFileName": "Filename.csv"
               },
               {
                 "url": "https://localhost:9966",
-                "buttonText": "Save2",
-                "useCustomButton": true,
-                "customButtonIcon": "#fa-print",
-                "customButtonTooltipText": "A tooltip text 2",
+                "buttons": {
+                  "buttonText": "Save2",
+                  "roundButton": true,
+                  "roundButtonIcon": "#fa-print",
+                  "roundButtonTooltipText": "A tooltip text 2"
+                },
                 "exportedFileName": "Filename.csv"
               },
               {
                 "url": "https://localhost:9966",
-                "buttonText": "Save by use of a service of some kind",
-                "useCustomButton": false,
-                "customButtonIcon": "#fa-check",
-                "customButtonTooltipText": "A tooltip text 3",
+                "buttons": {
+                  "buttonText": "Save by use of a service of some kind",
+                  "roundButton": false,
+                  "roundButtonIcon": "#fa-check",
+                  "roundButtonTooltipText": "A tooltip text 3"
+                },
                 "exportedFileName": "Filename.csv"
               },
               {
                 "url": "https://localhost:9966",
-                "buttonText": "Save3",
-                "useCustomButton": true,
-                "customButtonIcon": "#fa-pencil",
-                "customButtonTooltipText": "A tooltip text 4",
+                "buttons": {
+                  "buttonText": "Save3",
+                  "roundButton": true,
+                  "roundButtonIcon": "#fa-pencil",
+                  "roundButtonTooltipText": "A tooltip text 4"
+                },
                 "exportedFileName": "Filename.csv"
               },
               {
                 "url": "https://localhost:9966",
-                "buttonText": "Save3",
-                "useCustomButton": true,
-                "customButtonIcon": "#fa-download",
-                "customButtonTooltipText": "A tooltip text 5",
+                "buttons": {
+                  "buttonText": "Save3",
+                  "roundButton": true,
+                  "roundButtonIcon": "#fa-download",
+                  "roundButtonTooltipText": "A tooltip text 5"
+                },
                 "exportedFileName": "Filename.csv"
               },
               {
                 "url": "https://localhost:9966",
-                "buttonText": "Save by using some service",
-                "useCustomButton": false,
-                "customButtonIcon": "#fa-file-excel",
-                "customButtonTooltipText": "A tooltip text 6",
+                "buttons": {
+                  "buttonText": "Save by using some service",
+                  "roundButton": false,
+                  "roundButtonIcon": "#fa-file-excel",
+                  "roundButtonTooltipText": "A tooltip text 6"
+                },
                 "exportedFileName": "Filename.csv"
               }
             ]
