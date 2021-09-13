@@ -83,9 +83,7 @@ function makeElementDraggable(elm) {
 
   if (document.getElementById(`${elmnt.id}-draggable`)) {
     /* if present, the header is where you move the DIV from: */
-    document.getElementById(
-      `${elmnt.id}-draggable`
-    ).onmousedown = dragMouseDown;
+    document.getElementById(`${elmnt.id}-draggable`).onmousedown = dragMouseDown;
   } else {
     /* otherwise, move the DIV from anywhere inside the DIV: */
     elmnt.onmousedown = dragMouseDown;
@@ -189,21 +187,28 @@ function createExportButton(buttonText) {
   return container;
 }
 
-function createCustomExportButton(customButtonIcon, customButtonTooltipText) {
+function createCustomExportButton(roundButtonIcon, roundButtonTooltipText) {
   const container = document.createElement('div');
   container.classList.add('inline-block', 'padding-smallest');
 
   const iconComponent = Icon({
-    icon: customButtonIcon,
+    icon: roundButtonIcon,
     title: ''
   });
   const button = document.createElement('button');
   button.classList.add(
-    'padding-small', 'margin-bottom-smaller', 'icon-smaller', 'round', 'light', 'box-shadow', 'o-tooltip', 'margin-right-small'
+    'padding-small',
+    'margin-bottom-smaller',
+    'icon-smaller',
+    'round',
+    'light',
+    'box-shadow',
+    'o-tooltip',
+    'margin-right-small'
   );
   button.style = 'position: relative';
 
-  button.innerHTML = `<span class="icon" style="z-index: 10000">${iconComponent.render()}</span><span data-tooltip="${customButtonTooltipText}" data-placement="south"></span>`;
+  button.innerHTML = `<span class="icon" style="z-index: 10000">${iconComponent.render()}</span><span data-tooltip="${roundButtonTooltipText}" data-placement="south"></span>`;
 
   container.appendChild(button);
   const spinner = document.createElement('img');
@@ -262,17 +267,17 @@ function createExportButtons(
   selectionGroup,
   activeLayer
 ) {
-  const useCustomButton = obj.useCustomButton || false;
-  const buttonText = obj.buttonText || 'Export';
+  const roundButton = obj.buttons.roundButton || false;
+  const buttonText = obj.buttons.buttonText || 'Export';
   const url = obj.url;
   const layerSpecificExportedFileName = obj.exportedFileName;
   const attributesToSendToExport = obj.attributesToSendToExport
     ? obj.attributesToSendToExport
     : attributesToSendToExportPerLayer;
-  const exportBtn = useCustomButton
+  const exportBtn = roundButton
     ? createCustomExportButton(
-      obj.customButtonIcon,
-      obj.customButtonTooltipText
+      obj.buttons.roundButtonIcon,
+      obj.buttons.roundButtonTooltipText
     )
     : createExportButton(buttonText);
   const btn = exportBtn.querySelector('button');
@@ -282,9 +287,7 @@ function createExportButtons(
       return;
     }
     btn.loadStart();
-    const selectedItems = selectionManager.getSelectedItemsForASelectionGroup(
-      selectionGroup
-    );
+    const selectedItems = selectionManager.getSelectedItemsForASelectionGroup(selectionGroup);
     layerSpecificExportHandler(
       url,
       activeLayer,
@@ -344,9 +347,11 @@ function createSubexportComponent(selectionGroup) {
   if (layerSpecificExportOptions) {
     const exportUrls = layerSpecificExportOptions.exportUrls || [];
     const attributesToSendToExportPerLayer = layerSpecificExportOptions.attributesToSendToExport;
-    const customButtonExportUrls = exportUrls.filter((e) => e.useCustomButton);
+    const customButtonExportUrls = exportUrls.filter(
+      (e) => e.buttons.roundButton
+    );
     const standardButtonExportUrls = exportUrls.filter(
-      (e) => !e.useCustomButton
+      (e) => !e.buttons.roundButton
     );
 
     customButtonExportUrls.forEach((obj) => {
@@ -370,8 +375,8 @@ function createSubexportComponent(selectionGroup) {
   } else if (simpleExportLayers.length) {
     const exportAllowed = simpleExportLayers.find((l) => l === selectionGroup);
     if (exportAllowed) {
-      const useCustomButton = exportOptions.useCustomSimpleExportButton || false;
-      const exportBtn = useCustomButton
+      const roundButton = exportOptions.useCustomSimpleExportButton || false;
+      const exportBtn = roundButton
         ? createCustomExportButton(
           exportOptions.customSimpleButtonIcon,
           exportOptions.customSimpleButtonTooltipText
@@ -384,9 +389,7 @@ function createSubexportComponent(selectionGroup) {
           return;
         }
         btn.loadStart();
-        const selectedItems = selectionManager.getSelectedItemsForASelectionGroup(
-          selectionGroup
-        );
+        const selectedItems = selectionManager.getSelectedItemsForASelectionGroup(selectionGroup);
         simpleExportHandler(
           simpleExportUrl,
           activeLayer,
@@ -583,9 +586,7 @@ function scrollListElementToView(featureId) {
         // time out is set so that element gets the time to expand first, otherwise it will be scrolled halfway to the view
         setTimeout(() => {
           const elementBoundingBox = element.getBoundingClientRect();
-          const listContainer2 = document.getElementsByClassName(
-            'listcontainer'
-          )[0];
+          const listContainer2 = document.getElementsByClassName('listcontainer')[0];
           const listContainerBoundingBox = listContainer2.getBoundingClientRect();
           if (elementBoundingBox.top < listContainerBoundingBox.top) {
             const scrollDownValue = listContainerBoundingBox.top - elementBoundingBox.top;
