@@ -327,7 +327,7 @@ function createSubexportComponent(selectionGroup) {
     ? exportOptions.simpleExportLayers
     : [];
   const simpleExportUrl = exportOptions.simpleExportUrl;
-  const simpleExportButtonText = exportOptions.simpleExportButtonText || 'Export';
+  const simpleExportButtonText = exportOptions.simpleExportButtons.buttonText || 'Export';
   const exportedFileName = exportOptions.exportedFileName;
   const activeLayer = viewer.getLayer(selectionGroup);
 
@@ -375,11 +375,11 @@ function createSubexportComponent(selectionGroup) {
   } else if (simpleExportLayers.length) {
     const exportAllowed = simpleExportLayers.find((l) => l === selectionGroup);
     if (exportAllowed) {
-      const roundButton = exportOptions.useCustomSimpleExportButton || false;
+      const roundButton = exportOptions.simpleExportButtons.roundButton || false;
       const exportBtn = roundButton
         ? createCustomExportButton(
-          exportOptions.customSimpleButtonIcon,
-          exportOptions.customSimpleButtonTooltipText
+          exportOptions.simpleExportButtons.roundButtonIcon,
+          exportOptions.simpleExportButtons.roundButtonTooltipText
         )
         : createExportButton(simpleExportButtonText);
       const btn = exportBtn.querySelector('button');

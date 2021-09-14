@@ -147,15 +147,17 @@
     "infowindow": "infowindow",
     "infowindowOptions": {
       "export": {
-        "simpleExportLayers": ["sbk_inf_cykel_l"],
-        "simpleExportButtonText": "Simple export layer",
-        "useCustomSimpleExportButton": true,
-        "customSimpleButtonIcon": "#fa-floppy-o",
-        "customSimpleButtonTooltipText": "Simple tooltip text",
+        "simpleExportLayers": ["buf_skolplacering_y"],
+        "simpleExportButtons": {
+          "buttonText": "Simple export layer",
+          "roundButton": true,
+          "roundButtonIcon": "#fa-floppy-o",
+          "roundButtonTooltipText": "Simple tooltip text"
+        },
         "simpleExportUrl": "https://localhost:9966",
         "layerSpecificExport": [
           {
-            "layer": "buf_skolplacering_y",
+            "layer": "sbk_inf_cykel_l",
             "attributesToSendToExport": ["arskurs"],
             "exportUrls": [
               {
