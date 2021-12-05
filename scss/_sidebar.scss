@@ -1,7 +1,7 @@
 #o-sidebar.o-sidebar-show {
-  transform: translateX(-270px);
-  transform: translateX(-270px);
-  transform: translateX(-270px);
+  transform: translateX(270px);
+  transform: translateX(270px);
+  transform: translateX(270px);
 }
 
 #o-sidebar {
@@ -10,7 +10,7 @@
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.45);
   height: 100%;
   position: absolute;
-  right: -270px;
+  left: -270px;
   top: 0;
   transform: translateX(0);
   transform: translateX(0);
@@ -37,15 +37,15 @@
 #o-sidebar .owl-carousel .owl-wrapper-outer {
   overflow-y: auto;
 }
-@media screen and (max-width: 320px) {
+@media screen and (max-width: 270px) {
   #o-sidebar {
-    right: -320px;
+    right: -270px;
     width: 100%;
   }
 
   #o-sidebar.o-sidebar-show {
-    transform: translateX(-320px);
-    transform: translateX(-320px);
-    transform: translateX(-320px);
+    transform: translateX(270px);
+    transform: translateX(270px);
+    transform: translateX(270px);
   }
 }
