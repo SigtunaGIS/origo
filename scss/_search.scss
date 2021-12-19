@@ -52,7 +52,7 @@ input.o-search-field::-ms-clear {
     line-height: 1rem;
   }
 }
-&[class*=#{$media-l-m-s-xs}] {
+&[class*=#{$media-l-m-s}] {
   .o-search-wrapper {
     display: none;
   }
