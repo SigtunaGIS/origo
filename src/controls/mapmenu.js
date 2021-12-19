@@ -17,29 +17,15 @@ const Mapmenu = function Mapmenu({
   let isExpanded = false;
   let mapMenuEl;
   let menuButtonEl;
-  let isActive = false;
-
-  // Set tabindex for all buttons to include or exclude in taborder depending on if expanded or not
-  const setTabIndex = function setTabIndex() {
-    let idx = -1;
-    if (isExpanded) {
-      idx = 0;
-    }
-    for (let i = 0; i < mapMenuEl.getElementsByTagName('button').length; i += 1) {
-      mapMenuEl.getElementsByTagName('button')[i].tabIndex = idx;
-    }
-  };
 
   const toggle = function toggle() {
     mapMenuEl.classList.toggle('faded');
-    menuButtonEl.classList.toggle('active');
-    isActive = !isActive;
-    mapMenuEl.style.cssText = 'top: 0rem; left: 3rem;';
-    setTabIndex();
+    menuButtonEl.classList.toggle('faded');
+    isExpanded = !isExpanded;
   };
 
   const close = function close() {
-    if (isActive) {
+    if (isExpanded) {
       toggle();
     }
   };
@@ -60,16 +46,10 @@ const Mapmenu = function Mapmenu({
     click,
     title = ''
   } = {}) {
-    let idx = -1;
-    if (isExpanded) {
-      idx = 0;
-    }
     const button = Button({
       cls: 'icon-smaller compact no-grow',
       click,
-      icon,
-      title,
-      tabIndex: idx
+      icon
     });
     const titleCmp = El({ cls: 'grow padding-left', innerHTML: title });
     return Component({
@@ -102,28 +82,25 @@ const Mapmenu = function Mapmenu({
     },
     onAdd(evt) {
       viewer = evt.target;
-      // target = document.getElementById(viewer.getMain().getId());
-      target = document.getElementById(viewer.getMain().getMapTools().getId());
+      target = document.getElementById(viewer.getMain().getId());
       this.on('render', this.onRender);
       this.addComponents([mapMenu, menuButton]);
       this.render();
       viewer.getMap().on('click', onMapClick);
     },
     onInit() {
-      // const menuButtonCls = isExpanded ? ' faded' : '';
-      const menuButtonCls = isActive ? ' active' : '';
-      const menuMenuElCls = isActive ? '' : ' faded';
+      const menuButtonCls = isExpanded ? ' faded' : '';
       menuButton = Button({
         icon: menuIcon,
-        cls: `control icon-smaller medium round light${menuButtonCls}`,
+        cls: `control icon-smaller medium round absolute light top-right${menuButtonCls}`,
         tooltipText: 'Meny',
-        tooltipPlacement: 'east',
+        tooltipPlacement: 'west',
         click() {
           toggle();
         }
       });
       closeButton = Button({
-        cls: 'small round margin-top-smaller margin-bottom-auto margin-right-small icon-smallest grey-lightest',
+        cls: 'small round margin-top-small margin-right-small icon-smaller grey-lightest',
         ariaLabel: 'Stäng',
         icon: closeIcon,
         click() {
@@ -141,9 +118,7 @@ const Mapmenu = function Mapmenu({
         }
       });
       mapMenu = El({
-        // cls: 'absolute flex column top-right control box bg-white overflow-hidden z-index-top faded',
-        cls: `absolute flex column control bg-white text-small overflow-hidden z-index-top no-select grab${menuMenuElCls}`,
-        style: 'top: 0rem; left: 3rem;',
+        cls: 'absolute flex column top-right control box bg-white overflow-hidden z-index-top faded',
         collapseX: true,
         components: [headerComponent, contentComponent]
       });
@@ -155,7 +130,6 @@ const Mapmenu = function Mapmenu({
       const el = dom.html(menuButton.render());
       target.appendChild(el);
       menuButtonEl = document.getElementById(menuButton.getId());
-      setTabIndex();
       this.dispatch('render');
     }
   });
