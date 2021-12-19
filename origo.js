@@ -38,9 +38,9 @@ const Origo = function Origo(configPath, options = {}) {
     svgSpritePath: 'css/svg/',
     svgSprites: ['fa-icons.svg', 'material-icons.svg', 'miscellaneous.svg', 'origo-icons.svg', 'custom.svg'],
     breakPoints: {
-      xs: [240, 320],
-      s: [320, 320],
-      m: [500, 500],
+      xs: [240, 200],
+      s: [320, 240],
+      m: [500, 370],
       l: [768, 500]
     },
     breakPointsPrefix: 'o-media',
