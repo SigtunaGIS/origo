@@ -43,7 +43,7 @@ const loadSvgSprites = function loadSvgSprites(config) {
   });
 };
 
-const loadResources = async function loadResources(mapOptions, config) {
+export const loadResources = async function loadResources(mapOptions, config) {
   const map = {};
   const mapEl = config.target;
   const format = 'json';
@@ -172,4 +172,11 @@ const loadResources = async function loadResources(mapOptions, config) {
   return loadMapOptions();
 };
 
-export default loadResources;
+export const parsePermalink = function parsePermalink(url) {
+  const mapUrl = getUrl();
+  if (!url.startsWith(mapUrl)) {
+    console.log('the url given is not valid for this map', url);
+    return null;
+  }
+  return permalink.parsePermalink(url);
+};

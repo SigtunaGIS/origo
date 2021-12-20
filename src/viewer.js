@@ -17,6 +17,7 @@ import flattenGroups from './utils/flattengroups';
 import getAttributes from './getattributes';
 import getcenter from './geometry/getcenter';
 import isEmbedded from './utils/isembedded';
+import { parsePermalink } from './loadresources';
 
 const Viewer = function Viewer(targetOption, options = {}) {
   let map;
@@ -449,6 +450,145 @@ const Viewer = function Viewer(targetOption, options = {}) {
     return urlParams;
   };
 
+  function handleUrlParams(params) {
+    if (params.feature) {
+      let featureId = params.feature;
+      const layerName = featureId.split('.')[0];
+      const layer = getLayer(layerName);
+      const type = layer.get('type');
+
+      if (layer && type !== 'GROUP') {
+        const clusterSource = layer.getSource().source;
+        const id = featureId.split('.')[1];
+        layer.once('postrender', () => {
+          let feature;
+
+          if (type === 'WFS' && clusterSource) {
+            feature = clusterSource.getFeatureById(featureId);
+          } else if (type === 'WFS') {
+            if (featureId.includes('__')) {
+              featureId = featureId.replace(featureId.substring(featureId.lastIndexOf('__'), featureId.lastIndexOf('.')), '');
+            }
+            feature = layer.getSource().getFeatureById(featureId);
+          } else if (clusterSource) {
+            feature = clusterSource.getFeatureById(id);
+          } else {
+            feature = layer.getSource().getFeatureById(id);
+          }
+
+          if (feature) {
+            const obj = {};
+            obj.feature = feature;
+            obj.title = layer.get('title');
+            obj.content = getAttributes(feature, layer);
+            obj.layer = layer;
+            const centerGeometry = getcenter(feature.getGeometry());
+            const infowindowType = featureinfoOptions.showOverlay === false ? 'sidebar' : 'overlay';
+            featureinfo.render([obj], infowindowType, centerGeometry);
+            map.getView().fit(feature.getGeometry(), {
+              maxZoom: getResolutions().length - 2,
+              padding: [15, 15, 40, 15],
+              duration: 1000
+            });
+          }
+        });
+      }
+    }
+
+    if (params.pin) {
+      featureinfoOptions.savedPin = params.pin;
+    } else if (params.selection) {
+      // This needs further development for proper handling in permalink
+      featureinfoOptions.savedSelection = new Feature({
+        geometry: new geom[params.selection.geometryType](params.selection.coordinates)
+      });
+    }
+
+    if (!params.zoom && !params.mapStateId && startExtent) {
+      map.getView().fit(startExtent, { size: map.getSize() });
+    }
+  }
+  function showLayersAndLocationFromUrlParams(params) {
+    // light up the layers
+    const layersToShow = params.layers || {};
+    const keys = Object.keys(layersToShow);
+    keys.forEach(layerName => {
+      const layerObj = layersToShow[layerName];
+      const layerToShow = getLayer(layerName);
+      layerToShow.setVisible(layerObj.visible);
+      layerToShow.setOpacity(layerObj.opacity);
+    });
+
+    // center and zoom in
+    if (params.zoom && params.center) {
+      console.log(params);
+      map.getView().animate(
+        {
+          center: params.center,
+          zoom: params.zoom,
+          duration: 2000 // 2 seconds
+        }
+      );
+    }
+  }
+
+  function resetToBaseState() {
+    // if the option has a property called name => it is a layer
+    const flattenLayers = layerOptions.flatMap(l => (l.name && l.layers && l.visible ? l.layers : l) || l);
+    const defaultVisibleLayers = flattenLayers.filter(l => l.visible);
+    const visibleLayersObj = defaultVisibleLayers.reduce((acc, cur) => {
+      acc[cur.name] = cur;
+      return acc;
+    }, {});
+
+    const onLayers = getLayersByProperty('visible', true);
+
+    // hide active layers
+    onLayers.forEach(layer => {
+      const layerName = layer.get('name');
+      if (!visibleLayersObj[layerName]) {
+        console.log('turning off', layerName);
+        layer.setVisible(false);
+        // finding the correct layer for the correct opacity
+
+        const layerId = layer.get('id');
+        let opacity = 1;
+        let defaultLayer = layerOptions.find(l => l.name === layerId || (l.layers && l.layers.find(ll => ll.name === layerId)));
+        if (defaultLayer && defaultLayer.layers) {
+          defaultLayer = defaultLayer.layers.find(l => l.name === layerId);
+        }
+        if (defaultLayer) {
+          opacity = defaultLayer.opacity || 1;
+        }
+        layer.setOpacity(opacity);
+      } else {
+        console.log('staying on', layerName);
+      }
+    });
+    // show hiden layers
+    defaultVisibleLayers.forEach(l => {
+      const layer = getLayersByProperty('id', l.name)[0];
+      if (layer.getVisible()) {
+        console.log('turning on', l.name);
+        layer.setVisible(true);
+        layer.setOpacity(l.opacity || 1);
+      }
+    });
+  }
+
+  const importFromUrl = function importUrlParams(importUrl, resetToBaseVisibility = true) {
+    const importedUrlParams = parsePermalink(importUrl);
+    if (!importedUrlParams) {
+      return;
+    }
+
+    if (resetToBaseVisibility) {
+      resetToBaseState();
+    }
+    // handleUrlParams(importedUrlParams);
+    showLayersAndLocationFromUrlParams(importedUrlParams);
+  };
+
   return Component({
     onInit() {
       this.render();
@@ -473,62 +613,7 @@ const Viewer = function Viewer(targetOption, options = {}) {
             mapId: this.getId()
           });
 
-          if (urlParams.feature) {
-            let featureId = urlParams.feature;
-            const layerName = featureId.split('.')[0];
-            const layer = getLayer(layerName);
-            const type = layer.get('type');
-
-            if (layer && type !== 'GROUP') {
-              const clusterSource = layer.getSource().source;
-              const id = featureId.split('.')[1];
-              layer.once('postrender', () => {
-                let feature;
-
-                if (type === 'WFS' && clusterSource) {
-                  feature = clusterSource.getFeatureById(featureId);
-                } else if (type === 'WFS') {
-                  if (featureId.includes('__')) {
-                    featureId = featureId.replace(featureId.substring(featureId.lastIndexOf('__'), featureId.lastIndexOf('.')), '');
-                  }
-                  feature = layer.getSource().getFeatureById(featureId);
-                } else if (clusterSource) {
-                  feature = clusterSource.getFeatureById(id);
-                } else {
-                  feature = layer.getSource().getFeatureById(id);
-                }
-
-                if (feature) {
-                  const obj = {};
-                  obj.feature = feature;
-                  obj.title = layer.get('title');
-                  obj.content = getAttributes(feature, layer);
-                  obj.layer = layer;
-                  const centerGeometry = getcenter(feature.getGeometry());
-                  const infowindowType = featureinfoOptions.showOverlay === false ? 'sidebar' : 'overlay';
-                  featureinfo.render([obj], infowindowType, centerGeometry);
-                  map.getView().fit(feature.getGeometry(), {
-                    maxZoom: getResolutions().length - 2,
-                    padding: [15, 15, 40, 15],
-                    duration: 1000
-                  });
-                }
-              });
-            }
-          }
-
-          if (urlParams.pin) {
-            featureinfoOptions.savedPin = urlParams.pin;
-          } else if (urlParams.selection) {
-            // This needs further development for proper handling in permalink
-            featureinfoOptions.savedSelection = new Feature({
-              geometry: new geom[urlParams.selection.geometryType](urlParams.selection.coordinates)
-            });
-          }
-
-          if (!urlParams.zoom && !urlParams.mapStateId && startExtent) {
-            map.getView().fit(startExtent, { size: map.getSize() });
-          }
+          handleUrlParams(urlParams);
 
           featureinfoOptions.viewer = this;
 
@@ -604,7 +689,8 @@ const Viewer = function Viewer(targetOption, options = {}) {
     removeOverlays,
     zoomToExtent,
     getSelectionManager,
-    getEmbedded
+    getEmbedded,
+    importFromUrl
   });
 };
 
