@@ -450,49 +450,59 @@ const Viewer = function Viewer(targetOption, options = {}) {
     return urlParams;
   };
 
-  function handleUrlParams(params) {
-    if (params.feature) {
-      let featureId = params.feature;
-      const layerName = featureId.split('.')[0];
-      const layer = getLayer(layerName);
-      const type = layer.get('type');
+  function showFeatureFromParams(params, centerOnIt = true) {
+    if (!params || !params.feature) {
+      return;
+    }
 
-      if (layer && type !== 'GROUP') {
-        const clusterSource = layer.getSource().source;
-        const id = featureId.split('.')[1];
-        layer.once('postrender', () => {
-          let feature;
+    let featureId = params.feature;
+    const layerName = featureId.split('.')[0];
+    const layer = getLayer(layerName);
+    const type = layer.get('type');
 
-          if (type === 'WFS' && clusterSource) {
-            feature = clusterSource.getFeatureById(featureId);
-          } else if (type === 'WFS') {
-            if (featureId.includes('__')) {
-              featureId = featureId.replace(featureId.substring(featureId.lastIndexOf('__'), featureId.lastIndexOf('.')), '');
-            }
-            feature = layer.getSource().getFeatureById(featureId);
-          } else if (clusterSource) {
-            feature = clusterSource.getFeatureById(id);
-          } else {
-            feature = layer.getSource().getFeatureById(id);
+    if (layer && type !== 'GROUP') {
+      const clusterSource = layer.getSource().source;
+      const id = featureId.split('.')[1];
+      layer.once('postrender', () => {
+        let feature;
+
+        if (type === 'WFS' && clusterSource) {
+          feature = clusterSource.getFeatureById(featureId);
+        } else if (type === 'WFS') {
+          if (featureId.includes('__')) {
+            featureId = featureId.replace(featureId.substring(featureId.lastIndexOf('__'), featureId.lastIndexOf('.')), '');
           }
+          feature = layer.getSource().getFeatureById(featureId);
+        } else if (clusterSource) {
+          feature = clusterSource.getFeatureById(id);
+        } else {
+          feature = layer.getSource().getFeatureById(id);
+        }
 
-          if (feature) {
-            const obj = {};
-            obj.feature = feature;
-            obj.title = layer.get('title');
-            obj.content = getAttributes(feature, layer);
-            obj.layer = layer;
-            const centerGeometry = getcenter(feature.getGeometry());
-            const infowindowType = featureinfoOptions.showOverlay === false ? 'sidebar' : 'overlay';
-            featureinfo.render([obj], infowindowType, centerGeometry);
+        if (feature) {
+          const obj = {};
+          obj.feature = feature;
+          obj.title = layer.get('title');
+          obj.content = getAttributes(feature, layer);
+          obj.layer = layer;
+          const centerGeometry = getcenter(feature.getGeometry());
+          const infowindowType = featureinfoOptions.showOverlay === false ? 'sidebar' : 'overlay';
+          featureinfo.render([obj], infowindowType, centerGeometry);
+          if (centerOnIt) {
             map.getView().fit(feature.getGeometry(), {
               maxZoom: getResolutions().length - 2,
               padding: [15, 15, 40, 15],
               duration: 1000
             });
           }
-        });
-      }
+        }
+      });
+    }
+  }
+
+  const handleUrlParams = function handleUrlParams(params) {
+    if (params.feature) {
+      showFeatureFromParams(params);
     }
 
     if (params.pin) {
@@ -507,7 +517,8 @@ const Viewer = function Viewer(targetOption, options = {}) {
     if (!params.zoom && !params.mapStateId && startExtent) {
       map.getView().fit(startExtent, { size: map.getSize() });
     }
-  }
+  };
+
   function showLayersAndLocationFromUrlParams(params) {
     // light up the layers
     const layersToShow = params.layers || {};
@@ -518,6 +529,18 @@ const Viewer = function Viewer(targetOption, options = {}) {
       layerToShow.setVisible(layerObj.visible);
       layerToShow.setOpacity(layerObj.opacity);
     });
+
+    if (params.pin) {
+      featureinfo.addPin(params.pin);
+    } else if (params.selection) {
+      featureinfo.addFeature(new Feature({
+        geometry: new geom[params.selection.geometryType](params.selection.coordinates)
+      }));
+    }
+
+    if (params.feature) {
+      showFeatureFromParams(params, false);
+    }
 
     // center and zoom in
     if (params.zoom && params.center) {
@@ -578,14 +601,16 @@ const Viewer = function Viewer(targetOption, options = {}) {
 
   const importFromUrl = function importUrlParams(importUrl, resetToBaseVisibility = true) {
     const importedUrlParams = parsePermalink(importUrl);
+    console.log('import url', importUrlParams);
     if (!importedUrlParams) {
       return;
     }
 
     if (resetToBaseVisibility) {
       resetToBaseState();
+      // clean any pin, selection or feature
+      featureinfo.clear();
     }
-    // handleUrlParams(importedUrlParams);
     showLayersAndLocationFromUrlParams(importedUrlParams);
   };
 
