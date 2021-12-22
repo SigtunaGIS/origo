@@ -441,6 +441,25 @@ const Featureinfo = function Featureinfo(options = {}) {
     render(newItems, identifyTarget, opts.coordinate || maputils.getCenter(newItems[0].getFeature().getGeometry()));
   };
 
+  const addPin = function addPin(coordinates) {
+    if (!coordinates) {
+      return;
+    }
+
+    selectionLayer.clear();
+    savedPin = maputils.createPointFeature(coordinates, pinStyle);
+    selectionLayer.addFeature(savedPin);
+  };
+
+  const addFeature = function addFeature(feature) {
+    if (!feature) {
+      return;
+    }
+
+    selectionLayer.clear();
+    selectionLayer.addFeature(feature);
+  };
+
   const onClick = function onClick(evt) {
     savedPin = undefined;
     // Featurinfo in two steps. Concat serverside and clientside when serverside is finished
@@ -476,8 +495,7 @@ const Featureinfo = function Featureinfo(options = {}) {
             sidebar.setVisibility(false);
             setTimeout(() => {
               if (!maputils.checkZoomChange(resolution, map.getView().getResolution())) {
-                savedPin = maputils.createPointFeature(evt.coordinate, pinStyle);
-                selectionLayer.addFeature(savedPin);
+                addPin(evt.coordinate);
               }
             }, 250);
           }
@@ -549,7 +567,9 @@ const Featureinfo = function Featureinfo(options = {}) {
       }
     },
     render,
-    showInfo
+    showInfo,
+    addPin,
+    addFeature
   });
 };
 
