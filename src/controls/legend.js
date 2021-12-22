@@ -93,12 +93,6 @@ const Legend = function Legend(options = {}) {
       }
     });
     backgroundLayerButtons.push(button);
-
-    layer.on('change:visible', (e) => {
-      // console.log('changing to:', e.target.get('id'), !e.oldValue);
-      const isVisible = !e.oldValue;
-      button.dispatch('change', { state: isVisible ? 'active' : 'initial' });
-    });
   };
 
   const addBackgroundButtons = function addBackgroundButtons(layers) {
