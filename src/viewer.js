@@ -65,6 +65,7 @@ const Viewer = function Viewer(targetOption, options = {}) {
   const center = urlParams.center || centerOption;
   const zoom = urlParams.zoom || zoomOption;
   const groups = flattenGroups(groupOptions);
+  const layerStylePicker = {};
 
   const getCapabilitiesLayers = () => {
     const capabilitiesPromises = [];
@@ -371,8 +372,19 @@ const Viewer = function Viewer(targetOption, options = {}) {
     return false;
   };
 
+  const getLayerStylePicker = function getLayerStylePicker(layer) {
+    return layerStylePicker[layer.get('name')] || [];
+  };
+
+  const addLayerStylePicker = function addLayerStylePicker(layerProps) {
+    if (!layerStylePicker[layerProps.name]) {
+      layerStylePicker[layerProps.name] = layerProps.stylePicker;
+    }
+  };
+
   const addLayer = function addLayer(layerProps) {
     const layer = Layer(layerProps, this);
+    addLayerStylePicker(layerProps);
     map.addLayer(layer);
     this.dispatch('addlayer', {
       layerName: layerProps.name
@@ -607,6 +619,7 @@ const Viewer = function Viewer(targetOption, options = {}) {
     getSearchableLayers,
     getSize,
     getLayer,
+    getLayerStylePicker,
     getLayers,
     getLayersByProperty,
     getMap,
