@@ -1,5 +1,6 @@
 import { Component, Button, dom } from '../../ui';
 import { HeaderIcon } from '../../utils/legendmaker';
+import PopupMenu from '../../popupmenu';
 
 const OverlayLayer = function OverlayLayer(options) {
   let {
@@ -16,23 +17,23 @@ const OverlayLayer = function OverlayLayer(options) {
   } = options;
 
   const buttons = [];
-  let removeButton;
-  let ButtonsHtml;
+  const popupMenuItems = [];
   let layerList;
 
   let cls = `${clsSettings} flex row align-center padding-left padding-right item`.trim();
   const title = layer.get('title') || 'Titel saknas';
   const name = layer.get('name');
   const secure = layer.get('secure');
+  let moreInfoButton;
+  let popupMenu;
 
   const checkIcon = '#ic_check_circle_24px';
   let uncheckIcon = '#ic_radio_button_unchecked_24px';
 
   if (secure) {
     uncheckIcon = '#ic_lock_outline_24px';
-    cls += '"style="pointer-events:none';
   }
-  
+ 
   const opacity = layer.getOpacity();
 
   let headerIcon = HeaderIcon(style, opacity);
@@ -40,6 +41,13 @@ const OverlayLayer = function OverlayLayer(options) {
     headerIcon = icon;
     headerIconCls = iconCls;
   }
+
+  const eventOverlayProps = new CustomEvent('overlayproperties', {
+    bubbles: true,
+    detail: {
+      layer
+    }
+  });
 
   const getCheckIcon = (visible) => {
     const isVisible = visible ? checkIcon : uncheckIcon;
@@ -62,20 +70,17 @@ const OverlayLayer = function OverlayLayer(options) {
   const layerIcon = Button({
     cls: `${headerIconCls} round compact icon-small light relative no-shrink`,
     click() {
-      const eventOverlayProps = new CustomEvent('overlayproperties', {
-        bubbles: true,
-        detail: {
-          layer
-        }
-      });
-      document.getElementById(this.getId()).dispatchEvent(eventOverlayProps);
+      if (!secure) {
+        toggleVisible(layer.getVisible());
+      }
     },
     style: {
       height: '1.5rem',
       width: '1.5rem'
     },
     ariaLabel: 'Lager ikon',
-    icon: headerIcon
+    icon: headerIcon,
+    tabIndex: -1
   });
 
   buttons.push(layerIcon);
@@ -106,31 +111,129 @@ const OverlayLayer = function OverlayLayer(options) {
       'padding-left': '.5rem'
     },
     icon: getCheckIcon(layer.getVisible()),
-    ariaLabel: 'Växla lagersynlighet'
+    ariaLabel: 'Växla lagersynlighet',
+    tabIndex: -1
   });
 
   buttons.push(toggleButton);
 
+  const layerInfoMenuItem = Component({
+    onRender() {
+      const labelEl = document.getElementById(this.getId());
+      labelEl.addEventListener('click', (e) => {
+        popupMenu.setVisibility(false);
+        document.getElementById(moreInfoButton.getId()).dispatchEvent(eventOverlayProps);
+        e.preventDefault();
+      });
+    },
+    render() {
+      const labelCls = 'text-smaller padding-x-small grow pointer no-select overflow-hidden';
+      return `<li id="${this.getId()}" class="${labelCls}">Visa lagerinformation</li>`;
+    }
+  });
+  popupMenuItems.push(layerInfoMenuItem);
+
   if (layer.get('removable')) {
-    removeButton = Button({
-      cls: 'round small icon-smaller no-shrink',
-      click() {
-        layerList.removeOverlay(layer.get('name'));
-        viewer.getMap().removeLayer(layer);
+    const removeLayerMenuItem = Component({
+      onRender() {
+        const labelEl = document.getElementById(this.getId());
+        labelEl.addEventListener('click', (e) => {
+          layerList.removeOverlay(layer.get('name'));
+          viewer.getMap().removeLayer(layer);
+          e.preventDefault();
+        });
       },
-      style: {
-        'align-self': 'center',
-        'padding-left': '.5rem'
-      },
-      icon: '#ic_remove_circle_outline_24px'
+      render() {
+        const labelCls = 'text-smaller padding-x-small grow pointer no-select overflow-hidden';
+        return `<li id="${this.getId()}" class="${labelCls}">Ta bort lager</li>`;
+      }
     });
-    buttons.push(removeButton);
-    ButtonsHtml = `${layerIcon.render()}${label.render()}${removeButton.render()}${toggleButton.render()}`;
-  } else {
-    ButtonsHtml = `${layerIcon.render()}${label.render()}${toggleButton.render()}`;
+    popupMenuItems.push(removeLayerMenuItem);
   }
 
+  const popupMenuList = Component({
+    onInit() {
+      this.addComponents(popupMenuItems);
+    },
+    render() {
+      let html = `<ul id="${this.getId()}">`;
+      popupMenuItems.forEach((item) => {
+        html += `${item.render()}`;
+      });
+      html += '</ul>';
+      return html;
+    }
+  });
+
+  const getElementOffset = function getElementOffset(el, rootParentEl) {
+    let left = 0;
+    let top = 0;
+    let currentEl = el;
+    while (
+      currentEl
+      && !Number.isNaN(currentEl.offsetLeft)
+      && !Number.isNaN(currentEl.offsetTop)
+      && currentEl.id !== rootParentEl.id
+    ) {
+      left += currentEl.offsetLeft - currentEl.scrollLeft;
+      top += currentEl.offsetTop - currentEl.scrollTop;
+      currentEl = currentEl.offsetParent;
+    }
+    return { top, left };
+  };
+
+  const createPopupMenu = function createPopupMenu() {
+    const moreInfoButtonEl = document.getElementById(moreInfoButton.getId());
+    const onUnfocus = (e) => {
+      if (!moreInfoButtonEl.contains(e.target)) {
+        popupMenu.setVisibility(false);
+      }
+    };
+    const viewerEl = document.getElementById(viewer.getId());
+    const { top, left } = getElementOffset(moreInfoButtonEl, viewerEl);
+    const right = viewerEl.offsetWidth - left - moreInfoButtonEl.offsetWidth;
+    const targetRect = moreInfoButtonEl.getBoundingClientRect();
+    popupMenu = PopupMenu({ target: viewer.getId(), onUnfocus });
+    popupMenu.setContent(popupMenuList.render());
+    popupMenuList.dispatch('render');
+    popupMenu.setPosition({ right: `${right}px`, top: `${top + targetRect.height}px` });
+  };
+
+  const togglePopupMenu = function togglePopupMenu() {
+    if (!popupMenu) {
+      createPopupMenu();
+    } else {
+      popupMenu.toggleVisibility();
+    }
+  };
+
+  moreInfoButton = Button({
+    cls: 'round small icon-smaller no-shrink',
+    click() {
+      if (popupMenuItems.length > 1) {
+        togglePopupMenu();
+      } else {
+        document.getElementById(this.getId()).dispatchEvent(eventOverlayProps);
+      }
+    },
+    style: {
+      'align-self': 'center'
+    },
+    icon: '#ic_more_vert_24px',
+    ariaLabel: 'Visa lagerinfo',
+    tabIndex: -1
+  });
+
+  buttons.push(moreInfoButton);
+  const ButtonsHtml = `${layerIcon.render()}${label.render()}${toggleButton.render()}${moreInfoButton.render()}`;
+
+  const removeOverlayMenuItem = function removeListeners() {
+    const popupMenuListEl = document.getElementById(popupMenuList.getId());
+    popupMenuListEl.remove();
+  };
+
   const onRemove = function onRemove() {
+    removeOverlayMenuItem();
     const el = document.getElementById(this.getId());
     el.remove();
   };

@@ -44,7 +44,8 @@ const Search = function Search(options = {}) {
 
   const {
     geometryAttribute,
-    url
+    url,
+    queryParameterName = 'q'
   } = options;
 
   let searchDb = {};
@@ -250,6 +251,9 @@ const Search = function Search(options = {}) {
     });
     document.getElementsByClassName('o-search-field')[0].addEventListener('focus', () => {
       document.getElementById(`${wrapperElement.getId()}`).classList.add('active');
+      if (awesomplete.suggestions && awesomplete.suggestions.length > 0) {
+        awesomplete.open();
+      }
       window.dispatchEvent(new CustomEvent('resize'));
     });
   }
@@ -377,7 +381,7 @@ const Search = function Search(options = {}) {
     };
 
     function makeRequest(reqHandler, obj) {
-      let queryUrl = `${url}?q=${encodeURI(obj.value)}`;
+      let queryUrl = `${url}${url.indexOf('?') !== -1 ? '&' : '?'}${queryParameterName}=${encodeURI(obj.value)}`;
       if (includeSearchableLayers) {
         queryUrl += `&l=${viewer.getSearchableLayers(searchableDefault)}`;
       }

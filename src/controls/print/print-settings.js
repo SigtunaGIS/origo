@@ -10,6 +10,7 @@ import SizeControl from './size-control';
 import TitleControl from './title-control';
 import CreatedControl from './created-control';
 import NorthArrowControl from './north-arrow-control';
+import PrintLegendControl from './print-legend-control';
 import RotationControl from './rotation-control';
 import SetScaleControl from './set-scale-control';
 import ResolutionControl from './resolution-control';
@@ -47,6 +48,7 @@ const PrintSettings = function PrintSettings(options = {}) {
     showCreated,
     showScale,
     showNorthArrow,
+    showPrintLegend,
     rotation,
     rotationStep
   } = options;
@@ -58,8 +60,29 @@ const PrintSettings = function PrintSettings(options = {}) {
   let printSettingsContainer;
   let customSizeControl;
   let northArrowControl;
+  let printLegendControl;
   let rotationControl;
   let setScaleControl;
+
+  // Set tabindex for all settings buttons to include or exclude in taborder depending on if expanded or not
+  const setTabIndex = function setTabIndex() {
+    let idx = -1;
+    if (openButton.getState() === 'hidden') {
+      idx = 0;
+      document.getElementById(closeButton.getId()).focus();
+    } else {
+      document.getElementById(openButton.getId()).focus();
+    }
+    for (let i = 0; i < document.getElementById(contentComponent.getId()).getElementsByTagName('button').length; i += 1) {
+      document.getElementById(contentComponent.getId()).getElementsByTagName('button')[i].tabIndex = idx;
+    }
+    for (let j = 0; j < document.getElementById(contentComponent.getId()).getElementsByTagName('input').length; j += 1) {
+      document.getElementById(contentComponent.getId()).getElementsByTagName('input')[j].tabIndex = idx;
+    }
+    for (let h = 0; h < document.getElementById(contentComponent.getId()).getElementsByTagName('textarea').length; h += 1) {
+      document.getElementById(contentComponent.getId()).getElementsByTagName('textarea')[h].tabIndex = idx;
+    }
+  };
 
   const toggle = function toggle() {
     if (openButton.getState() === 'hidden') {
@@ -72,6 +95,7 @@ const PrintSettings = function PrintSettings(options = {}) {
     const customEvt = new CustomEvent('collapse:toggle', {
       bubbles: true
     });
+    setTabIndex();
     document.getElementById(openButton.getId()).dispatchEvent(customEvt);
   };
 
@@ -143,6 +167,7 @@ const PrintSettings = function PrintSettings(options = {}) {
       });
       const showScaleControl = ShowScaleControl({ checked: showScale });
       northArrowControl = NorthArrowControl({ showNorthArrow });
+      printLegendControl = PrintLegendControl({ showPrintLegend });
       rotationControl = map.getView().getConstraints().rotation(180) === 180 ? RotationControl({ rotation, rotationStep, map }) : undefined;
       customSizeControl = CustomSizeControl({
         minHeight: sizeCustomMinHeight,
@@ -174,11 +199,12 @@ const PrintSettings = function PrintSettings(options = {}) {
             rotationControl,
             setScaleControl,
             resolutionControl,
-            showScaleControl
+            showScaleControl,
+            printLegendControl
           });
         }
       });
-      const components = [customSizeControl, marginControl, orientationControl, sizeControl, titleControl, descriptionControl, createdControl, northArrowControl, setScaleControl, resolutionControl, showScaleControl];
+      const components = [customSizeControl, marginControl, orientationControl, sizeControl, titleControl, descriptionControl, createdControl, northArrowControl, printLegendControl, setScaleControl, resolutionControl, showScaleControl];
       if (rotationControl) { components.push(rotationControl); }
       contentComponent.addComponents(components);
       printSettingsContainer = Collapse({
@@ -205,6 +231,7 @@ const PrintSettings = function PrintSettings(options = {}) {
       titleControl.on('change:titleAlign', (evt) => this.dispatch('change:titleAlign', evt));
       createdControl.on('change:check', (evt) => this.dispatch('change:created', evt));
       northArrowControl.on('change:check', (evt) => this.dispatch('change:northarrow', evt));
+      printLegendControl.on('change:check', (evt) => this.dispatch('change:printlegend', evt));
       resolutionControl.on('change:resolution', (evt) => this.dispatch('change:resolution', evt));
       setScaleControl.on('change:scale', (evt) => this.dispatch('change:scale', evt));
       showScaleControl.on('change:check', (evt) => this.dispatch('change:showscale', evt));
@@ -216,6 +243,7 @@ const PrintSettings = function PrintSettings(options = {}) {
     onRender() {
       if (rotationControl) { rotationControl.setRotation(); }
       this.dispatch('render');
+      setTabIndex();
     },
     render() {
       return printSettingsContainer.render();
