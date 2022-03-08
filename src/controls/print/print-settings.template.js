@@ -10,7 +10,7 @@ export default function printTemplate({
   northArrowControl,
   rotationControl,
   setScaleControl,
-  resolutionControl,
+  //resolutionControl,
   showScaleControl,
   printLegendControl
 }) {
@@ -27,9 +27,6 @@ export default function printTemplate({
     <div class="padding-top"></div>
     <h6>Orientering</h6>
     ${orientationControl.render()}
-    <div class="padding-top"></div>
-    <h6>Upplösning</h6>
-    ${resolutionControl.render()}
     <div class="padding-top"></div>
       ${setScaleControl.render()}
     <div class="padding-top-large"></div>
