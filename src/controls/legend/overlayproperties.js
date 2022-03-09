@@ -1,5 +1,6 @@
-import { Component, InputRange } from '../../ui';
+import { Component, InputRange, Dropdown } from '../../ui';
 import { Legend } from '../../utils/legendmaker';
+import Style from '../../style';
 
 const OverlayProperties = function OverlayProperties(options = {}) {
   const {
@@ -15,6 +16,15 @@ const OverlayProperties = function OverlayProperties(options = {}) {
   const opacityControl = layer.get('opacityControl') !== false;
   const style = viewer.getStyle(layer.get('styleName'));
   const legend = Legend(style, opacity);
+  const stylePicker = viewer.getLayerStylePicker(layer);
+
+  const legendComponent = Component({
+    render() {
+      return `<div id=${this.getId()}>${legend}</div>`;
+    }
+  });
+
+  let styleSelection;
   let overlayEl;
   let sliderEl;
   let label = '';
@@ -31,6 +41,10 @@ const OverlayProperties = function OverlayProperties(options = {}) {
     label
   });
 
+  function hasStylePicker() {
+    return stylePicker.length > 0;
+  }
+
   function extendedLegendZoom(e) {
     const parentOverlay = document.getElementById(options.parent.getId());
 
@@ -43,14 +57,48 @@ const OverlayProperties = function OverlayProperties(options = {}) {
     }
   }
 
+  function renderStyleSelection() {
+    return hasStylePicker() ? styleSelection.render() : '';
+  }
+
+  function getStyleDisplayName(styleName) {
+    const altStyle = stylePicker.find(s => s.style === styleName);
+    return (altStyle && altStyle.title) || styleName;
+  }
+
+  const onSelectStyle = (styleTitle) => {
+    const altStyle = stylePicker.find(s => s.title === styleTitle);
+    styleSelection.setButtonText(styleTitle);
+    const newStyle = Style.createStyle({ style: altStyle.style, viewer });
+    const legendCmp = document.getElementById(legendComponent.getId());
+    legendCmp.innerHTML = Legend(viewer.getStyle(altStyle.style), opacity);
+    layer.setProperties({ styleName: altStyle.style });
+    layer.setStyle(newStyle);
+    layer.dispatchEvent('change:style');
+  };
+
   return Component({
     onInit() {
-      this.addComponents([transparencySlider]);
+      styleSelection = Dropdown({
+        direction: 'up',
+        cls: 'o-stylepicker text-black flex',
+        contentCls: 'bg-grey-lighter text-smaller rounded',
+        buttonCls: 'bg-white border text-black box-shadow',
+        buttonTextCls: 'text-smaller',
+        text: getStyleDisplayName(layer.get('styleName')),
+        buttonIconCls: 'black'
+      });
+      const components = [transparencySlider];
+      if (hasStylePicker()) {
+        components.push(styleSelection);
+      }
+      this.addComponents(components);
       this.on('click', (e) => {
         extendedLegendZoom(e);
       });
     },
     onRender() {
+      this.dispatch('render');
       sliderEl = document.getElementById(transparencySlider.getId());
       overlayEl = document.getElementById(this.getId());
       overlayEl.addEventListener('click', (e) => {
@@ -66,10 +114,20 @@ const OverlayProperties = function OverlayProperties(options = {}) {
           layer.setOpacity(sliderEl.valueAsNumber);
         });
       }
+      if (hasStylePicker()) {
+        styleSelection.setItems(stylePicker.map(altStyle => altStyle.title));
+        document.getElementById(styleSelection.getId()).addEventListener('dropdown:select', (evt) => {
+          onSelectStyle(evt.target.textContent);
+        });
+      }
     },
     render() {
       return `<div id="${this.getId()}" class="${cls} border-bottom">
-                <div class="padding-small">${legend}${transparencySlider.render()}</div>
+                <div class="padding-small">
+                  ${legendComponent.render()}
+                  ${renderStyleSelection()}
+                  ${transparencySlider.render()}
+                </div>
                 ${abstract ? `<div class="padding-small padding-x text-small">${abstract}</div>` : ''}
               </div>`;
     },
