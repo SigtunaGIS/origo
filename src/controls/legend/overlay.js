@@ -3,8 +3,10 @@ import { HeaderIcon } from '../../utils/legendmaker';
 import PopupMenu from '../../popupmenu';
 
 const OverlayLayer = function OverlayLayer(options) {
+  let {
+    headerIconCls = ''
+  } = options;
   const {
-    headerIconCls = '',
     cls: clsSettings = '',
     icon = '#o_list_24px',
     iconCls = 'grey-lightest',
@@ -15,14 +17,10 @@ const OverlayLayer = function OverlayLayer(options) {
   } = options;
 
   const buttons = [];
-  let headerIconClass = headerIconCls;
-
   const popupMenuItems = [];
   let layerList;
 
-  const hasStylePicker = viewer.getLayerStylePicker(layer).length > 0;
-  const layerIconCls = `round compact icon-small relative no-shrink ${hasStylePicker ? 'style-picker' : 'light'}`;
-  const cls = `${clsSettings} flex row align-center padding-left padding-right item`.trim();
+  let cls = `${clsSettings} flex row align-center padding-left padding-right item`.trim();
   const title = layer.get('title') || 'Titel saknas';
   const name = layer.get('name');
   const secure = layer.get('secure');
@@ -35,13 +33,13 @@ const OverlayLayer = function OverlayLayer(options) {
   if (secure) {
     uncheckIcon = '#ic_lock_outline_24px';
   }
-
+ 
   const opacity = layer.getOpacity();
 
   let headerIcon = HeaderIcon(style, opacity);
   if (!headerIcon) {
     headerIcon = icon;
-    headerIconClass = iconCls;
+    headerIconCls = iconCls;
   }
 
   const eventOverlayProps = new CustomEvent('overlayproperties', {
@@ -70,15 +68,15 @@ const OverlayLayer = function OverlayLayer(options) {
   };
 
   const layerIcon = Button({
-    cls: `${headerIconClass} ${layerIconCls}`,
+    cls: `${headerIconCls} round compact icon-small light relative no-shrink`,
     click() {
       if (!secure) {
         toggleVisible(layer.getVisible());
       }
     },
     style: {
-      height: 'calc(1.5rem + 2px)',
-      width: 'calc(1.5rem + 2px)'
+      height: '1.5rem',
+      width: '1.5rem'
     },
     ariaLabel: 'Lager ikon',
     icon: headerIcon,
@@ -240,16 +238,6 @@ const OverlayLayer = function OverlayLayer(options) {
     el.remove();
   };
 
-  const onLayerStyleChange = function onLayerStyleChange() {
-    const newStyle = viewer.getStyle(layer.get('styleName'));
-    const layerIconCmp = document.getElementById(layerIcon.getId());
-    let newIcon = HeaderIcon(newStyle, opacity);
-    headerIconClass = !newIcon ? iconCls : headerIconCls;
-    newIcon = !newIcon ? icon : newIcon;
-    layerIconCmp.className = `${headerIconClass} ${layerIconCls} ${hasStylePicker ? 'o-stylepicker-layerIcon' : ''}`;
-    layerIcon.dispatch('change', { icon: newIcon });
-  };
-
   return Component({
     name,
     getLayer,
@@ -287,9 +275,6 @@ const OverlayLayer = function OverlayLayer(options) {
           bubbles: true
         });
         document.getElementById(this.getId()).dispatchEvent(visibleEvent);
-      });
-      layer.on('change:style', () => {
-        onLayerStyleChange();
       });
     },
     render() {
