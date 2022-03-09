@@ -3,12 +3,18 @@ import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 import DrawInteraction from 'ol/interaction/Draw';
 import Overlay from 'ol/Overlay';
+import Feature from 'ol/Feature';
 import Polygon from 'ol/geom/Polygon';
+import Circle from 'ol/geom/Circle';
 import LineString from 'ol/geom/LineString';
 import Point from 'ol/geom/Point';
 import Projection from 'ol/proj/Projection';
 import * as Extent from 'ol/extent';
-import { Component, Icon, Element as El, Button, dom } from '../ui';
+import { Snap } from 'ol/interaction';
+import { Collection } from 'ol';
+import LayerGroup from 'ol/layer/Group';
+import { unByKey } from 'ol/Observable';
+import { Component, Icon, Element as El, Button, dom, Modal } from '../ui';
 import Style from '../style';
 import StyleTypes from '../style/styletypes';
 import replacer from '../utils/replacer';
@@ -20,7 +26,12 @@ const Measure = function Measure({
   elevationTargetProjection,
   elevationAttribute,
   showSegmentLengths = false,
-  useHectare = true
+  showSegmentLabelButtonActive = true,
+  useHectare = true,
+  snap = false,
+  snapIsActive = true,
+  snapLayers,
+  snapRadius = 15
 } = {}) {
   const style = Style;
   const styleTypes = StyleTypes();
@@ -45,6 +56,8 @@ const Measure = function Measure({
   let lengthTool;
   let areaTool;
   let elevationTool;
+  let bufferTool;
+  let toggleSnapButton;
   let defaultTool;
   let isActive = false;
   let tempOverlayArray = [];
@@ -55,13 +68,21 @@ const Measure = function Measure({
   let measureButton;
   let lengthToolButton;
   let areaToolButton;
+  let bufferToolButton;
+  let bufferSize;
   let elevationToolButton;
   let addNodeButton;
+  let showSegmentLabelButton;
+  let showSegmentLabelButtonState = showSegmentLabelButtonActive;
+  let showSegmentLabels;
   let undoButton;
   let clearButton;
   const buttons = [];
   let target;
   let touchMode;
+  let snapCollection;
+  let snapEventListenerKeys;
+  let snapActive = snapIsActive;
 
   function createStyle(feature) {
     const featureType = feature.getGeometry().getType();
@@ -159,14 +180,17 @@ const Measure = function Measure({
     return properties.reduce((prev, curr) => prev && prev[curr], obj);
   }
 
-  function getElevation(evt) {
-    const feature = evt.feature;
+  function getElevation(feature) {
     let coordinates;
     let elevationProjection;
     const options = {
       start: '{',
       end: '}'
     };
+    if (feature.getStyle() === null) {
+      feature.setStyle(style.createStyleRule(measureStyleOptions.interaction));
+      source.addFeature(feature);
+    }
 
     if (elevationTargetProjection && elevationTargetProjection !== viewer.getProjection().getCode()) {
       const clone = feature.getGeometry().clone();
@@ -213,6 +237,47 @@ const Measure = function Measure({
     });
   }
 
+  function addBuffer(feature, radius = 0) {
+    if (feature.getStyle() === null) {
+      feature.setStyle(style.createStyleRule(measureStyleOptions.interaction));
+      source.addFeature(feature);
+    }
+    // Mark the central point of the circle
+    feature.getStyle()[0].getText().setText('o');
+    if (radius !== 0) {
+      bufferSize = radius;
+    }
+    function addBufferToFeature() {
+      const pointCenter = feature.getGeometry().getCoordinates();
+      // Create a buffer around the point which was clicked on.
+      const bufferCircle = new Circle(pointCenter, bufferSize);
+      const bufferedFeature = new Feature(bufferCircle);
+      // Create a new point at top of the circle to add a text with radius information
+      const radiusText = new Point([pointCenter[0], bufferCircle.getExtent()[3]]);
+      const radiusFeature = new Feature(radiusText);
+      const featStyle = createStyle(feature);
+      radiusFeature.setStyle(featStyle);
+      // Remove stroke and fill only to leave the text styling from default measure style
+      radiusFeature.getStyle()[0].setStroke(null);
+      radiusFeature.getStyle()[0].setFill(null);
+      // Offset the text so it dont't cover the circle
+      radiusFeature.getStyle()[0].getText().setOffsetY(-10);
+      radiusFeature.getStyle()[0].getText().setPlacement('line');
+      radiusFeature.getStyle()[0].getText().setText(`${bufferSize} m`);
+      vector.getSource().addFeature(bufferedFeature);
+      vector.getSource().addFeature(radiusFeature);
+    }
+
+    addBufferToFeature();
+  }
+
+  function clearSnapInteractions() {
+    snapCollection.forEach((s) => map.removeInteraction(s));
+    snapCollection.clear();
+    snapEventListenerKeys.forEach((k) => unByKey(k));
+    snapEventListenerKeys.clear();
+  }
+
   function placeMeasurementLabel(segment, coords) {
     const aa = segment.getExtent();
     const oo = Extent.getCenter(aa);
@@ -224,11 +289,75 @@ const Measure = function Measure({
       positioning: 'center-center',
       stopEvent: true
     });
-
     tempOverlayArray.push(labelOverlay);
     labelOverlay.setPosition(oo);
     measureElement.innerHTML = formatLength(/** @type {LineString} */(segment));
     map.addOverlay(labelOverlay);
+    if (coords.length < 6 && showSegmentLengths) {
+      switch (type) {
+        case 'LineString':
+          if (coords.length === 3) {
+            document.getElementById('measure_3').style.display = 'none';
+            if (showSegmentLabels) {
+              document.getElementById('measure_3').style.display = 'block';
+            }
+          }
+          break;
+        case 'Polygon':
+          if (coords.length === 4) {
+            document.getElementById('measure_4').style.display = 'none';
+            if (showSegmentLabels) {
+              document.getElementById('measure_4').style.display = 'block';
+            }
+          }
+          break;
+        case 'Point':
+          if (showSegmentLabels) {
+            document.getElementById('measure_2').style.display = 'block';
+          } else {
+            document.getElementById('measure_2').style.display = 'none';
+          }
+          break;
+        default:
+          break;
+      }
+    }
+    if (!showSegmentLabels) {
+      measureElement.style.display = 'none';
+    }
+  }
+
+  // Takes a Polygon as input and adds area measurements on it
+  function addArea(area) {
+    const tempFeature = new Feature(area);
+    const areaLabel = formatArea(area);
+    tempFeature.setStyle(style.createStyleRule(measureStyleOptions.polygon));
+    source.addFeature(tempFeature);
+    const flatCoords = area.getCoordinates();
+    for (let i = 0; i < flatCoords[0].length; i += 1) {
+      if (i < flatCoords[0].length - 1) {
+        const tempSegment = new LineString([flatCoords[0][i], flatCoords[0][i + 1]]);
+        placeMeasurementLabel(tempSegment, flatCoords[0][i]);
+      }
+    }
+    const totalLength = formatLength(new LineString(flatCoords[0]));
+    tempFeature.getStyle()[0].getText().setText(`${areaLabel}\n${totalLength}`);
+  }
+
+  // Takes a LineString as input and adds length measurements on it
+  function addLength(line) {
+    const tempFeature = new Feature(line);
+    const totalLength = formatLength(line);
+    tempFeature.setStyle(style.createStyleRule(measureStyleOptions.linestring));
+    source.addFeature(tempFeature);
+    const flatCoords = line.getCoordinates();
+    for (let i = 0; i < flatCoords.length; i += 1) {
+      if (i < flatCoords.length - 1) {
+        const tempSegment = new LineString([flatCoords[i], flatCoords[i + 1]]);
+        placeMeasurementLabel(tempSegment, flatCoords[i]);
+      }
+    }
+    tempFeature.getStyle()[0].getText().setText(totalLength);
   }
 
   function centerSketch() {
@@ -352,6 +481,39 @@ const Measure = function Measure({
     document.getElementById(`${viewer.getId()}`).appendChild(markerElement);
   }
 
+  function createRadiusModal(feature) {
+    const title = 'Ange buffert i meter (ex 1000):';
+    const content = `<div>
+                      <input type="number" id="bufferradius">
+                      <button id="bufferradiusBtn">OK</button>
+                    </div>`;
+    const modal = Modal({
+      title,
+      content,
+      target: viewer.getId(),
+      style: 'width: auto;'
+    });
+    const bufferradiusEl = document.getElementById('bufferradius');
+    bufferradiusEl.focus();
+    const bufferradiusBtn = document.getElementById('bufferradiusBtn');
+    bufferradiusBtn.addEventListener('click', (e) => {
+      const radiusVal = bufferradiusEl.value;
+      const radius = parseFloat(radiusVal);
+      if ((!radius && radius !== 0)
+        || (radius <= 0)) {
+        e.stopPropagation();
+        return;
+      }
+      e.stopPropagation();
+      modal.closeModal();
+      if (Number.isNaN(radius)) {
+        feature.getStyle()[0].getText().setText('');
+      } else {
+        addBuffer(feature, radius);
+      }
+    });
+  }
+
   function disableInteraction() {
     if (activeButton) {
       document.getElementById(activeButton.getId()).classList.remove('active');
@@ -369,9 +531,18 @@ const Measure = function Measure({
     if (elevationTool) {
       document.getElementById(elevationToolButton.getId()).classList.add('hidden');
     }
+    if (bufferTool) {
+      document.getElementById(bufferToolButton.getId()).classList.add('hidden');
+    }
+    if (snap) {
+      document.getElementById(toggleSnapButton.getId()).classList.add('hidden');
+    }
     document.getElementById(measureButton.getId()).classList.add('tooltip');
     document.getElementById(clearButton.getId()).classList.add('hidden');
-    if (touchMode) {
+    if (showSegmentLengths) {
+      document.getElementById(showSegmentLabelButton.getId()).classList.add('hidden');
+    }
+    if (touchMode && isActive) {
       document.getElementById(addNodeButton.getId()).classList.add('hidden');
       const markerIconElement = document.getElementById(`${markerIcon.getId()}`);
       markerIconElement.parentNode.removeChild(markerIconElement);
@@ -379,6 +550,9 @@ const Measure = function Measure({
     setActive(false);
     map.un('pointermove', pointerMoveHandler);
     map.removeInteraction(measure);
+    if (snap) {
+      clearSnapInteractions();
+    }
     if (typeof helpTooltipElement !== 'undefined' && helpTooltipElement !== null) {
       if (helpTooltipElement.parentNode !== null) {
         helpTooltipElement.outerHTML = '';
@@ -404,6 +578,12 @@ const Measure = function Measure({
     if (elevationTool) {
       document.getElementById(elevationToolButton.getId()).classList.remove('hidden');
     }
+    if (bufferTool) {
+      document.getElementById(bufferToolButton.getId()).classList.remove('hidden');
+    }
+    if (snap) {
+      document.getElementById(toggleSnapButton.getId()).classList.remove('hidden');
+    }
     document.getElementById(measureButton.getId()).classList.remove('tooltip');
     document.getElementById(clearButton.getId()).classList.remove('hidden');
     document.getElementById(defaultButton.getId()).click();
@@ -411,7 +591,84 @@ const Measure = function Measure({
       document.getElementById(addNodeButton.getId()).classList.remove('hidden');
       renderMarker();
     }
+    if (showSegmentLengths) {
+      document.getElementById(showSegmentLabelButton.getId()).classList.remove('hidden');
+      if (showSegmentLabelButtonState) {
+        document.getElementById(showSegmentLabelButton.getId()).classList.add('active');
+      }
+    }
     setActive(true);
+  }
+
+  function createSnapInteractionForVectorLayer(layer) {
+    const state = layer.getLayerState();
+    // Using ol_uid because the Origo layer id is unreliable
+    const layerId = layer.ol_uid;
+    let sn;
+    if (state.visible) {
+      sn = new Snap({
+        source: layer.getSource(),
+        pixelTolerance: snapRadius
+      });
+      sn.setActive(!!state.visible && snapActive);
+      sn.set('layerId', layerId);
+    }
+    const eventKey = layer.on('change:visible', (visibilityChangeEvent) => {
+      if (!visibilityChangeEvent.oldValue) {
+        const s = new Snap({
+          source: layer.getSource(),
+          pixelTolerance: snapRadius
+        });
+        s.setActive(!visibilityChangeEvent.oldValue && snapActive);
+        s.set('layerId', layerId);
+        map.addInteraction(s);
+        snapCollection.push(s);
+      } else {
+        const int = map
+          .getInteractions()
+          .getArray()
+          .find((i) => (i instanceof Snap ? i.get('layerId') === layerId : false));
+        map.removeInteraction(int);
+        snapCollection.remove(int);
+      }
+    });
+    snapEventListenerKeys.push(eventKey);
+    return sn;
+  }
+
+  function createSnapInteractionsRecursive(layer) {
+    const snaps = [];
+    if (layer instanceof VectorLayer) {
+      const sn = createSnapInteractionForVectorLayer(layer);
+      if (sn) snaps.push(sn);
+    } else if (layer instanceof LayerGroup) {
+      layer.getLayers().forEach((l) => {
+        snaps.concat(createSnapInteractionsRecursive(l));
+      });
+    }
+    return snaps;
+  }
+
+  function addSnapInteractions() {
+    if (snapLayers === undefined) {
+      const allLayers = viewer.getLayers();
+      allLayers.forEach((l) => {
+        snapCollection.extend(createSnapInteractionsRecursive(l));
+      });
+    } else {
+      snapLayers.forEach((sl) => {
+        const l = viewer.getLayer(sl);
+        if (l instanceof VectorLayer) {
+          const sn = createSnapInteractionForVectorLayer(l);
+          if (sn) snapCollection.push(sn);
+        }
+      });
+      const sn = createSnapInteractionForVectorLayer(vector);
+      if (sn) snapCollection.push(sn);
+    }
+    snapCollection.forEach((s) => {
+      map.addInteraction(s);
+    });
   }
 
   function addInteraction() {
@@ -425,6 +682,9 @@ const Measure = function Measure({
     });
 
     map.addInteraction(measure);
+    if (snap) {
+      addSnapInteractions();
+    }
     createMeasureTooltip();
     createHelpTooltip();
     if (!touchMode) {
@@ -465,7 +725,18 @@ const Measure = function Measure({
 
       document.getElementById(undoButton.getId()).classList.add('hidden');
       if (feature.getGeometry().getType() === 'Point') {
-        getElevation(evt);
+        if (bufferTool) {
+          if (document.getElementById(bufferToolButton.getId()).classList.contains('active')) {
+            feature.getStyle()[0].getText().setText('');
+            createRadiusModal(evt.feature);
+          } else {
+            feature.getStyle()[0].getText().setText(label);
+            getElevation(evt.feature);
+          }
+        } else {
+          feature.getStyle()[0].getText().setText(label);
+          getElevation(evt.feature);
+        }
       }
     }, this);
   }
@@ -510,6 +781,28 @@ const Measure = function Measure({
     map.getViewport().dispatchEvent(up);
   }
 
+  function toggleSegmentLabels() {
+    const elements = document.getElementsByClassName('o-tooltip-measure');
+    for (let i = 0; i < elements.length; i += 1) {
+      const e = elements[i];
+
+      if (e.id.startsWith('measure_')) {
+        if (showSegmentLabels) {
+          e.style.display = 'none';
+        } else {
+          e.style.display = 'block';
+        }
+      }
+    }
+    if (showSegmentLabels) {
+      showSegmentLabels = false;
+      document.getElementById(showSegmentLabelButton.getId()).classList.remove('active');
+    } else {
+      document.getElementById(showSegmentLabelButton.getId()).classList.add('active');
+      showSegmentLabels = true;
+    }
+  }
+
   function undoLastPoint() {
     if ((type === 'LineString' && sketch.getGeometry().getCoordinates().length === 2) || (type === 'Polygon' && sketch.getGeometry().getCoordinates()[0].length <= 3)) {
       document.getElementsByClassName('o-tooltip-measure')[0].remove();
@@ -524,8 +817,134 @@ const Measure = function Measure({
     }
   }
 
+  function toggleSnap() {
+    snapCollection.forEach(s => s.setActive(!snapActive));
+    snapActive = !snapActive;
+    if (snapActive) {
+      document.getElementById(toggleSnapButton.getId()).classList.add('active');
+    } else {
+      document.getElementById(toggleSnapButton.getId()).classList.remove('active');
+    }
+  }
+
+  function getState() {
+    if (vector) {
+      const sourceMeasure = vector.getSource();
+      const features = sourceMeasure.getFeatures();
+      const length = [];
+      const area = [];
+      const elevation = [];
+      const buffer = [];
+      const bufferRadius = [];
+      features.forEach((feature) => {
+        switch (feature.getGeometry().getType()) {
+          case 'LineString':
+            length.push(feature.getGeometry().getCoordinates());
+            break;
+          case 'Polygon':
+            area.push(feature.getGeometry().getCoordinates());
+            break;
+          case 'Point':
+            if (feature.getStyle()[0].getText().getText() === 'o') {
+              buffer.push(feature.getGeometry().getCoordinates());
+            } else if (feature.getStyle()[0].getText().getPlacement() === 'line') {
+              bufferRadius.push(feature.getStyle()[0].getText().getText());
+            } else {
+              elevation.push(feature.getGeometry().getCoordinates());
+            }
+            break;
+          default:
+            break;
+        }
+      });
+      const returnValue = {};
+      if (length.length > 0) {
+        returnValue.length = length;
+      }
+      if (area.length > 0) {
+        returnValue.area = area;
+      }
+      if (elevation.length > 0) {
+        returnValue.elevation = elevation;
+      }
+      if (buffer.length > 0) {
+        returnValue.buffer = buffer;
+      }
+      if (bufferRadius.length > 0) {
+        returnValue.bufferRadius = bufferRadius;
+      }
+      returnValue.showSegmentLabels = showSegmentLabels;
+      returnValue.isActive = isActive;
+      if (Object.keys(returnValue).length !== 0) {
+        return returnValue;
+      }
+    }
+
+    return undefined;
+  }
+
+  function restoreState(params) {
+    if (params && params.controls && params.controls.measure) {
+      if (params.controls.measure.measureState.isActive) {
+        enableInteraction();
+      }
+      // Restore areas
+      if (params.controls.measure.measureState && params.controls.measure.measureState.area && params.controls.measure.measureState.area.length > 0) {
+        if (Array.isArray(params.controls.measure.measureState.area)) {
+          params.controls.measure.measureState.area.forEach((item) => {
+            addArea(new Polygon(item));
+          });
+        }
+      }
+      // Restore length
+      if (params.controls.measure.measureState && params.controls.measure.measureState.length && params.controls.measure.measureState.length.length > 0) {
+        if (Array.isArray(params.controls.measure.measureState.length)) {
+          params.controls.measure.measureState.length.forEach((item) => {
+            addLength(new LineString(item));
+          });
+        }
+      }
+      // Restore buffers
+      if (params.controls.measure.measureState && params.controls.measure.measureState.buffer && params.controls.measure.measureState.buffer.length > 0) {
+        if (Array.isArray(params.controls.measure.measureState.buffer)) {
+          for (let i = 0; i < params.controls.measure.measureState.buffer.length; i += 1) {
+            let radius = params.controls.measure.measureState.bufferRadius[i];
+            radius = radius.replace(' m', '');
+            addBuffer(new Feature(new Point(params.controls.measure.measureState.buffer[i]), Number(radius)), Number(radius));
+          }
+        }
+      }
+      // Restore elevation measurements
+      if (params.controls.measure.measureState && params.controls.measure.measureState.elevation && params.controls.measure.measureState.elevation.length > 0) {
+        if (Array.isArray(params.controls.measure.measureState.elevation)) {
+          for (let i = 0; i < params.controls.measure.measureState.elevation.length; i += 1) {
+            getElevation(new Feature(new Point(params.controls.measure.measureState.elevation[i])));
+          }
+        }
+      }
+      // Restore showSegmentLabels state
+      if (params.controls.measure.measureState) {
+        if (showSegmentLabels !== params.controls.measure.measureState.showSegmentLabels) {
+          toggleSegmentLabels();
+        }
+        if (!params.controls.measure.measureState.showSegmentLabels && typeof showSegmentLabelButton !== 'undefined') {
+          document.getElementById(showSegmentLabelButton.getId()).classList.remove('active');
+          showSegmentLabelButtonState = false;
+        }
+      }
+      overlayArray.push(...tempOverlayArray);
+      tempOverlayArray = [];
+    }
+  }
+
   return Component({
     name: 'measure',
+    getState() {
+      return getState();
+    },
+    restoreState() {
+      restoreState();
+    },
     onAdd(evt) {
       viewer = evt.target;
       touchMode = 'ontouchstart' in document.documentElement;
@@ -540,6 +959,23 @@ const Measure = function Measure({
           tooltipPlacement: 'east'
         });
         buttons.push(addNodeButton);
+      }
+      if (showSegmentLengths) {
+        if (showSegmentLabelButtonState) {
+          showSegmentLabels = true;
+        } else {
+          showSegmentLabels = false;
+        }
+        showSegmentLabelButton = Button({
+          cls: 'o-measure-segment-label padding-small margin-bottom-smaller icon-smaller round light box-shadow hidden',
+          click() {
+            toggleSegmentLabels();
+          },
+          icon: '#ic_linear_scale_24px',
+          tooltipText: 'Visa delsträckor',
+          tooltipPlacement: 'east'
+        });
+        buttons.push(showSegmentLabelButton);
       }
       target = `${viewer.getMain().getMapTools().getId()}`;
 
@@ -559,6 +995,7 @@ const Measure = function Measure({
       map.addLayer(vector);
       this.addComponents(buttons);
       this.render();
+      restoreState(viewer.getUrlParams());
       viewer.on('toggleClickInteraction', (detail) => {
         if (detail.name === 'measure' && detail.active) {
           enableInteraction();
@@ -571,8 +1008,13 @@ const Measure = function Measure({
       lengthTool = measureTools.indexOf('length') >= 0;
       areaTool = measureTools.indexOf('area') >= 0;
       elevationTool = measureTools.indexOf('elevation') >= 0;
+      bufferTool = measureTools.indexOf('buffer') >= 0;
       defaultTool = lengthTool ? defaultMeasureTool : 'area';
-      if (lengthTool || areaTool || elevationTool) {
+      snapCollection = new Collection([], {
+        unique: true
+      });
+      snapEventListenerKeys = new Collection([], { unique: true });
+      if (lengthTool || areaTool || elevationTool || bufferTool) {
         measureElement = El({
           tagName: 'div',
           cls: 'flex column'
@@ -616,7 +1058,6 @@ const Measure = function Measure({
             tooltipPlacement: 'east'
           });
           buttons.push(areaToolButton);
-          defaultButton = defaultTool === 'length' ? lengthToolButton : areaToolButton;
         }
 
         if (elevationTool) {
@@ -631,7 +1072,33 @@ const Measure = function Measure({
             tooltipPlacement: 'east'
           });
           buttons.push(elevationToolButton);
-          defaultButton = defaultTool === 'length' ? lengthToolButton : elevationToolButton;
+        }
+
+        if (bufferTool) {
+          bufferToolButton = Button({
+            cls: 'o-measure-buffer padding-small margin-bottom-smaller icon-smaller round light box-shadow hidden',
+            click() {
+              type = 'Point';
+              toggleType(this);
+            },
+            icon: '#ic_adjust_24px',
+            tooltipText: 'Buffer',
+            tooltipPlacement: 'east'
+          });
+          buttons.push(bufferToolButton);
+        }
+        switch (defaultTool) {
+          case 'area':
+            defaultButton = areaToolButton;
+            break;
+          case 'elevation':
+            defaultButton = elevationToolButton;
+            break;
+          case 'buffer':
+            defaultButton = bufferToolButton;
+            break;
+          default:
+            defaultButton = lengthToolButton;
         }
 
         if (lengthTool || areaTool) {
@@ -657,6 +1124,21 @@ const Measure = function Measure({
             tooltipPlacement: 'east'
           });
           buttons.push(clearButton);
+        }
+
+        if (snap) {
+          toggleSnapButton = Button({
+            cls: `o-measure-snap padding-small margin-bottom-smaller icon-smaller round light box-shadow hidden activ ${
+              snapActive && 'active'
+            }`,
+            click() {
+              toggleSnap();
+            },
+            icon: '#fa-magnet',
+            tooltipText: 'Snappning',
+            tooltipPlacement: 'east'
+          });
+          buttons.push(toggleSnapButton);
         }
       }
     },
@@ -685,6 +1167,21 @@ const Measure = function Measure({
       }
       if (touchMode) {
         htmlString = addNodeButton.render();
+        el = dom.html(htmlString);
+        document.getElementById(measureElement.getId()).appendChild(el);
+      }
+      if (showSegmentLengths) {
+        htmlString = showSegmentLabelButton.render();
+        el = dom.html(htmlString);
+        document.getElementById(measureElement.getId()).appendChild(el);
+      }
+      if (bufferTool) {
+        htmlString = bufferToolButton.render();
+        el = dom.html(htmlString);
+        document.getElementById(measureElement.getId()).appendChild(el);
+      }
+      if (toggleSnapButton) {
+        htmlString = toggleSnapButton.render();
         el = dom.html(htmlString);
         document.getElementById(measureElement.getId()).appendChild(el);
       }

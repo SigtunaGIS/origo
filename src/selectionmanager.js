@@ -16,12 +16,19 @@ const Selectionmanager = function Selectionmanager(options = {}) {
   let urval;
   let map;
   let infowindow;
+  /** The selectionmanager component itself */
+  let component;
 
   const multiselectStyleOptions = options.multiSelectionStyles || styleTypes.getStyle('multiselection');
   const isInfowindow = options.infowindow === 'infowindow' || false;
 
   function alreadyExists(item) {
-    return selectedItems.getArray().some((i) => item.getId() === i.getId());
+    return selectedItems.getArray().some((i) => item.getId() === i.getId() && item.selectionGroup === i.selectionGroup);
+  }
+
+  function getSelectedItemsForASelectionGroup(selectionGroup) {
+    const items = selectedItems.getArray().filter((i) => i.getSelectionGroup() === selectionGroup);
+    return items;
   }
 
   function removeItem(item) {
@@ -56,6 +63,9 @@ const Selectionmanager = function Selectionmanager(options = {}) {
       return;
     }
     selectedItems.push(item);
+    if (getSelectedItemsForASelectionGroup(item.getSelectionGroup()).length === selectedItems.getArray().length) {
+      infowindow.showSelectedList(item.getSelectionGroup());
+    }
   }
 
   function addItems(items) {
@@ -64,12 +74,20 @@ const Selectionmanager = function Selectionmanager(options = {}) {
     });
   }
 
+  /**
+   * Highlights the feature with fid id.
+   * All other items are un-highlighted
+   * Emits event 'highlight' with highlighted SelectedItem
+   * @param {any} id
+   */
   function highlightFeatureById(id) {
     selectedItems.forEach((item) => {
       const feature = item.getFeature();
       if (item.getId() === id) {
         feature.set('state', 'selected');
+        component.dispatch('highlight', item);
       } else {
+        // FIXME: Second argument should be a bool. Change to true to intentionally supress event, or remove second arg to emit the event. May affect the all other layers refresh below
         feature.unset('state', 'selected');
       }
     });
@@ -88,6 +106,7 @@ const Selectionmanager = function Selectionmanager(options = {}) {
     infowindow.highlightListElement(featureId);
   }
 
+  // FIXME: does almost exactly the same as highlightAndExpandItem
   function highlightItem(item) {
     const featureId = item.getId();
     highlightFeatureById(featureId);
@@ -114,9 +133,8 @@ const Selectionmanager = function Selectionmanager(options = {}) {
     }
   }
 
-  function getSelectedItemsForASelectionGroup(selectionGroup) {
-    const items = selectedItems.getArray().filter((i) => i.getSelectionGroup() === selectionGroup);
-    return items;
+  function getSelectedItems() {
+    return selectedItems;
   }
 
   function clearSelection() {
@@ -130,6 +148,13 @@ const Selectionmanager = function Selectionmanager(options = {}) {
     return Style.createStyleRule(multiselectStyleOptions.selected);
   }
 
+  function createSelectionGroup(selectionGroup, selectionGroupTitle) {
+    const urvalLayer = featurelayer(null, map);
+    urvalLayer.setStyle(featureStyler);
+    urval.set(selectionGroup, urvalLayer);
+    infowindow.createUrvalElement(selectionGroup, selectionGroupTitle);
+  }
+
   function onItemAdded(event) {
     const item = event.element;
 
@@ -137,10 +162,7 @@ const Selectionmanager = function Selectionmanager(options = {}) {
     const selectionGroupTitle = event.element.getSelectionGroupTitle();
 
     if (!urval.has(selectionGroup)) {
-      const urvalLayer = featurelayer(null, map);
-      urvalLayer.setStyle(featureStyler);
-      urval.set(selectionGroup, urvalLayer);
-      infowindow.createUrvalElement(selectionGroup, selectionGroupTitle);
+      createSelectionGroup(selectionGroup, selectionGroupTitle);
     }
 
     urval.get(selectionGroup).addFeature(item.getFeature());
@@ -161,6 +183,7 @@ const Selectionmanager = function Selectionmanager(options = {}) {
     const selectionGroupTitle = event.element.getSelectionGroupTitle();
 
     const feature = item.getFeature();
+    // FIXME: second argument should be a bool. True supresses event. 'selected' will be treated as true. Maybe correct, but not obvious.
     feature.unset('state', 'selected');
 
     urval.get(selectionGroup).removeFeature(feature);
@@ -178,12 +201,20 @@ const Selectionmanager = function Selectionmanager(options = {}) {
     }
   }
 
+  /**
+   * Highlights a feature. All other highlights remain and list is not affected.
+   * @param {any} feature The feature to highlight
+   */
   function highlightFeature(feature) {
     feature.set('state', 'selected');
   }
 
   function getNumberOfSelectedItems() {
     return selectedItems.getLength();
+  }
+
+  function getUrval() {
+    return urval;
   }
 
   return Component({
@@ -194,10 +225,13 @@ const Selectionmanager = function Selectionmanager(options = {}) {
     addOrHighlightItem,
     removeItemById,
     clearSelection,
+    createSelectionGroup,
     highlightFeature,
     highlightFeatureById,
     getNumberOfSelectedItems,
+    getSelectedItems,
     getSelectedItemsForASelectionGroup,
+    getUrval,
     onInit() {
       selectedItems = new Collection([], { unique: true });
       urval = new Map();
@@ -205,6 +239,8 @@ const Selectionmanager = function Selectionmanager(options = {}) {
       selectedItems.on('remove', onItemRemoved);
     },
     onAdd(e) {
+      // Keep a reference to "ourselves"
+      component = this;
       viewer = e.target;
       map = viewer.getMap();
       infowindow = infowindowManager.init(options);
