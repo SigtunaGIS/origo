@@ -204,7 +204,7 @@ const PrintSettings = function PrintSettings(options = {}) {
           });
         }
       });
-      const components = [customSizeControl, marginControl, orientationControl, sizeControl, titleControl, descriptionControl, createdControl, northArrowControl, printLegendControl, setScaleControl, resolutionControl, showScaleControl];
+      const components = [customSizeControl, marginControl, orientationControl, sizeControl, titleControl, descriptionControl, createdControl, northArrowControl, printLegendControl, setScaleControl, showScaleControl];
       if (rotationControl) { components.push(rotationControl); }
       contentComponent.addComponents(components);
       printSettingsContainer = Collapse({
