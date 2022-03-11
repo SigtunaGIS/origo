@@ -1,9 +1,6 @@
-import {
-  simpleExportHandler,
-  layerSpecificExportHandler
-} from './infowindow_exporthandler';
-import Icon from './ui/icon';
+import { simpleExportHandler, layerSpecificExportHandler } from './infowindow_exporthandler';
 import exportToFile from './utils/exporttofile';
+import Icon from './ui/icon';
 
 let parentElement;
 let mainContainer;
@@ -25,11 +22,7 @@ function createSvgElement(id, className) {
   const useElem = document.createElementNS('http://www.w3.org/2000/svg', 'use');
 
   svgElem.setAttribute('class', className); // this instead of above line to support ie!
-  useElem.setAttributeNS(
-    'http://www.w3.org/1999/xlink',
-    'xlink:href',
-    `#${id}`
-  );
+  useElem.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${id}`);
   svgElem.appendChild(useElem);
   svgContainer.appendChild(svgElem);
   svgContainer.classList.add(`${className}-container`);
@@ -129,7 +122,7 @@ function render(viewerId, title) {
   parentElement.appendChild(mainContainer);
   mainContainer.classList.add('hidden');
 
-  // Make the DIV element draggable:
+  // Make the DIV element draggagle:
   makeElementDraggable(mainContainer);
 }
 
@@ -162,27 +155,29 @@ function showSelectedList(selectionGroup) {
 
 function createExportButton(buttonText) {
   const container = document.createElement('div');
-  container.classList.add('padding-smallest');
+
+  const spinner = document.createElement('img');
+  spinner.src = 'img/loading.gif';
+  spinner.classList.add('spinner');
+  spinner.style.visibility = 'hidden';
 
   const button = document.createElement('button');
   button.classList.add('export-button');
   button.textContent = buttonText;
 
   container.appendChild(button);
-  const spinner = document.createElement('img');
-  spinner.src = 'img/loading.gif';
-  spinner.classList.add('spinner');
+  container.appendChild(spinner);
 
   button.loadStart = () => {
     button.disabled = true;
     button.classList.add('disabled');
-    button.replaceWith(spinner);
+    spinner.style.visibility = 'visible';
   };
 
   button.loadStop = () => {
     button.disabled = false;
     button.classList.remove('disabled');
-    spinner.replaceWith(button);
+    spinner.style.visibility = 'hidden';
   };
 
   return container;
@@ -236,12 +231,8 @@ function createToaster(status, message) {
   const toaster = document.createElement('div');
   toaster.style.fontSize = '12px';
   if (!message) {
-    const successMsg = exportOptions.toasterMessages && exportOptions.toasterMessages.success
-      ? exportOptions.toasterMessages.success
-      : 'Success!';
-    const failMsg = exportOptions.toasterMessages && exportOptions.toasterMessages.fail
-      ? exportOptions.toasterMessages.fail
-      : 'Sorry, something went wrong. Please contact your administrator';
+    const successMsg = exportOptions.toasterMessages && exportOptions.toasterMessages.success ? exportOptions.toasterMessages.success : 'Success!';
+    const failMsg = exportOptions.toasterMessages && exportOptions.toasterMessages.fail ? exportOptions.toasterMessages.fail : 'Sorry, something went wrong. Please contact your administrator';
     msg = status === 'ok' ? successMsg : failMsg;
   }
   // It cannot be appended to infowindow bcuz in mobile tranform:translate is used css, and it causes that position: fixed loses its effect.
@@ -324,23 +315,26 @@ function createSubexportComponent(selectionGroup) {
   // OBS! selectionGroup corresponds to a layer with the same name in most cases, but in case of a group layer it can contain selected items from all the layers in that GroupLayer.
 
   let layerSpecificExportOptions;
-  const simpleExportLayers = exportOptions.simpleExportLayers
-    ? exportOptions.simpleExportLayers
+  const simpleExportLayers = exportOptions.simpleExport.layers
+    ? exportOptions.simpleExport.layers
     : [];
-  const simpleExportUrl = exportOptions.simpleExportUrl;
-  const simpleExportButtonText = exportOptions.simpleExportButtons.buttonText || 'Export';
-  const exportedFileName = exportOptions.exportedFileName;
+  const simpleExportUrl = exportOptions.simpleExport.url;
+  const simpleExportButtonText = exportOptions.simpleExport.buttons.buttonText || 'Export';
+  const exportedFileName = exportOptions.simpleExport.exportedFileName;
   const activeLayer = viewer.getLayer(selectionGroup);
 
   const subexportContainer = document.createElement('div');
   subexportContainer.classList.add('export-buttons-container');
+
+  if (activeLayer.get('type') === 'GROUP') {
+    console.warn('The selected layer is a LayerGroup, be careful!');
+  }
 
   if (exportOptions.layerSpecificExport) {
     layerSpecificExportOptions = exportOptions.layerSpecificExport.find(
       (i) => i.layer === selectionGroup
     );
   }
-
   if (layerSpecificExportOptions) {
     const exportUrls = layerSpecificExportOptions.exportUrls || [];
     const attributesToSendToExportPerLayer = layerSpecificExportOptions.attributesToSendToExport;
@@ -372,11 +366,11 @@ function createSubexportComponent(selectionGroup) {
   } else if (simpleExportLayers.length) {
     const exportAllowed = simpleExportLayers.find((l) => l === selectionGroup);
     if (exportAllowed) {
-      const roundButton = exportOptions.simpleExportButtons.roundButton || false;
+      const roundButton = exportOptions.simpleExport.buttons.roundButton || false;
       const exportBtn = roundButton
         ? createCustomExportButton(
-          exportOptions.simpleExportButtons.roundButtonIcon,
-          exportOptions.simpleExportButtons.roundButtonTooltipText
+          exportOptions.simpleExport.buttons.roundButtonIcon,
+          exportOptions.simpleExport.buttons.roundButtonTooltipText
         )
         : createExportButton(simpleExportButtonText);
       const btn = exportBtn.querySelector('button');
@@ -403,6 +397,10 @@ function createSubexportComponent(selectionGroup) {
           });
       });
       subexportContainer.appendChild(exportBtn);
+    } else {
+      console.warn(
+        `Export is not allowed for selection group: ${selectionGroup}`
+      );
     }
   } else if (exportOptions.clientExport) {
     const conf = exportOptions.clientExport;
@@ -422,6 +420,10 @@ function createSubexportComponent(selectionGroup) {
       });
       subexportContainer.appendChild(exportBtn);
     }
+  } else {
+    console.warn(
+      `Neither Specific Export is specified for selection group: ${selectionGroup} nor Simple Export is allowed!`
+    );
   }
 
   return subexportContainer;
@@ -461,19 +463,12 @@ function highlightListElement(featureId) {
   });
 }
 
-function createExpandableContent(
-  listElementContentContainer,
-  content,
-  elementId
-) {
+function createExpandableContent(listElementContentContainer, content, elementId) {
   const items = content.querySelectorAll('ul > li');
   const foldedItems = [];
 
   if (items.length > 2) {
-    const rightArrowSvg = createSvgElement(
-      'fa-chevron-right',
-      'expandlistelement-svg'
-    );
+    const rightArrowSvg = createSvgElement('fa-chevron-right', 'expandlistelement-svg');
 
     rightArrowSvg.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -542,17 +537,14 @@ function createListElement(item) {
   const listElement = document.createElement('div');
   listElement.classList.add('listelement');
   listElement.id = item.getId();
-  const svg = createSvgElement(
-    'ic_remove_circle_outline_24px',
-    'removelistelement-svg'
-  );
+  const svg = createSvgElement('ic_remove_circle_outline_24px', 'removelistelement-svg');
   svg.addEventListener('click', () => {
     selectionManager.removeItem(item);
   });
   listElement.appendChild(svg);
   const listElementContentContainer = document.createElement('div');
   listElementContentContainer.classList.add('listelement-content-container');
-  const content = item.getContent();
+  const content = (item.getContent());
   listElementContentContainer.appendChild(content);
   listElement.appendChild(listElementContentContainer);
   createExpandableContent(listElementContentContainer, content, item.getId());
@@ -598,9 +590,7 @@ function scrollListElementToView(featureId) {
           if (elementBoundingBox.top < listContainerBoundingBox.top) {
             const scrollDownValue = listContainerBoundingBox.top - elementBoundingBox.top;
             listContainer2.scrollTop -= scrollDownValue;
-          } else if (
-            elementBoundingBox.bottom > listContainerBoundingBox.bottom
-          ) {
+          } else if (elementBoundingBox.bottom > listContainerBoundingBox.bottom) {
             const scrollUpValue = elementBoundingBox.bottom - listContainerBoundingBox.bottom;
             listContainer2.scrollTop += scrollUpValue;
           }
@@ -644,11 +634,8 @@ function init(options) {
   viewer = options.viewer;
   selectionManager = options.viewer.getSelectionManager();
 
-  const infowindowOptions = options.infowindowOptions
-    ? options.infowindowOptions
-    : {};
+  const infowindowOptions = options.infowindowOptions ? options.infowindowOptions : {};
   exportOptions = infowindowOptions.export || {};
-
   sublists = new Map();
   subexports = new Map();
   urvalElements = new Map();
