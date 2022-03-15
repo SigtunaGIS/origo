@@ -313,14 +313,7 @@ function createExportButtons(
 
 function createSubexportComponent(selectionGroup) {
   // OBS! selectionGroup corresponds to a layer with the same name in most cases, but in case of a group layer it can contain selected items from all the layers in that GroupLayer.
-
   let layerSpecificExportOptions;
-  const simpleExportLayers = exportOptions.simpleExport.layers
-    ? exportOptions.simpleExport.layers
-    : [];
-  const simpleExportUrl = exportOptions.simpleExport.url;
-  const simpleExportButtonText = exportOptions.simpleExport.buttons.buttonText || 'Export';
-  const exportedFileName = exportOptions.simpleExport.exportedFileName;
   const activeLayer = viewer.getLayer(selectionGroup);
 
   const subexportContainer = document.createElement('div');
@@ -359,7 +352,11 @@ function createSubexportComponent(selectionGroup) {
       );
       subexportContainer.appendChild(button);
     });
-  } else if (simpleExportLayers.length) {
+  } else if (exportOptions.simpleExport) {
+    const simpleExportLayers = exportOptions.simpleExport.layers ? exportOptions.simpleExport.layers : [];
+    const simpleExportUrl = exportOptions.simpleExport.url || false;
+    const simpleExportButtonText = exportOptions.simpleExport.buttons.buttonText || 'Export';
+    const exportedFileName = exportOptions.simpleExport.exportedFileName || 'Exportera';
     const exportAllowed = simpleExportLayers.find((l) => l === selectionGroup);
     if (exportAllowed) {
       const roundButton = exportOptions.simpleExport.buttons.roundButton || false;
@@ -398,22 +395,30 @@ function createSubexportComponent(selectionGroup) {
     const conf = exportOptions.clientExport;
     const exportAllowed = !conf.layers || conf.layers.find((l) => l === selectionGroup);
     if (exportAllowed) {
-      const exportBtn = createExportButton(conf.buttonText || 'Exportera');
+      const roundButton = conf.buttons.roundButton || false;
+      const buttonText = conf.buttons.buttonText || 'Exportera';
+      const exportBtn = roundButton
+        ? createCustomExportButton(
+          conf.buttons.roundButtonIcon,
+          conf.buttons.roundButtonTooltipText
+        )
+        : createExportButton(buttonText);
+
       const btn = exportBtn.querySelector('button');
       btn.addEventListener('click', () => {
-        exportBtn.loadStart();
+        btn.loadStart();
         const selectedItems = selectionManager.getSelectedItemsForASelectionGroup(selectionGroup);
         const features = selectedItems.map(i => i.getFeature());
         exportToFile(features, conf.format, {
           featureProjection: viewer.getProjection().getCode(),
           filename: selectionGroup
         });
-        exportBtn.loadStop();
+        btn.loadStop();
       });
       subexportContainer.appendChild(exportBtn);
     }
   }
-  
+
   return subexportContainer;
 }
 
