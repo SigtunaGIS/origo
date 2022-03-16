@@ -519,15 +519,17 @@ const Viewer = function Viewer(targetOption, options = {}) {
     }
   };
 
-  function showLayersAndLocationFromUrlParams(params) {
+  function showLayersAndLocationFromUrlParams(params, resetBackgroundLayers) {
     // light up the layers
     const layersToShow = params.layers || {};
     const keys = Object.keys(layersToShow);
     keys.forEach(layerName => {
       const layerObj = layersToShow[layerName];
       const layerToShow = getLayer(layerName);
-      layerToShow.setVisible(layerObj.visible);
-      layerToShow.setOpacity(layerObj.opacity);
+      if (!(!resetBackgroundLayers && layerToShow.get('group') === 'background')) {
+        layerToShow.setVisible(layerObj.visible);
+        layerToShow.setOpacity(layerObj.opacity);
+      }
     });
 
     if (params.pin) {
@@ -555,7 +557,7 @@ const Viewer = function Viewer(targetOption, options = {}) {
     }
   }
 
-  function resetToBaseState() {
+  function resetToBaseState(resetBackgroundLayers) {
     // if the option has a property called name => it is a layer
     const flattenLayers = layerOptions.flatMap(l => (l.name && l.layers && l.visible ? l.layers : l) || l);
     const defaultVisibleLayers = flattenLayers.filter(l => l.visible);
@@ -569,7 +571,7 @@ const Viewer = function Viewer(targetOption, options = {}) {
     // hide active layers
     onLayers.forEach(layer => {
       const layerName = layer.get('name');
-      if (!visibleLayersObj[layerName]) {
+      if (!visibleLayersObj[layerName] && !(!resetBackgroundLayers && layer.get('group') === 'background')) {
         console.log('turning off', layerName);
         layer.setVisible(false);
         // finding the correct layer for the correct opacity
@@ -588,10 +590,10 @@ const Viewer = function Viewer(targetOption, options = {}) {
         console.log('staying on', layerName);
       }
     });
-    // show hiden layers
+    // show hidden layers
     defaultVisibleLayers.forEach(l => {
       const layer = getLayersByProperty('id', l.name)[0];
-      if (layer.getVisible()) {
+      if (layer.getVisible() && !(!resetBackgroundLayers && layer.get('group') === 'background')) {
         console.log('turning on', l.name);
         layer.setVisible(true);
         layer.setOpacity(l.opacity || 1);
@@ -599,19 +601,19 @@ const Viewer = function Viewer(targetOption, options = {}) {
     });
   }
 
-  const importFromUrl = function importUrlParams(importUrl, resetToBaseVisibility = true) {
+  const importFromUrl = function importUrlParams(importUrl, resetToBaseVisibility = true, resetBackgroundLayers = true) {
     const importedUrlParams = parsePermalink(importUrl);
     console.log('import url', importUrlParams);
     if (!importedUrlParams) {
       return;
     }
 
-    if (resetToBaseVisibility) {
-      resetToBaseState();
+    if (resetToBaseVisibility || resetBackgroundLayers) {
+      resetToBaseState(resetBackgroundLayers);
       // clean any pin, selection or feature
       featureinfo.clear();
     }
-    showLayersAndLocationFromUrlParams(importedUrlParams);
+    showLayersAndLocationFromUrlParams(importedUrlParams, resetBackgroundLayers);
   };
 
   return Component({
