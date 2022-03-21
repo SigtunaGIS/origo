@@ -468,11 +468,11 @@ const Viewer = function Viewer(targetOption, options = {}) {
 
     if (layer && type !== 'GROUP') {
       const clusterSource = layer.getSource().source;
-      const id = featureId.split('.')[1];
+      let id = featureId.split('.')[1];
       layer.once('postrender', () => {
         let feature;
 
-        if (layerType === 'WFS') {
+        if (type === 'WFS') {
           // WFS uses the layername as a part of the featureId. Problem is that it what the server think is the name that matters.
           // First we assume that the layername is actually correct, then take the special cases
           let idLayerPart = layerName;
@@ -541,7 +541,7 @@ const Viewer = function Viewer(targetOption, options = {}) {
     keys.forEach(layerName => {
       const layerObj = layersToShow[layerName];
       const layerToShow = getLayer(layerName);
-      if (!(!resetBackgroundLayers && layerToShow.get('group') === 'background')) {
+      if (resetBackgroundLayers || layerToShow.get('group') !== 'background') {
         layerToShow.setVisible(layerObj.visible);
         layerToShow.setOpacity(layerObj.opacity);
       }
