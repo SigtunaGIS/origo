@@ -501,7 +501,7 @@ const Viewer = function Viewer(targetOption, options = {}) {
           obj.feature = feature;
           obj.title = layer.get('title');
           obj.content = getAttributes(feature, layer);
-          obj.layer = layer;
+          obj.layerName = layerName;
           featureinfo.showFeatureInfo(obj);
           if (centerOnIt) {
             map.getView().fit(feature.getGeometry(), {
