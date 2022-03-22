@@ -499,8 +499,6 @@ const Viewer = function Viewer(targetOption, options = {}) {
         if (feature) {
           const obj = {};
           obj.feature = feature;
-          obj.title = layer.get('title');
-          obj.content = getAttributes(feature, layer);
           obj.layerName = layerName;
           featureinfo.showFeatureInfo(obj);
           if (centerOnIt) {

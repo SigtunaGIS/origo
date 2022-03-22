@@ -562,7 +562,6 @@ const Featureinfo = function Featureinfo(options = {}) {
     const grouplayers = viewer.getGroupLayers();
     const newItem = getFeatureInfo.createSelectedItem(feature, layer, map, grouplayers);
     render([newItem], identifyTarget, maputils.getCenter(feature.getGeometry()), { ignorePan: true });
-    viewer.zoomToExtent(feature.getGeometry());
   };
 
   const addPin = function addPin(coordinates) {
