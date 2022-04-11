@@ -259,8 +259,8 @@ function createExportButtons(
   selectionGroup,
   activeLayer
 ) {
-  const roundButton = obj.buttons.roundButton || false;
-  const buttonText = obj.buttons.buttonText || 'Export';
+  const roundButton = obj.button.roundButton || false;
+  const buttonText = obj.button.buttonText || 'Export';
   const url = obj.url;
   const layerSpecificExportedFileName = obj.exportedFileName;
   const attributesToSendToExport = obj.attributesToSendToExport
@@ -268,8 +268,8 @@ function createExportButtons(
     : attributesToSendToExportPerLayer;
   const exportBtn = roundButton
     ? createCustomExportButton(
-      obj.buttons.roundButtonIcon,
-      obj.buttons.roundButtonTooltipText
+      obj.button.roundButtonIcon,
+      obj.button.roundButtonTooltipText
     )
     : createExportButton(buttonText);
   const btn = exportBtn.querySelector('button');
@@ -328,10 +328,10 @@ function createSubexportComponent(selectionGroup) {
     const exportUrls = layerSpecificExportOptions.exportUrls || [];
     const attributesToSendToExportPerLayer = layerSpecificExportOptions.attributesToSendToExport;
     const customButtonExportUrls = exportUrls.filter(
-      (e) => e.buttons.roundButton
+      (e) => e.button.roundButton
     );
     const standardButtonExportUrls = exportUrls.filter(
-      (e) => !e.buttons.roundButton
+      (e) => !e.button.roundButton
     );
 
     customButtonExportUrls.forEach((obj) => {
@@ -355,15 +355,15 @@ function createSubexportComponent(selectionGroup) {
   } else if (exportOptions.simpleExport) {
     const simpleExportLayers = exportOptions.simpleExport.layers ? exportOptions.simpleExport.layers : [];
     const simpleExportUrl = exportOptions.simpleExport.url || false;
-    const simpleExportButtonText = exportOptions.simpleExport.buttons.buttonText || 'Export';
-    const exportedFileName = exportOptions.simpleExport.exportedFileName || 'Exportera';
+    const simpleExportButtonText = exportOptions.simpleExport.button.buttonText || 'Export';
     const exportAllowed = simpleExportLayers.find((l) => l === selectionGroup);
     if (exportAllowed) {
-      const roundButton = exportOptions.simpleExport.buttons.roundButton || false;
+      const exportedFileName = `${exportAllowed}.xlsx`;
+      const roundButton = exportOptions.simpleExport.button.roundButton || false;
       const exportBtn = roundButton
         ? createCustomExportButton(
-          exportOptions.simpleExport.buttons.roundButtonIcon,
-          exportOptions.simpleExport.buttons.roundButtonTooltipText
+          exportOptions.simpleExport.button.roundButtonIcon,
+          exportOptions.simpleExport.button.roundButtonTooltipText
         )
         : createExportButton(simpleExportButtonText);
       const btn = exportBtn.querySelector('button');
@@ -395,12 +395,12 @@ function createSubexportComponent(selectionGroup) {
     const conf = exportOptions.clientExport;
     const exportAllowed = !conf.layers || conf.layers.find((l) => l === selectionGroup);
     if (exportAllowed) {
-      const roundButton = conf.buttons.roundButton || false;
-      const buttonText = conf.buttons.buttonText || 'Exportera';
+      const roundButton = conf.button.roundButton || false;
+      const buttonText = conf.button.buttonText || 'Exportera';
       const exportBtn = roundButton
         ? createCustomExportButton(
-          conf.buttons.roundButtonIcon,
-          conf.buttons.roundButtonTooltipText
+          conf.button.roundButtonIcon,
+          conf.button.roundButtonTooltipText
         )
         : createExportButton(buttonText);
 
