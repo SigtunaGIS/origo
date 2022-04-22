@@ -20,12 +20,13 @@ import validate from '../../utils/validate';
 import slugify from '../../utils/slugify';
 import topology from '../../utils/topology';
 import attachmentsform from './attachmentsform';
+import relatedTablesForm from './relatedtablesform';
+import relatedtables from '../../utils/relatedtables';
 
 const editsStore = store();
 let editLayers = {};
 let autoSave;
 let autoForm;
-let editSource;
 let map;
 let currentLayer;
 let editableLayers;
@@ -52,6 +53,9 @@ let allowDelete;
 let allowCreate;
 let allowEditAttributes;
 let allowEditGeometry;
+/** List that tracks the state when editing related tables */
+let breadcrumbs = [];
+let autoCreatedFeature = false;
 
 function isActive() {
   if (modify === undefined || select === undefined) {
@@ -109,11 +113,58 @@ function getFeaturesByIds(type, layer, ids) {
   return features;
 }
 
+/**
+ * Helper that calculates the default value for one attribute
+ * @param {any} attribConf The list entry from "attributes"-configuration that default value should be calculated for
+ * @returns The default value for provided attribute
+ */
+function getDefaultValueForAttribute(attribConf) {
+  const defaultsConfig = attribConf.defaultValue;
+  if (defaultsConfig) {
+    if (typeof defaultsConfig === 'string') {
+      return defaultsConfig;
+    }
+    // Else look for some properties
+    if (defaultsConfig.type === 'sessionStorage') {
+      return sessionStorage.getItem(defaultsConfig.key);
+    } else if (defaultsConfig.type === 'localStorage') {
+      return localStorage.getItem(defaultsConfig.key);
+    } else if (defaultsConfig.type === 'timestamp') {
+      // If an exact timestamp is needed, use a database default or trigger, this is taken when editor opens
+      const today = new Date();
+      // Can't win the timezone war. If local time is used, save it without any timezone info and hope the server does the right thing
+      const isoDate = defaultsConfig.useUTC ? today.toISOString() : new Date(today.getTime() - (today.getTimezoneOffset() * 60000)).toISOString();
+      switch (defaultsConfig.timeStampFormat) {
+        // yy-MM-dd consistent with attribute format "date"
+        case 'date':
+          return isoDate.slice(0, 10);
+        case 'time':
+          // HH:mm:ss consistent with attribute format "time"
+          return isoDate.slice(11, 19);
+        case 'datetime':
+          // "yy-MM-dd HH:mm:ss" consistent with attribute format "datetime"
+          return `${isoDate.slice(0, 10)} ${isoDate.slice(11, 19)}`;
+        default:
+          // Can be parsed to DateTime by server, skipping milliseconds and timezone info.
+          // Suitable for hidden fields that correspond to a DateTime in database
+          return isoDate.slice(0, 19);
+      }
+    }
+  }
+  // Consistent return
+  return undefined;
+}
+
+/**
+ * Helper that calculate all default values for a layer.
+ * @param {any} attrs The "attributes"-configuration for the desired layer
+ * @returns {object} An object with attributes names as properties and the default value as value.
+ */
 function getDefaultValues(attrs) {
   return attrs.filter(attribute => attribute.name && attribute.defaultValue)
     .reduce((prev, curr) => {
       const previous = prev;
-      previous[curr.name] = curr.defaultValue;
+      previous[curr.name] = getDefaultValueForAttribute(curr);
       return previous;
     }, {});
 }
@@ -121,10 +172,14 @@ function getDefaultValues(attrs) {
 function getSnapSources(layers) {
   return layers.map(layer => viewer.getLayer(layer).getSource());
 }
-
-function saveFeatures() {
+/**
+ * Saves the features to server.
+ * @returns A promise which is resolved when all features have been saved if the source supports it. Otherwise it is resolved immediately.
+ * */
+async function saveFeatures() {
   const edits = editsStore.getEdits();
   const layerNames = Object.getOwnPropertyNames(edits);
+  const promises = [];
   layerNames.forEach((layerName) => {
     const transaction = {
       insert: null,
@@ -137,22 +192,13 @@ function saveFeatures() {
       const ids = edits[layerName][editType];
       const features = getFeaturesByIds(editType, layer, ids);
       if (features.length) {
-        // Remove attributes added by attachments before saving.
-        const attachmentsConfig = layer.get('attachments');
-        if (attachmentsConfig && attachmentsConfig.groups) {
-          features.forEach(feat => {
-            attachmentsConfig.groups.forEach(g => {
-              feat.unset(g.linkAttribute);
-              feat.unset(g.fileNameAttribute);
-            });
-          });
-        }
         transaction[editType] = features;
       }
     });
-
-    transactionHandler(transaction, layerName, viewer);
+    // If the source does not return a promise it is not awaited for in Promise.all, so this is pretty safe.
+    promises.push(transactionHandler(transaction, layerName, viewer));
   });
+  return Promise.all(promises);
 }
 
 /**
@@ -160,10 +206,10 @@ function saveFeatures() {
  * @param {any} change The feature and change type
  * @param {any} ignoreAutoSave Optional argument that overrides autoSave configuration parameter. Used to prevent numerous transactions in batch mode.
  */
-function saveFeature(change, ignoreAutoSave) {
+async function saveFeature(change, ignoreAutoSave) {
   dispatcher.emitChangeFeature(change);
   if (autoSave && !ignoreAutoSave) {
-    saveFeatures(change);
+    await saveFeatures(change);
   }
 }
 
@@ -188,27 +234,37 @@ function onModifyStart(evt) {
   }
 }
 
-//
+/**
+ * Adds the feature to the layer and set default attributes and a temporary id. If autosaved is enabled it is saved to db.
+ * @param {any} feature
+ * @param {any} layerName
+ * @returns a promise which is resolved when feature is saved to db (or immediately id not autosave)
+ */
+async function addFeatureToLayer(feature, layerName) {
+  const layer = viewer.getLayer(layerName);
+  const defaultAttributes = getDefaultValues(layer.get('attributes'));
+  feature.setProperties(defaultAttributes);
+  feature.setId(generateUUID());
+  layer.getSource().addFeature(feature);
+  return saveFeature({
+    feature,
+    layerName,
+    action: 'insert'
+  });
+}
 
 /**
  * Helper for adding new features. Typically called from various eventhandlers
  * @param {Feature} feature The feature to add.
+ * @returns a promise which is resolved when feature is saved to db (or immediately if not autosave)
  */
-function addFeature(feature) {
-  const layer = viewer.getLayer(currentLayer);
-  const defaultAttributes = getDefaultValues(layer.get('attributes'));
-  feature.setProperties(defaultAttributes);
-  feature.setId(generateUUID());
-  editSource.addFeature(feature);
+async function addFeature(feature) {
+  await addFeatureToLayer(feature, currentLayer);
   setActive();
   hasDraw = false;
-  saveFeature({
-    feature,
-    layerName: currentLayer,
-    action: 'insert'
-  });
   dispatcher.emitChangeEdit('draw', false);
   if (autoForm) {
+    autoCreatedFeature = true;
     // eslint-disable-next-line no-use-before-define
     editAttributes(feature);
   }
@@ -418,7 +474,6 @@ function setAllowedOperations() {
 
 function setInteractions(drawType) {
   const editLayer = editLayers[currentLayer];
-  editSource = editLayer.getSource();
   attributes = editLayer.get('attributes');
   title = editLayer.get('title') || 'Information';
   const drawOptions = {
@@ -468,6 +523,10 @@ function setInteractions(drawType) {
 }
 
 function setEditLayer(layerName) {
+  // It is not possible to actually change layer while having breadcrubs as all modals must be closed, which will
+  // pop off all breadcrumbs.
+  // But just in case something changes, reset the breadcrumbs when a new layer is edited.
+  breadcrumbs = [];
   currentLayer = layerName;
   setAllowedOperations();
   setInteractions();
@@ -509,22 +568,66 @@ function setEditProps(options) {
   return result;
 }
 
+/**
+ * Helper to delete a feature. If the feature belongs to a layer that has related layers the deletion is recursive
+ * if configured so in the relation configuration.
+ * @param {any} feature The feature to delete
+ * @param {any} layer The layer in which the feature is
+ * @param {any} supressDbDelete True if the feature should in fact not be deleted from db. Defaults to false. Mainly used by recursive calls.
+ * @returns a promise which is resolved when feature is deleted from db (or immediately id not autosave)
+ */
+async function deleteFeature(feature, layer, supressDbDelete) {
+  // If editor is in auto save mode we can delete in the correct order by start by recursing before deleting anything
+  // If editor is not in auto save, it is up to the transactionhandler in combination with the map server if
+  // delete order is preserved. Better not have any db constraints if mode is 'cascade'.
+  // If mode is 'db' child features are only deleted from the map and it is up to the database to delete or keep orphaned children.
+  // If mode is 'none' (default), just delete this feature and keep children orphaned in map.
+
+  // First delete child features recursively
+  const relatedLayersConfig = relatedtables.getConfig(layer);
+  if (relatedLayersConfig) {
+    // async and forEach do not mix. Use some old school looping as lint forbids for in
+    for (let ix = 0; ix < relatedLayersConfig.length; ix += 1) {
+      const currLayerConfig = relatedLayersConfig[ix];
+      const deleteMode = currLayerConfig.cascadingDelete;
+      if (deleteMode === 'cascade' || deleteMode === 'db') {
+        const childLayer = viewer.getLayer(currLayerConfig.layerName);
+        // This funtion is recursive, we have to await
+        // eslint-disable-next-line no-await-in-loop
+        const childFeatures = await relatedtables.getChildFeatures(layer, feature, childLayer);
+        for (let jx = 0; jx < childFeatures.length; jx += 1) {
+          const currChildFeature = childFeatures[jx];
+          // This funtion is recursive, we have to await
+          // eslint-disable-next-line no-await-in-loop
+          await deleteFeature(currChildFeature, childLayer, deleteMode === 'db');
+        }
+      }
+    }
+  }
+
+  // If caller had deleteMode == 'db', this db entry is assumed to be deleted by the database when the parent is deleted
+  // but we must still remove it from the map (or refresh the entire layer, which we won't).
+  if (!supressDbDelete) {
+    await saveFeature({
+      feature,
+      layerName: layer.get('name'),
+      action: 'delete'
+    });
+  }
+  const source = layer.getSource();
+  source.removeFeature(feature);
+}
+
 function onDeleteSelected() {
   const features = select.getFeatures();
 
   // Make sure all features are loaded in the source
-  editSource = editLayers[currentLayer].getSource();
+  // const editSource = editLayers[currentLayer].getSource();
   if (features.getLength() === 1) {
     const feature = features.item(0);
     const r = window.confirm('Är du säker på att du vill ta bort det här objektet?');
     if (r === true) {
-      saveFeature({
-        feature,
-        layerName: currentLayer,
-        action: 'delete'
-      });
-      select.getFeatures().clear();
-      editSource.removeFeature(editSource.getFeatureById(feature.getId()));
+      deleteFeature(feature, editLayers[currentLayer]).then(() => select.getFeatures().clear());
     }
   }
 }
@@ -567,6 +670,32 @@ function cancelAttribute() {
 }
 
 /**
+ * Refreshes the related tables section of the current edit form
+ * @param {any} feature
+ */
+function refreshRelatedTablesForm(feature) {
+  const relatedTablesFormEl = document.getElementById(`o-relatedtables-form-${currentLayer}`);
+  relatedTablesForm(viewer, viewer.getLayer(currentLayer), feature, relatedTablesFormEl);
+}
+
+/** Called when the edit form modal is closed. Reverts the editor state to edit the parent object if the modal was a child table */
+function onModalClosed() {
+  if (breadcrumbs.length > 0) {
+    const lastBread = breadcrumbs.pop();
+
+    // Restore some global varaibles that defines the state
+    currentLayer = lastBread.layerName;
+    modal = lastBread.modal;
+    title = lastBread.title;
+    attributes = lastBread.attributes;
+
+    // State is restored, now show parent modal instead and refresh as the title attribute might have changed
+    modal.show();
+    refreshRelatedTablesForm(lastBread.feature);
+  }
+}
+
+/**
  * Reads the new attribute values from from DOM and saves to feature
  * @param {any} features The features to save
  * @param {any} formEl The attributes to set on features
@@ -592,12 +721,32 @@ function attributesSaveHandler(features, formEl) {
 }
 
 /**
+ * Sets up an eventlistener on the attribute editor form abort button.
+ * @param {Collection} features The features that shouldn't be updated
+ */
+function onAttributesAbort(features) {
+  const abortBtnEl = document.getElementById(`o-abort-button-${currentLayer}`);
+  if (abortBtnEl !== null) {
+    abortBtnEl.addEventListener('click', (e) => {
+      abortBtnEl.blur();
+      features.forEach((feature) => {
+        deleteFeature(feature, editLayers[currentLayer]).then(() => select.getFeatures().clear());
+      });
+      modal.closeModal();
+      // The modal does not fire close event when it is closed externally
+      onModalClosed();
+      e.preventDefault();
+    });
+  }
+}
+
+/**
  * Sets up an eventlistener on the attribute editor form save button.
  * @param {Collection} features The features that should be updated
  * @param {any} attrs Array of attributes whih values to set
  */
 function onAttributesSave(features, attrs) {
-  document.getElementById('o-save-button').addEventListener('click', (e) => {
+  document.getElementById(`o-save-button-${currentLayer}`).addEventListener('click', (e) => {
     const editEl = {};
     const valid = {};
     const fileReaders = [];
@@ -605,11 +754,13 @@ function onAttributesSave(features, attrs) {
       // Get the input container class
       const containerClass = `.${attribute.elId}`;
       // Get the input attributes
+      // FIXME: Don't have to get from DOM, the same values are in 'attribute'
+      // and it would be enough to call getElementId once anyway (called numerous times later on).
       const inputType = document.getElementById(attribute.elId).getAttribute('type');
       const inputValue = document.getElementById(attribute.elId).value;
       const inputName = document.getElementById(attribute.elId).getAttribute('name');
       const inputId = document.getElementById(attribute.elId).getAttribute('id');
-      const inputRequired = document.getElementById(attribute.elId).getAttribute('required');
+      const inputRequired = document.getElementById(attribute.elId).required;
 
       // If hidden element it should be excluded
       // By sheer luck, this prevents attributes to be changed in batch edit mode when checkbox is not checked.
@@ -730,8 +881,8 @@ function onAttributesSave(features, attrs) {
           }
           break;
         case 'datetime':
-          valid.datetime = validate.datetime(inputValue) ? inputValue : false;
-          if (!valid.datetime) {
+          valid.datetime = validate.datetime(inputValue) || inputValue === '' ? inputValue : false;
+          if (!valid.datetime && inputValue !== '') {
             if (!errorMsg) {
               errorOn.insertAdjacentHTML('afterend', `<div class="o-${inputId} errorMsg fade-in padding-bottom-small">${errorText}</div>`);
             }
@@ -740,7 +891,7 @@ function onAttributesSave(features, attrs) {
           }
           break;
         case 'date':
-          valid.date = validate.date(inputValue) ? inputValue : false;
+          valid.date = validate.date(inputValue) || inputValue === '' ? inputValue : false;
           if (!valid.date && inputValue !== '') {
             if (!errorMsg) {
               errorOn.insertAdjacentHTML('afterend', `<div class="o-${inputId} errorMsg fade-in padding-bottom-small">${errorText}</div>`);
@@ -750,8 +901,8 @@ function onAttributesSave(features, attrs) {
           }
           break;
         case 'time':
-          valid.time = validate.time(inputValue) ? inputValue : false;
-          if (!valid.time) {
+          valid.time = validate.time(inputValue) || inputValue === '' ? inputValue : false;
+          if (!valid.time && inputValue !== '') {
             if (!errorMsg) {
               errorOn.insertAdjacentHTML('afterend', `<div class="o-${inputId} errorMsg fade-in padding-bottom-small">${errorText}</div>`);
             }
@@ -807,8 +958,10 @@ function onAttributesSave(features, attrs) {
         attributesSaveHandler(features, editEl);
       }
 
-      document.getElementById('o-save-button').blur();
+      document.getElementById(`o-save-button-${currentLayer}`).blur();
       modal.closeModal();
+      // The modal does not fire close event when it is closed externally
+      onModalClosed();
       e.preventDefault();
     }
   });
@@ -906,10 +1059,12 @@ function editAttributes(feat) {
   /** Filtered list of attributes containing only those that should be displayed */
   const editableAttributes = attributes.filter(attr => {
     const attachmentsConfig = layer.get('attachments');
+    const relatedTablesConfig = relatedtables.getConfig(layer);
     // Filter out attributes created from attachments. Actually can produce false positives if name is not set, but that is handled in the next row
     // as name is required for editable attributes (although not specified in the docs, but needed to create the input)
     const isAttachment = attachmentsConfig && attachmentsConfig.groups.some(g => g.linkAttribute === attr.name || g.fileNameAttribute === attr.name);
-    return attr.name && (!isBatchEdit || (isBatchEdit && attr.allowBatchEdit)) && !isAttachment;
+    const isRelatedPromoted = relatedTablesConfig && relatedTablesConfig.some(c => c.promoteAttribs && c.promoteAttribs.some(c2 => c2.parentName === attr.name));
+    return attr.name && (!isBatchEdit || (isBatchEdit && attr.allowBatchEdit)) && !isAttachment && !isRelatedPromoted;
   });
 
   if (features.getLength() === 1 || isBatchEdit) {
@@ -921,7 +1076,11 @@ function editAttributes(feat) {
       attributeObjects = editableAttributes.map((attributeObject) => {
         const obj = {};
         Object.assign(obj, attributeObject);
-        obj.val = feature.get(obj.name) !== undefined ? feature.get(obj.name) : '';
+        if (obj.defaultValue && obj.defaultValue.updateOnEdit) {
+          obj.val = getDefaultValueForAttribute(obj);
+        } else {
+          obj.val = feature.get(obj.name) !== undefined ? feature.get(obj.name) : '';
+        }
         if ('constraint' in obj) {
           const constraintProps = obj.constraint.split(':');
           if (constraintProps.length === 3) {
@@ -937,18 +1096,18 @@ function editAttributes(feat) {
               obj.isVisible = obj.dependencyVal === obj.requiredVal;
             }
             obj.addListener = addListener();
-            obj.elId = `input-${obj.name}-${slugify(obj.requiredVal)}`;
-            obj.elDependencyId = `input-${constraintProps[1]}`;
+            obj.elId = `input-${currentLayer}-${obj.name}-${slugify(obj.requiredVal)}`;
+            obj.elDependencyId = `input-${currentLayer}-${constraintProps[1]}`;
           } else {
             alert('Villkor verkar inte vara rätt formulerat. Villkor formuleras enligt principen change:attribute:value');
           }
         } else if (obj.type === 'image') {
           obj.isVisible = true;
-          obj.elId = `input-${obj.name}`;
+          obj.elId = `input-${currentLayer}-${obj.name}`;
           obj.addListener = addImageListener();
         } else {
           obj.isVisible = true;
-          obj.elId = `input-${obj.name}`;
+          obj.elId = `input-${currentLayer}-${obj.name}`;
         }
         if (isBatchEdit && !('constraint' in obj)) {
           // Create an additional ckeckbox, that controls if this attribute should be changed
@@ -976,13 +1135,24 @@ function editAttributes(feat) {
       });
     }
 
+    // Create the placeholder for the related tables form
+    let relatedTablesFormHTML = '';
+    if (relatedtables.getConfig(layer) && !isBatchEdit) {
+      relatedTablesFormHTML = `<div id="o-relatedtables-form-${currentLayer}"></div>`;
+    }
+
     const formElement = attributeObjects.reduce((prev, next) => prev + next.formElement, '');
 
     let attachmentsForm = '';
     if (layer.get('attachments') && !isBatchEdit) {
       attachmentsForm = `<div id="o-attach-form-${currentLayer}"></div>`;
     }
-    const form = `<div id="o-form">${formElement}${attachmentsForm}<br><div class="o-form-save"><input id="o-save-button" type="button" value="Ok"></input></div></div>`;
+
+    let form = `<div id="o-form">${formElement}${relatedTablesFormHTML}${attachmentsForm}<br><div class="o-form-save"><input id="o-save-button-${currentLayer}" type="button" value="OK" aria-label="OK"></input></div></div>`;
+    if (autoCreatedFeature) {
+      form = `<div id="o-form">${formElement}${relatedTablesFormHTML}${attachmentsForm}<br><div class="o-form-save"><input id="o-save-button-${currentLayer}" type="button" value="Spara" aria-label="Spara"></input><input id="o-abort-button-${currentLayer}" type="button" value="Ta bort" aria-label="Ta bort"></input></div></div>`;
+      autoCreatedFeature = false;
+    }
 
     modal = Modal({
       title: dlgTitle,
@@ -1005,6 +1175,19 @@ function editAttributes(feat) {
       }
     }
 
+    // Get notified when form is closed in order to go back to parent form when closing a child form
+    modal.on('closed', () => { onModalClosed(); });
+
+    // Populate the related tables form now that the DOM element exists
+    if (relatedTablesFormHTML) {
+      const formEl = document.getElementById(`o-relatedtables-form-${currentLayer}`);
+      if (editsStore.hasFeature('insert', feature, currentLayer)) {
+        formEl.innerHTML = '<h3>Relaterade objekt</h3><p>Du måste spara innan du kan lägga till relaterade objekt.</p>';
+      } else {
+        relatedTablesForm(viewer, layer, feature, formEl);
+      }
+    }
+
     attributeObjects.forEach((obj) => {
       if ('addListener' in obj) {
         obj.addListener(obj);
@@ -1019,6 +1202,7 @@ function editAttributes(feat) {
     });
 
     onAttributesSave(features, attributeObjects);
+    onAttributesAbort(features);
   }
 }
 
@@ -1057,6 +1241,63 @@ function onChangeEdit(e) {
   }
 }
 
+/**
+ * Stores the editor state and opens up a new attribute edit modal for a child object
+ * @param {any} layer The child layer to edit
+ * @param {any} parentFeature The parent feature that is currently edited
+ * @param {any} feature The child feature to edit
+ */
+function editChild(layer, parentFeature, feature) {
+  // Store a state of some global variables that needs to be changed when editing a child
+  const newBreadcrumb = {
+    modal,
+    layerName: currentLayer,
+    title,
+    attributes,
+    feature: parentFeature
+  };
+  breadcrumbs.push(newBreadcrumb);
+  currentLayer = layer.get('name');
+  // Hide parent form to keep UI clean (and avoid user closing parent modal).
+  // Do not delete and recreate parent form in order to keep pending edits.
+  modal.hide();
+  title = layer.get('title');
+  attributes = layer.get('attributes');
+  editAttributes(feature);
+}
+
+/**
+ * Eventhandler called from realtedTableForm when edit button is pressed
+ * @param {any} e Event containing layers and features necessary
+ */
+function onEditChild(e) {
+  editChild(e.detail.layer, e.detail.parentFeature, e.detail.feature);
+}
+
+/**
+ * Eventhandler called from relatedTableForm when add button is pressed
+ * @param {any} e Event containing layers and features necessary
+ */
+async function onAddChild(e) {
+  const newfeature = new Feature();
+  relatedtables.attachChild(e.detail.parentLayer, e.detail.parentFeature, e.detail.childLayer, newfeature);
+  await addFeatureToLayer(newfeature, e.detail.childLayer.get('name'));
+  if (autoForm) {
+    editChild(e.detail.childLayer, e.detail.parentFeature, newfeature);
+  } else {
+    // Refresh / add to parent list. Not needed for autoform, as it will be handled when child modal closes
+    refreshRelatedTablesForm(e.detail.parentFeature);
+  }
+}
+
+/**
+ * Eventhandler called from relatedTableForm when delete button is pressed
+ * @param { any } e Event containing layers and features necessary
+ */
+function onDeleteChild(e) {
+  deleteFeature(e.detail.feature, e.detail.layer).then(() => refreshRelatedTablesForm(e.detail.parentFeature));
+}
+
 export default function editHandler(options, v) {
   viewer = v;
   featureInfo = viewer.getControlByName('featureInfo');
@@ -1081,4 +1322,7 @@ export default function editHandler(options, v) {
   document.addEventListener('changeEdit', onChangeEdit);
   document.addEventListener('editorShapes', onChangeShape);
   document.addEventListener('customDrawEnd', onCustomDrawEnd);
+  document.addEventListener(dispatcher.EDIT_CHILD_EVENT, onEditChild);
+  document.addEventListener(dispatcher.ADD_CHILD_EVENT, onAddChild);
+  document.addEventListener(dispatcher.DELETE_CHILD_EVENT, onDeleteChild);
 }
