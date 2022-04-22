@@ -17,6 +17,7 @@ import flattenGroups from './utils/flattengroups';
 import getAttributes from './getattributes';
 import getcenter from './geometry/getcenter';
 import isEmbedded from './utils/isembedded';
+import { parsePermalink } from './loadresources';
 
 const Viewer = function Viewer(targetOption, options = {}) {
   let map;
@@ -455,6 +456,182 @@ const Viewer = function Viewer(targetOption, options = {}) {
     return urlParams;
   };
 
+  function showFeatureFromParams(params, centerOnIt = true) {
+    if (!params || !params.feature) {
+      return;
+    }
+
+    const featureId = params.feature;
+    const layerName = featureId.split('.')[0];
+    const layer = getLayer(layerName);
+    const type = layer.get('type');
+
+    if (layer && type !== 'GROUP') {
+      const clusterSource = layer.getSource().source;
+      let id = featureId.split('.')[1];
+      layer.once('postrender', () => {
+        let feature;
+
+        if (type === 'WFS') {
+          // WFS uses the layername as a part of the featureId. Problem is that it what the server think is the name that matters.
+          // First we assume that the layername is actually correct, then take the special cases
+          let idLayerPart = layerName;
+          const layerId = layer.get('id');
+          if (layerId) {
+            // if layer explicitly has set the id it takes precedense over name
+            // layer name already have popped the namespace part, but id is untouched.
+            idLayerPart = layerId.split(':').pop();
+          } else if (layerName.includes('__')) {
+            // If using the __-notation to use same layer several times, we must only use the actual layer name
+            idLayerPart = layerName.split('__')[0];
+          }
+          // Build the correct WFS id
+          id = `${idLayerPart}.${id}`;
+        }
+        // FIXME: ensure that feature is loaded. If using bbox and feature is outside default extent it will not be found.
+        // Workaround is to have a default extent covering the entire map with the layer in visible range or use strategy all
+        if (clusterSource) {
+          feature = clusterSource.getFeatureById(id);
+        } else {
+          feature = layer.getSource().getFeatureById(id);
+        }
+
+        if (feature) {
+          const obj = {};
+          obj.feature = feature;
+          obj.layerName = layerName;
+          featureinfo.showFeatureInfo(obj);
+          if (centerOnIt) {
+            map.getView().fit(feature.getGeometry(), {
+              maxZoom: getResolutions().length - 2,
+              padding: [15, 15, 40, 15],
+              duration: 1000
+            });
+          }
+        }
+      });
+    }
+  }
+
+  const handleUrlParams = function handleUrlParams(params) {
+    if (params.feature) {
+      showFeatureFromParams(params);
+    }
+
+    if (params.pin) {
+      featureinfoOptions.savedPin = params.pin;
+    } else if (params.selection) {
+      // This needs further development for proper handling in permalink
+      featureinfoOptions.savedSelection = new Feature({
+        geometry: new geom[params.selection.geometryType](params.selection.coordinates)
+      });
+    }
+
+    if (!params.zoom && !params.mapStateId && startExtent) {
+      map.getView().fit(startExtent, { size: map.getSize() });
+    }
+  };
+
+  function showLayersAndLocationFromUrlParams(params, resetBackgroundLayers) {
+    // light up the layers
+    const layersToShow = params.layers || {};
+    const keys = Object.keys(layersToShow);
+    keys.forEach(layerName => {
+      const layerObj = layersToShow[layerName];
+      const layerToShow = getLayer(layerName);
+      if (resetBackgroundLayers || layerToShow.get('group') !== 'background') {
+        layerToShow.setVisible(layerObj.visible);
+        layerToShow.setOpacity(layerObj.opacity);
+      }
+    });
+
+    if (params.pin) {
+      featureinfo.addPin(params.pin);
+    } else if (params.selection) {
+      featureinfo.addFeature(new Feature({
+        geometry: new geom[params.selection.geometryType](params.selection.coordinates)
+      }));
+    }
+
+    if (params.feature) {
+      showFeatureFromParams(params, false);
+    }
+
+    // center and zoom in
+    if (params.zoom && params.center) {
+      console.log(params);
+      map.getView().animate(
+        {
+          center: params.center,
+          zoom: params.zoom,
+          duration: 2000 // 2 seconds
+        }
+      );
+    }
+  }
+
+  function resetToBaseState(resetToBaseVisibility, resetBackgroundLayers) {
+    const shouldLayerBeReset = (layer) => (resetToBaseVisibility && layer.get('group') !== 'background')
+      || (resetBackgroundLayers && layer.get('group') === 'background');
+
+    // if the option has a property called name => it is a layer
+    const flattenLayers = layerOptions.flatMap(l => (l.name && l.layers && l.visible ? l.layers : l) || l);
+    const defaultVisibleLayers = flattenLayers.filter(l => l.visible);
+    const visibleLayersObj = defaultVisibleLayers.reduce((acc, cur) => {
+      acc[cur.name] = cur;
+      return acc;
+    }, {});
+
+    const onLayers = getLayersByProperty('visible', true);
+
+    // hide active layers
+    onLayers.forEach(layer => {
+      const layerName = layer.get('name');
+      if (!visibleLayersObj[layerName] && shouldLayerBeReset(layer)) {
+        console.log('turning off', layerName);
+        layer.setVisible(false);
+        // finding the correct layer for the correct opacity
+
+        const layerId = layer.get('id');
+        let opacity = 1;
+        let defaultLayer = layerOptions.find(l => l.name === layerId || (l.layers && l.layers.find(ll => ll.name === layerId)));
+        if (defaultLayer && defaultLayer.layers) {
+          defaultLayer = defaultLayer.layers.find(l => l.name === layerId);
+        }
+        if (defaultLayer) {
+          opacity = defaultLayer.opacity || 1;
+        }
+        layer.setOpacity(opacity);
+      } else {
+        console.log('staying on', layerName);
+      }
+    });
+    // show hidden layers
+    defaultVisibleLayers.forEach(l => {
+      const layer = getLayersByProperty('id', l.name)[0];
+      if (layer.getVisible() && shouldLayerBeReset(layer)) {
+        console.log('turning on', l.name);
+        layer.setVisible(true);
+        layer.setOpacity(l.opacity || 1);
+      }
+    });
+  }
+
+  const importFromUrl = function importUrlParams(importUrl, resetToBaseVisibility = true, resetBackgroundLayers = true) {
+    const importedUrlParams = parsePermalink(importUrl);
+    console.log('import url', importUrlParams);
+    if (!importedUrlParams) {
+      return;
+    }
+
+    resetToBaseState(resetToBaseVisibility, resetBackgroundLayers);
+    if (resetToBaseVisibility) {
+      // clean any pin, selection or feature
+      featureinfo.clear();
+    }
+    showLayersAndLocationFromUrlParams(importedUrlParams, resetBackgroundLayers);
+  };
+
   return Component({
     onInit() {
       this.render();
@@ -479,71 +656,7 @@ const Viewer = function Viewer(targetOption, options = {}) {
             mapId: this.getId()
           });
 
-          if (urlParams.feature) {
-            const featureId = urlParams.feature;
-            const layerName = featureId.split('.')[0];
-            const layer = getLayer(layerName);
-            const layerType = layer.get('type');
-            if (layer && layerType !== 'GROUP') {
-              // FIXME: postrender event is only emitted if any features from a layer is actually drawn, which means there is no feature in the default extent,
-              // it will not be triggered until map is panned or zoomed where a feature exists.
-              layer.once('postrender', () => {
-                const clusterSource = layer.getSource().source;
-                // Assume that id is just the second part of the argumment and adjust it for special cases later.
-                let id = featureId.split('.')[1];
-                let feature;
-
-                if (layerType === 'WFS') {
-                  // WFS uses the layername as a part of the featureId. Problem is that it what the server think is the name that matters.
-                  // First we assume that the layername is actually correct, then take the special cases
-                  let idLayerPart = layerName;
-                  const layerId = layer.get('id');
-                  if (layerId) {
-                    // if layer explicitly has set the id it takes precedense over name
-                    // layer name already have popped the namespace part, but id is untouched.
-                    idLayerPart = layerId.split(':').pop();
-                  } else if (layerName.includes('__')) {
-                    // If using the __-notation to use same layer several times, we must only use the actual layer name
-                    idLayerPart = layerName.split('__')[0];
-                  }
-                  // Build the correct WFS id
-                  id = `${idLayerPart}.${id}`;
-                }
-                // FIXME: ensure that feature is loaded. If using bbox and feature is outside default extent it will not be found.
-                // Workaround is to have a default extent covering the entire map with the layer in visible range or use strategy all
-                if (clusterSource) {
-                  feature = clusterSource.getFeatureById(id);
-                } else {
-                  feature = layer.getSource().getFeatureById(id);
-                }
-
-                if (feature) {
-                  const obj = {};
-                  obj.feature = feature;
-                  obj.layerName = layerName;
-                  featureinfo.showFeatureInfo(obj);
-                  map.getView().fit(feature.getGeometry(), {
-                    maxZoom: getResolutions().length - 2,
-                    padding: [15, 15, 40, 15],
-                    duration: 1000
-                  });
-                }
-              });
-            }
-          }
-
-          if (urlParams.pin) {
-            featureinfoOptions.savedPin = urlParams.pin;
-          } else if (urlParams.selection) {
-            // This needs further development for proper handling in permalink
-            featureinfoOptions.savedSelection = new Feature({
-              geometry: new geom[urlParams.selection.geometryType](urlParams.selection.coordinates)
-            });
-          }
-
-          if (!urlParams.zoom && !urlParams.mapStateId && startExtent) {
-            map.getView().fit(startExtent, { size: map.getSize() });
-          }
+          handleUrlParams(urlParams);
 
           featureinfoOptions.viewer = this;
 
@@ -619,7 +732,8 @@ const Viewer = function Viewer(targetOption, options = {}) {
     setStyle,
     zoomToExtent,
     getSelectionManager,
-    getEmbedded
+    getEmbedded,
+    importFromUrl
   });
 };
 

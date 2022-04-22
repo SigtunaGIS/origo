@@ -9,7 +9,7 @@ import * as olStyle from 'ol/style';
 import * as olFormat from 'ol/format';
 import * as ui from './src/ui';
 import Viewer from './src/viewer';
-import loadResources from './src/loadresources';
+import { loadResources } from './src/loadresources';
 import titleCase from './src/utils/titlecase';
 import * as origoControls from './src/controls';
 import * as origoExtensions from './src/extensions';

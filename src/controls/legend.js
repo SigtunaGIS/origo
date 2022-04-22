@@ -79,7 +79,7 @@ const Legend = function Legend(options = {}) {
   const addBackgroundButton = function addBackgroundButton(layer) {
     const styleName = layer.get('styleName') || 'default';
     const icon = viewer.getStyle(styleName) ? imageSource(viewer.getStyle(styleName)) : 'img/png/farg.png';
-    backgroundLayerButtons.push(Button({
+    const button = Button({
       icon,
       cls: 'round smallest border icon-small icon-bg',
       title: layer.get('title'),
@@ -101,7 +101,12 @@ const Legend = function Legend(options = {}) {
           }
         }
       }
-    }));
+    });
+    layer.on('change:visible', (e) => {
+      const newState = e.oldValue ? 'inactive' : 'active';
+      button.setState(newState);
+    });
+    backgroundLayerButtons.push(button);
   };
 
   const addBackgroundButtons = function addBackgroundButtons(layers) {

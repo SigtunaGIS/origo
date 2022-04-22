@@ -562,7 +562,25 @@ const Featureinfo = function Featureinfo(options = {}) {
     const grouplayers = viewer.getGroupLayers();
     const newItem = getFeatureInfo.createSelectedItem(feature, layer, map, grouplayers);
     render([newItem], identifyTarget, maputils.getCenter(feature.getGeometry()), { ignorePan: true });
-    viewer.zoomToExtent(feature.getGeometry());
+  };
+
+  const addPin = function addPin(coordinates) {
+    if (!coordinates) {
+      return;
+    }
+
+    selectionLayer.clear();
+    savedPin = maputils.createPointFeature(coordinates, pinStyle);
+    selectionLayer.addFeature(savedPin);
+  };
+
+  const addFeature = function addFeature(feature) {
+    if (!feature) {
+      return;
+    }
+
+    selectionLayer.clear();
+    selectionLayer.addFeature(feature);
   };
 
   const onClick = function onClick(evt) {
@@ -600,8 +618,7 @@ const Featureinfo = function Featureinfo(options = {}) {
             sidebar.setVisibility(false);
             setTimeout(() => {
               if (!maputils.checkZoomChange(resolution, map.getView().getResolution())) {
-                savedPin = maputils.createPointFeature(evt.coordinate, pinStyle);
-                selectionLayer.addFeature(savedPin);
+                addPin(evt.coordinate);
               }
             }, 250);
           }
@@ -674,6 +691,8 @@ const Featureinfo = function Featureinfo(options = {}) {
     },
     render,
     showInfo,
+    addPin,
+    addFeature,
     showFeatureInfo
   });
 };
