@@ -1,15 +1,14 @@
 import { simpleExportHandler, layerSpecificExportHandler } from './infowindow_exporthandler';
 import exportToFile from './utils/exporttofile';
-import { dom, Button } from './ui';
+import { Component, Collapse, CollapseHeader, dom, Button } from './ui';
 
 let parentElement;
 let mainContainer;
 let urvalContainer;
-let listContainer;
-let exportContainer;
 let sublists;
 let subexports;
 let urvalElements;
+let urvalElementContents;
 let expandableContents;
 let exportOptions;
 let activeSelectionGroup;
@@ -31,11 +30,40 @@ function createSvgElement(id, className) {
   return svgContainer;
 }
 
+const debounceTimeout = [];
+function debounce(func, id) {
+  if (debounceTimeout[id]) clearTimeout(debounceTimeout[id]);
+  debounceTimeout[id] = setTimeout(() => {
+    func();
+  }, 50);
+}
+
+function toggleExpandCollapse() {
+  const visibleGroups = [];
+  urvalElements.forEach(cmp => {
+    const el = document.getElementById(cmp.getId());
+    if (!el.classList.contains('hidden')) {
+      visibleGroups.push({ cmp, el });
+    }
+  });
+
+  visibleGroups.forEach(group => {
+    if (visibleGroups.length === 1) {
+      // Debounce needed due to race condition in rendering expand/collaps animation.
+      debounce(() => group.cmp.getComponents()[0].expand(), group.cmp.getId());
+    } else {
+      // Debounce needed due to race condition in rendering expand/collaps animation.
+      debounce(() => group.cmp.getComponents()[0].collapse(), group.cmp.getId());
+    }
+  });
+}
+
 function hideInfowindow() {
   mainContainer.classList.add('hidden');
 }
 
 function showInfowindow() {
+  toggleExpandCollapse();
   mainContainer.classList.remove('hidden');
 }
 
@@ -106,28 +134,18 @@ function createCloseButton() {
 function render(viewerId) {
   mainContainer = document.createElement('div');
   setInfowindowStyle();
-  mainContainer.classList.add('sidebarcontainer');
-  mainContainer.id = 'sidebarcontainer';
+  mainContainer.classList.add('sidebarcontainer', 'expandable_list');
+  mainContainer.id = 'sidebarcontainer-draggable';
   urvalContainer = document.createElement('div');
   urvalContainer.classList.add('urvalcontainer');
-  // We add this so that urvalcontainer can become draggable
-  urvalContainer.id = 'sidebarcontainer-draggable';
   const urvalTextNodeContainer = document.createElement('div');
   urvalTextNodeContainer.classList.add('urval-textnode-container');
   const urvalTextNode = document.createTextNode(infowindowOptions.title || 'Träffar');
   urvalTextNodeContainer.appendChild(urvalTextNode);
-  urvalContainer.appendChild(urvalTextNodeContainer);
+  mainContainer.appendChild(urvalTextNodeContainer);
   const closeButton = createCloseButton();
-  urvalContainer.appendChild(dom.html(closeButton.render()));
-  listContainer = document.createElement('div');
-  listContainer.classList.add('listcontainer');
-
-  exportContainer = document.createElement('div');
-  exportContainer.classList.add('exportcontainer');
-
+  mainContainer.appendChild(dom.html(closeButton.render()));
   mainContainer.appendChild(urvalContainer);
-  mainContainer.appendChild(listContainer);
-  mainContainer.appendChild(exportContainer);
 
   parentElement = document.getElementById(viewerId);
   parentElement.appendChild(mainContainer);
@@ -153,25 +171,6 @@ function showSelectedList(selectionGroup) {
   }
 
   activeSelectionGroup = selectionGroup;
-  while (listContainer.firstChild) {
-    listContainer.removeChild(listContainer.firstChild);
-  }
-  const sublistToAppend = sublists.get(selectionGroup);
-  listContainer.appendChild(sublistToAppend);
-
-  while (exportContainer.firstChild) {
-    exportContainer.removeChild(exportContainer.firstChild);
-  }
-  const subexportToAppend = subexports.get(selectionGroup);
-  exportContainer.appendChild(subexportToAppend);
-
-  urvalElements.forEach((value, key) => {
-    if (key === selectionGroup) {
-      value.classList.add('selectedurvalelement');
-    } else {
-      value.classList.remove('selectedurvalelement');
-    }
-  });
 }
 
 function createExportButton(buttonText) {
@@ -336,21 +335,46 @@ function createSubexportComponent(selectionGroup) {
 }
 
 function createUrvalElement(selectionGroup, selectionGroupTitle) {
-  const urvalElement = document.createElement('div');
-  urvalElement.classList.add('urvalelement');
-  const textNode = document.createTextNode(selectionGroupTitle);
-  urvalElement.appendChild(textNode);
-  urvalContainer.appendChild(urvalElement);
-  urvalElements.set(selectionGroup, urvalElement);
-  urvalElement.addEventListener('click', () => {
-    showSelectedList(selectionGroup);
-  });
-
-  const sublistContainter = document.createElement('div');
-  sublists.set(selectionGroup, sublistContainter);
+  const sublistContainer = document.createElement('div');
+  sublistContainer.classList.add('sublist');
+  sublists.set(selectionGroup, sublistContainer);
 
   const subexportComponent = createSubexportComponent(selectionGroup);
+  subexportComponent.classList.add('sublist');
   subexports.set(selectionGroup, subexportComponent);
+
+  const urvalContentCmp = Component({
+    render() {
+      return `<div class="urvalcontent" id="${this.getId()}"></div>`;
+    }
+  });
+
+  const groupCmp = Collapse({
+    cls: '',
+    expanded: false,
+    headerComponent: CollapseHeader({
+      cls: 'hover padding-x padding-y-small grey-lightest border-bottom text-small',
+      icon: '#ic_chevron_right_24px',
+      title: selectionGroupTitle
+    }),
+    contentComponent: urvalContentCmp,
+    collapseX: false
+  });
+
+  const urvalCmp = Component({
+    onInit() {
+      this.addComponent(groupCmp);
+    },
+    render() {
+      return `<div class="urvalelement" id="${this.getId()}">${groupCmp.render()}</div>`;
+    }
+  });
+
+  urvalContainer.appendChild(dom.html(urvalCmp.render()));
+  urvalCmp.dispatch('render');
+  urvalElements.set(selectionGroup, urvalCmp);
+  const urvalContentEl = document.getElementById(urvalContentCmp.getId());
+  urvalElementContents.set(selectionGroup, urvalContentEl);
 }
 
 function highlightListElement(featureId) {
@@ -435,7 +459,8 @@ function createExpandableContent(listElementContentContainer, content, elementId
 }
 
 function showUrvalElement(selectionGroup) {
-  const urvalElement = urvalElements.get(selectionGroup);
+  const urvalCmp = urvalElements.get(selectionGroup);
+  const urvalElement = document.getElementById(urvalCmp.getId());
   urvalElement.classList.remove('hidden');
 }
 
@@ -457,6 +482,12 @@ function createListElement(item) {
   const sublist = sublists.get(item.getSelectionGroup());
   sublist.appendChild(listElement);
   showUrvalElement(item.getSelectionGroup());
+
+  const urvalContent = urvalElementContents.get(item.getSelectionGroup());
+  urvalContent.replaceChildren(sublist);
+
+  const subexportToAppend = subexports.get(item.getSelectionGroup());
+  urvalContent.appendChild(subexportToAppend);
 }
 
 function expandListElement(featureId) {
@@ -483,27 +514,7 @@ function expandListElement(featureId) {
 }
 
 function scrollListElementToView(featureId) {
-  sublists.forEach((sublist) => {
-    const elements = sublist.getElementsByClassName('listelement');
-    for (let index = 0; index < elements.length; index += 1) {
-      const element = elements[index];
-      if (element.id === featureId) {
-        // time out is set so that element gets the time to expand first, otherwise it will be scrolled halfway to the view
-        setTimeout(() => {
-          const elementBoundingBox = element.getBoundingClientRect();
-          const listContainer2 = document.getElementsByClassName('listcontainer')[0];
-          const listContainerBoundingBox = listContainer2.getBoundingClientRect();
-          if (elementBoundingBox.top < listContainerBoundingBox.top) {
-            const scrollDownValue = listContainerBoundingBox.top - elementBoundingBox.top;
-            listContainer2.scrollTop -= scrollDownValue;
-          } else if (elementBoundingBox.bottom > listContainerBoundingBox.bottom) {
-            const scrollUpValue = elementBoundingBox.bottom - listContainerBoundingBox.bottom;
-            listContainer2.scrollTop += scrollUpValue;
-          }
-        }, 500);
-      }
-    }
-  });
+  // Do nothing
 }
 
 function removeListElement(item) {
@@ -526,14 +537,16 @@ function removeListElement(item) {
 }
 
 function hideUrvalElement(selectionGroup) {
-  const urvalElement = urvalElements.get(selectionGroup);
+  const urvalCmp = urvalElements.get(selectionGroup);
+  const urvalElement = document.getElementById(urvalCmp.getId());
   urvalElement.classList.add('hidden');
 }
 
 function updateUrvalElementText(selectionGroup, selectionGroupTitle, sum) {
-  const urvalElement = urvalElements.get(selectionGroup);
+  const urvalCmp = urvalElements.get(selectionGroup);
+  const urvalElement = document.getElementById(urvalCmp.getId());
   const newNodeValue = `${selectionGroupTitle} (${sum})`;
-  urvalElement.childNodes[0].nodeValue = newNodeValue;
+  urvalElement.getElementsByTagName('span')[0].innerText = newNodeValue;
 }
 
 function init(options) {
@@ -546,6 +559,7 @@ function init(options) {
   sublists = new Map();
   subexports = new Map();
   urvalElements = new Map();
+  urvalElementContents = new Map();
   expandableContents = new Map();
 
   render(options.viewer.getId());
