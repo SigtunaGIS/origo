@@ -1,6 +1,6 @@
 import { Component, Button, dom } from '../../ui';
 import { HeaderIcon } from '../../utils/legendmaker';
-import PopupMenu from '../../popupmenu';
+import PopupMenu from '../../ui/popupmenu';
 
 const OverlayLayer = function OverlayLayer(options) {
   let {
@@ -20,7 +20,7 @@ const OverlayLayer = function OverlayLayer(options) {
   const popupMenuItems = [];
   let layerList;
 
-  let cls = `${clsSettings} flex row align-center padding-left padding-right item`.trim();
+  const cls = `${clsSettings} flex row align-center padding-left padding-right-smaller item`.trim();
   const title = layer.get('title') || 'Titel saknas';
   const name = layer.get('name');
   const secure = layer.get('secure');
@@ -33,7 +33,7 @@ const OverlayLayer = function OverlayLayer(options) {
   if (secure) {
     uncheckIcon = '#ic_lock_outline_24px';
   }
- 
+
   const opacity = layer.getOpacity();
 
   let headerIcon = HeaderIcon(style, opacity);
@@ -133,6 +133,29 @@ const OverlayLayer = function OverlayLayer(options) {
   });
   popupMenuItems.push(layerInfoMenuItem);
 
+  if (layer.get('zoomToExtent')) {
+    const zoomToExtentMenuItem = Component({
+      onRender() {
+        const labelEl = document.getElementById(this.getId());
+        labelEl.addEventListener('click', (e) => {
+          const extent = typeof layer.getSource !== 'undefined' && typeof layer.getSource().getExtent !== 'undefined' ? layer.getSource().getExtent() : layer.getExtent();
+          if (layer.getVisible()) {
+            viewer.getMap().getView().fit(extent, {
+              padding: [50, 50, 50, 50],
+              duration: 1000
+            });
+            e.preventDefault();
+          }
+        });
+      },
+      render() {
+        const labelCls = 'text-smaller padding-x-small grow pointer no-select overflow-hidden';
+        return `<li id="${this.getId()}" class="${labelCls}">Zooma till</li>`;
+      }
+    });
+    popupMenuItems.push(zoomToExtentMenuItem);
+  }
+
   if (layer.get('removable')) {
     const removeLayerMenuItem = Component({
       onRender() {
@@ -193,7 +216,8 @@ const OverlayLayer = function OverlayLayer(options) {
     const { top, left } = getElementOffset(moreInfoButtonEl, viewerEl);
     const right = viewerEl.offsetWidth - left - moreInfoButtonEl.offsetWidth;
     const targetRect = moreInfoButtonEl.getBoundingClientRect();
-    popupMenu = PopupMenu({ target: viewer.getId(), onUnfocus });
+    popupMenu = PopupMenu({ onUnfocus });
+    document.getElementById(viewer.getId()).appendChild(dom.html(popupMenu.render()));
     popupMenu.setContent(popupMenuList.render());
     popupMenuList.dispatch('render');
     popupMenu.setPosition({ right: `${right}px`, top: `${top + targetRect.height}px` });
