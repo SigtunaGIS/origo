@@ -1,7 +1,5 @@
-import {
-  simpleExportHandler,
-  layerSpecificExportHandler
-} from './infowindow_exporthandler';
+import { simpleExportHandler, layerSpecificExportHandler } from './infowindow_exporthandler';
+import exportToFile from './utils/exporttofile';
 import Icon from './ui/icon';
 
 let parentElement;
@@ -24,11 +22,7 @@ function createSvgElement(id, className) {
   const useElem = document.createElementNS('http://www.w3.org/2000/svg', 'use');
 
   svgElem.setAttribute('class', className); // this instead of above line to support ie!
-  useElem.setAttributeNS(
-    'http://www.w3.org/1999/xlink',
-    'xlink:href',
-    `#${id}`
-  );
+  useElem.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${id}`);
   svgElem.appendChild(useElem);
   svgContainer.appendChild(svgElem);
   svgContainer.classList.add(`${className}-container`);
@@ -83,9 +77,7 @@ function makeElementDraggable(elm) {
 
   if (document.getElementById(`${elmnt.id}-draggable`)) {
     /* if present, the header is where you move the DIV from: */
-    document.getElementById(
-      `${elmnt.id}-draggable`
-    ).onmousedown = dragMouseDown;
+    document.getElementById(`${elmnt.id}-draggable`).onmousedown = dragMouseDown;
   } else {
     /* otherwise, move the DIV from anywhere inside the DIV: */
     elmnt.onmousedown = dragMouseDown;
@@ -163,47 +155,56 @@ function showSelectedList(selectionGroup) {
 
 function createExportButton(buttonText) {
   const container = document.createElement('div');
-  container.classList.add('padding-smallest');
+
+  const spinner = document.createElement('img');
+  spinner.src = 'img/loading.gif';
+  spinner.classList.add('spinner');
+  spinner.style.visibility = 'hidden';
 
   const button = document.createElement('button');
   button.classList.add('export-button');
   button.textContent = buttonText;
 
   container.appendChild(button);
-  const spinner = document.createElement('img');
-  spinner.src = 'img/loading.gif';
-  spinner.classList.add('spinner');
+  container.appendChild(spinner);
 
   button.loadStart = () => {
     button.disabled = true;
     button.classList.add('disabled');
-    button.replaceWith(spinner);
+    spinner.style.visibility = 'visible';
   };
 
   button.loadStop = () => {
     button.disabled = false;
     button.classList.remove('disabled');
-    spinner.replaceWith(button);
+    spinner.style.visibility = 'hidden';
   };
 
   return container;
 }
 
-function createCustomExportButton(customButtonIcon, customButtonTooltipText) {
+function createCustomExportButton(roundButtonIcon, roundButtonTooltipText) {
   const container = document.createElement('div');
   container.classList.add('inline-block', 'padding-smallest');
 
   const iconComponent = Icon({
-    icon: customButtonIcon,
+    icon: roundButtonIcon,
     title: ''
   });
   const button = document.createElement('button');
   button.classList.add(
-    'padding-small', 'margin-bottom-smaller', 'icon-smaller', 'round', 'light', 'box-shadow', 'o-tooltip', 'margin-right-small'
+    'padding-small',
+    'margin-bottom-smaller',
+    'icon-smaller',
+    'round',
+    'light',
+    'box-shadow',
+    'o-tooltip',
+    'margin-right-small'
   );
   button.style = 'position: relative';
 
-  button.innerHTML = `<span class="icon" style="z-index: 10000">${iconComponent.render()}</span><span data-tooltip="${customButtonTooltipText}" data-placement="south"></span>`;
+  button.innerHTML = `<span class="icon" style="z-index: 10000">${iconComponent.render()}</span><span data-tooltip="${roundButtonTooltipText}" data-placement="south"></span>`;
 
   container.appendChild(button);
   const spinner = document.createElement('img');
@@ -230,12 +231,8 @@ function createToaster(status, message) {
   const toaster = document.createElement('div');
   toaster.style.fontSize = '12px';
   if (!message) {
-    const successMsg = exportOptions.toasterMessages && exportOptions.toasterMessages.success
-      ? exportOptions.toasterMessages.success
-      : 'Success!';
-    const failMsg = exportOptions.toasterMessages && exportOptions.toasterMessages.fail
-      ? exportOptions.toasterMessages.fail
-      : 'Sorry, something went wrong. Please contact your administrator';
+    const successMsg = exportOptions.toasterMessages && exportOptions.toasterMessages.success ? exportOptions.toasterMessages.success : 'Success!';
+    const failMsg = exportOptions.toasterMessages && exportOptions.toasterMessages.fail ? exportOptions.toasterMessages.fail : 'Sorry, something went wrong. Please contact your administrator';
     msg = status === 'ok' ? successMsg : failMsg;
   }
   // It cannot be appended to infowindow bcuz in mobile tranform:translate is used css, and it causes that position: fixed loses its effect.
@@ -262,17 +259,17 @@ function createExportButtons(
   selectionGroup,
   activeLayer
 ) {
-  const useCustomButton = obj.useCustomButton || false;
-  const buttonText = obj.buttonText || 'Export';
+  const roundButton = obj.button.roundButton || false;
+  const buttonText = obj.button.buttonText || 'Export';
   const url = obj.url;
   const layerSpecificExportedFileName = obj.exportedFileName;
   const attributesToSendToExport = obj.attributesToSendToExport
     ? obj.attributesToSendToExport
     : attributesToSendToExportPerLayer;
-  const exportBtn = useCustomButton
+  const exportBtn = roundButton
     ? createCustomExportButton(
-      obj.customButtonIcon,
-      obj.customButtonTooltipText
+      obj.button.roundButtonIcon,
+      obj.button.roundButtonTooltipText
     )
     : createExportButton(buttonText);
   const btn = exportBtn.querySelector('button');
@@ -282,9 +279,7 @@ function createExportButtons(
       return;
     }
     btn.loadStart();
-    const selectedItems = selectionManager.getSelectedItemsForASelectionGroup(
-      selectionGroup
-    );
+    const selectedItems = selectionManager.getSelectedItemsForASelectionGroup(selectionGroup);
     layerSpecificExportHandler(
       url,
       activeLayer,
@@ -318,35 +313,25 @@ function createExportButtons(
 
 function createSubexportComponent(selectionGroup) {
   // OBS! selectionGroup corresponds to a layer with the same name in most cases, but in case of a group layer it can contain selected items from all the layers in that GroupLayer.
-
   let layerSpecificExportOptions;
-  const simpleExportLayers = exportOptions.simpleExportLayers
-    ? exportOptions.simpleExportLayers
-    : [];
-  const simpleExportUrl = exportOptions.simpleExportUrl;
-  const simpleExportButtonText = exportOptions.simpleExportButtonText || 'Export';
-  const exportedFileName = exportOptions.exportedFileName;
   const activeLayer = viewer.getLayer(selectionGroup);
 
   const subexportContainer = document.createElement('div');
   subexportContainer.classList.add('export-buttons-container');
-
-  if (activeLayer.get('type') === 'GROUP') {
-    console.warn('The selected layer is a LayerGroup, be careful!');
-  }
 
   if (exportOptions.layerSpecificExport) {
     layerSpecificExportOptions = exportOptions.layerSpecificExport.find(
       (i) => i.layer === selectionGroup
     );
   }
-
   if (layerSpecificExportOptions) {
     const exportUrls = layerSpecificExportOptions.exportUrls || [];
     const attributesToSendToExportPerLayer = layerSpecificExportOptions.attributesToSendToExport;
-    const customButtonExportUrls = exportUrls.filter((e) => e.useCustomButton);
+    const customButtonExportUrls = exportUrls.filter(
+      (e) => e.button.roundButton
+    );
     const standardButtonExportUrls = exportUrls.filter(
-      (e) => !e.useCustomButton
+      (e) => !e.button.roundButton
     );
 
     customButtonExportUrls.forEach((obj) => {
@@ -367,14 +352,18 @@ function createSubexportComponent(selectionGroup) {
       );
       subexportContainer.appendChild(button);
     });
-  } else if (simpleExportLayers.length) {
+  } else if (exportOptions.simpleExport) {
+    const simpleExportLayers = exportOptions.simpleExport.layers ? exportOptions.simpleExport.layers : [];
+    const simpleExportUrl = exportOptions.simpleExport.url || false;
+    const simpleExportButtonText = exportOptions.simpleExport.button.buttonText || 'Export';
     const exportAllowed = simpleExportLayers.find((l) => l === selectionGroup);
     if (exportAllowed) {
-      const useCustomButton = exportOptions.useCustomSimpleExportButton || false;
-      const exportBtn = useCustomButton
+      const exportedFileName = `${exportAllowed}.xlsx`;
+      const roundButton = exportOptions.simpleExport.button.roundButton || false;
+      const exportBtn = roundButton
         ? createCustomExportButton(
-          exportOptions.customSimpleButtonIcon,
-          exportOptions.customSimpleButtonTooltipText
+          exportOptions.simpleExport.button.roundButtonIcon,
+          exportOptions.simpleExport.button.roundButtonTooltipText
         )
         : createExportButton(simpleExportButtonText);
       const btn = exportBtn.querySelector('button');
@@ -384,9 +373,7 @@ function createSubexportComponent(selectionGroup) {
           return;
         }
         btn.loadStart();
-        const selectedItems = selectionManager.getSelectedItemsForASelectionGroup(
-          selectionGroup
-        );
+        const selectedItems = selectionManager.getSelectedItemsForASelectionGroup(selectionGroup);
         simpleExportHandler(
           simpleExportUrl,
           activeLayer,
@@ -403,15 +390,33 @@ function createSubexportComponent(selectionGroup) {
           });
       });
       subexportContainer.appendChild(exportBtn);
-    } else {
-      console.warn(
-        `Export is not allowed for selection group: ${selectionGroup}`
-      );
     }
-  } else {
-    console.warn(
-      `Neither Specific Export is specified for selection group: ${selectionGroup} nor Simple Export is allowed!`
-    );
+  } else if (exportOptions.clientExport) {
+    const conf = exportOptions.clientExport;
+    const exportAllowed = !conf.layers || conf.layers.find((l) => l === selectionGroup);
+    if (exportAllowed) {
+      const roundButton = conf.button.roundButton || false;
+      const buttonText = conf.button.buttonText || 'Exportera';
+      const exportBtn = roundButton
+        ? createCustomExportButton(
+          conf.button.roundButtonIcon,
+          conf.button.roundButtonTooltipText
+        )
+        : createExportButton(buttonText);
+
+      const btn = exportBtn.querySelector('button');
+      btn.addEventListener('click', () => {
+        btn.loadStart();
+        const selectedItems = selectionManager.getSelectedItemsForASelectionGroup(selectionGroup);
+        const features = selectedItems.map(i => i.getFeature());
+        exportToFile(features, conf.format, {
+          featureProjection: viewer.getProjection().getCode(),
+          filename: selectionGroup
+        });
+        btn.loadStop();
+      });
+      subexportContainer.appendChild(exportBtn);
+    }
   }
 
   return subexportContainer;
@@ -451,19 +456,12 @@ function highlightListElement(featureId) {
   });
 }
 
-function createExpandableContent(
-  listElementContentContainer,
-  content,
-  elementId
-) {
+function createExpandableContent(listElementContentContainer, content, elementId) {
   const items = content.querySelectorAll('ul > li');
   const foldedItems = [];
 
   if (items.length > 2) {
-    const rightArrowSvg = createSvgElement(
-      'fa-chevron-right',
-      'expandlistelement-svg'
-    );
+    const rightArrowSvg = createSvgElement('fa-chevron-right', 'expandlistelement-svg');
 
     rightArrowSvg.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -532,17 +530,14 @@ function createListElement(item) {
   const listElement = document.createElement('div');
   listElement.classList.add('listelement');
   listElement.id = item.getId();
-  const svg = createSvgElement(
-    'ic_remove_circle_outline_24px',
-    'removelistelement-svg'
-  );
+  const svg = createSvgElement('ic_remove_circle_outline_24px', 'removelistelement-svg');
   svg.addEventListener('click', () => {
     selectionManager.removeItem(item);
   });
   listElement.appendChild(svg);
   const listElementContentContainer = document.createElement('div');
   listElementContentContainer.classList.add('listelement-content-container');
-  const content = item.getContent();
+  const content = (item.getContent());
   listElementContentContainer.appendChild(content);
   listElement.appendChild(listElementContentContainer);
   createExpandableContent(listElementContentContainer, content, item.getId());
@@ -583,16 +578,12 @@ function scrollListElementToView(featureId) {
         // time out is set so that element gets the time to expand first, otherwise it will be scrolled halfway to the view
         setTimeout(() => {
           const elementBoundingBox = element.getBoundingClientRect();
-          const listContainer2 = document.getElementsByClassName(
-            'listcontainer'
-          )[0];
+          const listContainer2 = document.getElementsByClassName('listcontainer')[0];
           const listContainerBoundingBox = listContainer2.getBoundingClientRect();
           if (elementBoundingBox.top < listContainerBoundingBox.top) {
             const scrollDownValue = listContainerBoundingBox.top - elementBoundingBox.top;
             listContainer2.scrollTop -= scrollDownValue;
-          } else if (
-            elementBoundingBox.bottom > listContainerBoundingBox.bottom
-          ) {
+          } else if (elementBoundingBox.bottom > listContainerBoundingBox.bottom) {
             const scrollUpValue = elementBoundingBox.bottom - listContainerBoundingBox.bottom;
             listContainer2.scrollTop += scrollUpValue;
           }
@@ -636,11 +627,8 @@ function init(options) {
   viewer = options.viewer;
   selectionManager = options.viewer.getSelectionManager();
 
-  const infowindowOptions = options.infowindowOptions
-    ? options.infowindowOptions
-    : {};
+  const infowindowOptions = options.infowindowOptions ? options.infowindowOptions : {};
   exportOptions = infowindowOptions.export || {};
-
   sublists = new Map();
   subexports = new Map();
   urvalElements = new Map();

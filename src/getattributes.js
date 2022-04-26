@@ -9,7 +9,7 @@ function createUrl(prefix, suffix, url) {
   return p + url + s;
 }
 
-function parseUrl(urlattr, feature, attribute, attributes, map) {
+function parseUrl(urlattr, feature, attribute, attributes, map, linktext) {
   let val = '';
   let url;
   if (urlattr) {
@@ -17,7 +17,7 @@ function parseUrl(urlattr, feature, attribute, attributes, map) {
   } else if (isUrl(attribute.url)) {
     url = attribute.url;
   } else return '';
-  const text = feature.get(attribute.name) || attribute.html || attribute.title || urlattr;
+  const text = linktext || feature.get(attribute.name) || attribute.html || attribute.title || urlattr;
   const aTargetTitle = replacer.replace(attribute.targetTitle, attributes) || url;
   let aTarget = '_blank';
   let aCls = 'o-identify-link';
@@ -27,53 +27,91 @@ function parseUrl(urlattr, feature, attribute, attributes, map) {
   } else if (attribute.target === 'modal-full') {
     aTarget = 'modal-full';
     aCls = 'o-identify-link-modal';
+  } else if (attribute.target === '_self') {
+    aTarget = '_self';
+  } else if (attribute.target === '_top') {
+    aTarget = '_top';
+  } else if (attribute.target === '_parent') {
+    aTarget = '_parent';
   }
   val = `<a class="${aCls}" target="${aTarget}" href="${url}" title="${aTargetTitle}">${text}</a>`;
   return val;
+}
+
+/**
+ * Creates HTML containing clickable links from attribute content. Internal helper.
+ * @param {any} feature The feature in question
+ * @param {any} attribute The current attribute configuration to format
+ * @param {any} attributes All other attribute configurations
+ * @param {any} map The map
+ */
+function buildUrlContent(feature, attribute, attributes, map) {
+  if (attribute.splitter) {
+    let val = '';
+    const urlArr = feature.get(attribute.url).split(attribute.splitter);
+    let linkArr;
+    if (attribute.linktext) {
+      linkArr = feature.get(attribute.linktext).split(attribute.splitter);
+    }
+    if (urlArr[0] !== '') {
+      urlArr.forEach((url, ix) => {
+        // Assume linkText array is same size as links array.
+        const linkText = linkArr ? linkArr[ix] : null;
+        val += `<p>${parseUrl(url, feature, attribute, attributes, map, linkText)}</p>`;
+      });
+    }
+    return val;
+  }
+  return parseUrl(feature.get(attribute.url), feature, attribute, attributes, map);
 }
 
 const getContent = {
   name(feature, attribute, attributes, map) {
     let val = '';
     let title = '';
+    let prefix = '';
+    let suffix = '';
     const featureValue = feature.get(attribute.name) === 0 ? feature.get(attribute.name).toString() : feature.get(attribute.name);
     if (featureValue) {
       val = featureValue;
       if (attribute.title) {
         title = `<b>${attribute.title}</b>`;
       }
-      if (attribute.url) {
-        if (attribute.splitter) {
-          const urlArr = feature.get(attribute.url).split(attribute.splitter);
-          if (urlArr[0] !== '') {
-            urlArr.forEach((url) => {
-              val += `<p>${parseUrl(url, feature, attribute, attributes, map)}</p>`;
-            });
-          }
-        } else {
-          val = parseUrl(feature.get(attribute.url), feature, attribute, attributes, map);
+      if (attribute.prefix) {
+        prefix = attribute.prefix;
+      }
+      if (attribute.suffix) {
+        suffix = attribute.suffix;
+      }
+      if (attribute.formatDatetime) {
+        if (!Number.isNaN(Date.parse(featureValue))) {
+          const locale = 'locale' in attribute.formatDatetime ? attribute.formatDatetime.locale : 'default';
+          const options = 'options' in attribute.formatDatetime ? attribute.formatDatetime.options : { dateStyle: 'full', timeStyle: 'long' };
+          val = new Intl.DateTimeFormat(locale, options).format(Date.parse(featureValue));
         }
+      }
+      if (attribute.url) {
+        val = buildUrlContent(feature, attribute, attributes, map);
       }
     }
     const newElement = document.createElement('li');
-    newElement.classList.add(attribute.cls);
-    newElement.innerHTML = `${title}${val}`;
+    if (typeof (attribute.cls) !== 'undefined') {
+      newElement.classList.add(attribute.cls);
+    }
+    newElement.innerHTML = `${title}${prefix}${val}${suffix}`;
     return newElement;
   },
   url(feature, attribute, attributes, map) {
     let val = '';
-    if (attribute.splitter) {
-      const urlArr = feature.get(attribute.url).split(attribute.splitter);
-      if (urlArr[0] !== '') {
-        urlArr.forEach((url) => {
-          val += `<p>${parseUrl(url, feature, attribute, attributes, map)}</p>`;
-        });
-      }
-    } else {
-      val = parseUrl(feature.get(attribute.url), feature, attribute, attributes, map);
+    // Use a common title for all links. If no splitter only one link is assumed and title is used as link text instead.
+    if (attribute.title && attribute.splitter) {
+      val = `<b>${attribute.title}</b>`;
     }
+    val += buildUrlContent(feature, attribute, attributes, map);
     const newElement = document.createElement('li');
-    newElement.classList.add(attribute.cls);
+    if (typeof (attribute.cls) !== 'undefined') {
+      newElement.classList.add(attribute.cls);
+    }
     newElement.innerHTML = val;
     return newElement;
   },
@@ -95,7 +133,37 @@ const getContent = {
       }
     }
     const newElement = document.createElement('li');
-    newElement.classList.add(attribute.cls);
+    if (typeof (attribute.cls) !== 'undefined') {
+      newElement.classList.add(attribute.cls);
+    }
+    newElement.innerHTML = val;
+    return newElement;
+  },
+  carousel(feature, attribute, attributes, map) {
+    let val = '';
+    let slides = '';
+    if (attribute.splitter) {
+      const imgArr = feature.get(attribute.carousel).split(attribute.splitter);
+      if (imgArr[0] !== '') {
+        imgArr.forEach((img) => {
+          const url = createUrl(attribute.urlPrefix, attribute.urlSuffix, replacer.replace(img, attributes, null, map));
+          const attribution = attribute.attribution ? `<div class="o-image-attribution">${attribute.attribution}</div>` : '';
+          slides += `<div class="o-image-content o-image-content${feature.ol_uid}"><img src="${url}">${attribution}</div>`;
+        });
+        val = `<div class="o-image-carousel o-image-carousel${feature.ol_uid}">${slides}</div>`;
+      }
+    } else {
+      const featGet = attribute.carousel ? feature.get(attribute.carousel) : feature.get(attribute.name);
+      if (featGet) {
+        const url = createUrl(attribute.urlPrefix, attribute.urlSuffix, replacer.replace(feature.get(attribute.carousel), attributes, null, map));
+        const attribution = attribute.attribution ? `<div class="o-image-attribution">${attribute.attribution}</div>` : '';
+        val = `<div class="o-image-container"><img src="${url}">${attribution}</div>`;
+      }
+    }
+    const newElement = document.createElement('li');
+    if (typeof (attribute.cls) !== 'undefined') {
+      newElement.classList.add(attribute.cls);
+    }
     newElement.innerHTML = val;
     return newElement;
   },
@@ -105,7 +173,9 @@ const getContent = {
       helperArg: feature.getGeometry()
     }, map);
     const newElement = document.createElement('li');
-    newElement.classList.add(attribute.cls);
+    if (typeof (attribute.cls) !== 'undefined') {
+      newElement.classList.add(attribute.cls);
+    }
     newElement.innerHTML = val;
     return newElement;
   }
@@ -157,6 +227,9 @@ function getAttributes(feature, layer, map) {
             val = getContent.img(feature, attribute, attributes, map);
           } else if (attribute.html) {
             val = getContent.html(feature, attribute, attributes, map);
+          } else if (attribute.carousel) {
+            val = getContent.carousel(feature, attribute, attributes, map);
+            ulList.classList.add('o-carousel-list');
           } else {
             val = customAttribute(feature, attribute, attributes, map);
           }

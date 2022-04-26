@@ -24,6 +24,30 @@ function createSelectedItem(feature, layer, map, groupLayers) {
     selectionGroup = layer.get('name');
     selectionGroupTitle = layer.get('title');
   }
+
+  // Add pseudo attributes to make sure they exist when the SelectedItem is created as the content is created in constructor
+  // Ideally we would also populate here, but that is an async operation and will break the api.
+  const attachments = layer.get('attachments');
+  if (attachments) {
+    attachments.groups.forEach(a => {
+      if (a.linkAttribute) {
+        feature.set(a.linkAttribute, '');
+      }
+      if (a.fileNameAttribute) {
+        feature.set(a.fileNameAttribute, '');
+      }
+    });
+  }
+  const relatedLayers = layer.get('relatedLayers');
+  if (relatedLayers) {
+    relatedLayers.forEach(currLayer => {
+      if (currLayer.promoteAttribs) {
+        currLayer.promoteAttribs.forEach(currAttrib => {
+          feature.set(currAttrib.parentName, '');
+        });
+      }
+    });
+  }
   return new SelectedItem(feature, layer, map, selectionGroup, selectionGroupTitle);
 }
 
@@ -32,6 +56,34 @@ function getFeatureInfoUrl({
   resolution,
   projection
 }, layer) {
+  if (layer.get('infoFormat') === 'application/geo+json' || layer.get('infoFormat') === 'application/geojson') {
+    const url = layer.getSource().getFeatureInfoUrl(coordinate, resolution, projection, {
+      INFO_FORMAT: layer.get('infoFormat'),
+      FEATURE_COUNT: '20'
+    });
+
+    return fetch(url, { type: 'GET' })
+      .then((res) => {
+        if (res.error) {
+          return [];
+        }
+        return res.json();
+      })
+      .then(json => {
+        if (json.features.length > 0) {
+          const copyJson = json;
+          copyJson.features.forEach((item, i) => {
+            if (!item.geometry) {
+              copyJson.features[i].geometry = { type: 'Point', coordinates: coordinate };
+            }
+          });
+          const feature = maputils.geojsonToFeature(copyJson);
+          return feature;
+        }
+        return [];
+      })
+      .catch(error => console.error(error));
+  }
   const url = layer.getSource().getFeatureInfoUrl(coordinate, resolution, projection, {
     INFO_FORMAT: 'application/json',
     FEATURE_COUNT: '20'
@@ -120,14 +172,14 @@ function getGetFeatureInfoRequest({ layer, coordinate }, viewer) {
       if (layer.get('featureinfoLayer')) {
         const featureinfoLayerName = layer.get('featureinfoLayer');
         const featureinfoLayer = viewer.getLayer(featureinfoLayerName);
-        return getGetFeatureInfoRequest({ featureinfoLayer, coordinate }, viewer);
+        return getGetFeatureInfoRequest({ layer: featureinfoLayer, coordinate }, viewer);
       }
       break;
     case 'WMS':
       if (layer.get('featureinfoLayer')) {
         const featureinfoLayerName = layer.get('featureinfoLayer');
         const featureinfoLayer = viewer.getLayer(featureinfoLayerName);
-        return getGetFeatureInfoRequest({ featureinfoLayer, coordinate }, viewer);
+        return getGetFeatureInfoRequest({ layer: featureinfoLayer, coordinate }, viewer);
       }
       obj.cb = 'GEOJSON';
       obj.fn = getFeatureInfoUrl({ coordinate, resolution, projection }, layer);
@@ -136,7 +188,7 @@ function getGetFeatureInfoRequest({ layer, coordinate }, viewer) {
       if (layer.get('featureinfoLayer')) {
         const featureinfoLayerName = layer.get('featureinfoLayer');
         const featureinfoLayer = viewer.getLayer(featureinfoLayerName);
-        return getGetFeatureInfoRequest({ featureinfoLayer, coordinate }, viewer);
+        return getGetFeatureInfoRequest({ layer: featureinfoLayer, coordinate }, viewer);
       }
       obj.fn = getAGSIdentifyUrl({ layer, coordinate }, viewer);
       return obj;
@@ -267,6 +319,7 @@ function getFeaturesAtPixel({
 }
 
 export default {
+  createSelectedItem,
   getFeaturesFromRemote,
   getFeaturesAtPixel
 };

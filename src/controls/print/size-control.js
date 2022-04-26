@@ -10,15 +10,17 @@ export default function SizeControl({ initialSize, sizes }) {
       return Button({
         cls: 'grow light text-smaller',
         text: 'Anpassa',
-        state: 'initial',
-        style: { width: '34%' }
+        state: initialSize === size ? 'active' : 'initial',
+        style: { width: `${String(round2(100 - round2(100 / sizes.length, 1) * (sizes.length - 1), 1))}%` },
+        ariaLabel: 'Anpassa egen storlek'
       });
     }
     return Button({
       cls: 'grow light text-smaller',
       text: titleCase(size),
       state: initialSize === size ? 'active' : 'initial',
-      style: { width: '33%' }
+      style: { width: `${String(round2(100 / sizes.length, 1))}%` },
+      ariaLabel: titleCase(size)
     });
   });
 
