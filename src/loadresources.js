@@ -173,10 +173,11 @@ export const loadResources = async function loadResources(mapOptions, config) {
 };
 
 export const parsePermalink = function parsePermalink(url) {
-  const mapUrl = getUrl();
-  if (!url.startsWith(mapUrl)) {
-    console.log('the url given is not valid for this map', url);
-    return null;
-  }
+  // Checking that the url is part of the same domain
+  // const mapUrl = [`${window.location.protocol}//`, `${window.location.hostname}`, (window.location.port ? `:${window.location.port}` : '')].join('');
+  // if (!url.startsWith(mapUrl)) {
+  //   console.log('the url given is not valid for this map', url);
+  //   return null;
+  // }
   return permalink.parsePermalink(url);
 };
