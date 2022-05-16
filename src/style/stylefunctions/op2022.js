@@ -164,8 +164,8 @@ export default function op2022Style() {
     }
 
 
-    /* gransk_ui_kommunikationslinjer_l__vag_enpil */
-    if (layer == 'gransk_ui_kommunikationslinjer_l' && properties.sig_typ == 'Kommunikationslänk väg' && properties.beteckning =='E4.65') {
+    /* op2022_ui_kommunikationslinjer_l__vag_enpil */
+    if (layer == 'op2022_ui_kommunikationslinjer_l' && properties.sig_typ == 'Kommunikationslänk väg' && properties.beteckning =='E4.65') {
       var styleFunction = function(feature) {
 
         const arrow_stroke_color = 'rgba(121,121,121,1)'
@@ -219,7 +219,7 @@ export default function op2022Style() {
             return style;
     }
 
-    if (layer == 'gransk_ui_kommunikationslinjer_l' && properties.sig_typ == 'Kommunikationslänk väg' && properties.beteckning !='E4.65') {
+    if (layer == 'op2022_ui_kommunikationslinjer_l' && properties.sig_typ == 'Kommunikationslänk väg' && properties.beteckning !='E4.65') {
 
       var styleFunction = function(feature) {
 
@@ -295,7 +295,7 @@ export default function op2022Style() {
             return style;
     };
 
-    if (layer == 'gransk_ui_kommunikationslinjer_l' && properties.sig_typ == 'Kommunikationslänk spår') {
+    if (layer == 'op2022_ui_kommunikationslinjer_l' && properties.sig_typ == 'Kommunikationslänk spår') {
 
       var styleFunction = function(feature) {
 
@@ -369,7 +369,7 @@ export default function op2022Style() {
 
       return style;
     };
-    if (layer == 'gransk_ui_kommunikationslinjer_l' && properties.sig_typ == 'Kommunikationslänk spår - föreslagen') {
+    if (layer == 'op2022_ui_kommunikationslinjer_l' && properties.sig_typ == 'Kommunikationslänk spår - föreslagen') {
 
       var styleFunction = function(feature) {
 
@@ -444,7 +444,7 @@ export default function op2022Style() {
       return style;
     };
 
-    if (layer == 'gransk_ui_natur_friluftslivslinjer_l' && properties.bestammelsekod == 'OP_UT_NAT_ViktigtSamband') {
+    if (layer == 'op2022_ui_natur_friluftslivslinjer_l' && properties.bestammelsekod == 'OP_UT_NAT_ViktigtSamband') {
 
       var styleFunction = function(feature) {
 
@@ -520,7 +520,7 @@ export default function op2022Style() {
             return style;
     };
 
-    if(layer == 'gransk_mak_mangfunktionell_bebyggelse_y_planerad'){
+    if(layer == 'op2022_mak_mangfunktionell_bebyggelse_y_planerad'){
 
       // Pattern style
       const pat_width = 12;
@@ -550,7 +550,7 @@ export default function op2022Style() {
       return style;
     }
 
-    if(layer == 'gransk_mak_sammanhangande_bostadsbebyggelse_y_planerad'){
+    if(layer == 'op2022_mak_sammanhangande_bostadsbebyggelse_y_planerad'){
 
       // Pattern style
       const pat_width = 12;
@@ -579,7 +579,7 @@ export default function op2022Style() {
       });
       return style;
     }
-    if(layer == 'gransk_mak_verksamheter_industri_y_planerad'){
+    if(layer == 'op2022_mak_verksamheter_industri_y_planerad'){
 
       // Pattern style
       const pat_width = 12;
@@ -609,7 +609,7 @@ export default function op2022Style() {
       return style;
     }
 
-    if(layer == 'gransk_mak_verksamheter_industri_y'){
+    if(layer == 'op2022_mak_verksamheter_industri_y'){
 
       switch(properties.bestammelsekod) {
         case 'OP_MVA_VI_A':
@@ -686,7 +686,7 @@ export default function op2022Style() {
       }
     }
 
-    if(layer == 'gransk_mak_natur_friluftsliv_y'){
+    if(layer == 'op2022_mak_natur_friluftsliv_y'){
 
       switch(properties.bestammelsekod) {
         case 'OP_MVA_NF_A':
@@ -747,7 +747,7 @@ export default function op2022Style() {
 
     }
 
-    if(layer == 'gransk_tema_gi_friluftsliv_hoga_varden_y'){
+    if(layer == 'op2022_tema_gi_friluftsliv_hoga_varden_y'){
 
       // Pattern style
       const pat_width = 16;
@@ -778,7 +778,7 @@ export default function op2022Style() {
 
     }
 
-    if(layer == 'gransk_tema_km_kultur_narmiljo_y'){
+    if(layer == 'op2022_tema_km_kultur_narmiljo_y'){
       // Pattern style
       const pat_width = 12;
       const pat_height = 12;
@@ -807,7 +807,7 @@ export default function op2022Style() {
       return style;
     }
 
-    if(layer == 'gransk_ri_lst_ri_rorligt_friluftsliv_mb4kap2_y'){
+    if(layer == 'op2022_ri_lst_ri_rorligt_friluftsliv_mb4kap2_y'){
       // Pattern style
       const pat_width = 12;
       const pat_height = 12;
@@ -836,7 +836,7 @@ export default function op2022Style() {
       return style;
     }
 
-    if(layer == 'gransk_ri_tv_paverkan_lagfartsflyg_y'){
+    if(layer == 'op2022_ri_tv_paverkan_lagfartsflyg_y'){
       // Pattern style
       const pat_width = 14;
       const pat_height = 14;
@@ -867,7 +867,7 @@ export default function op2022Style() {
       return style;
     }
 
-    if(layer == 'gransk_av_lstab_djurskyddsomraden_y'){
+    if(layer == 'op2022_av_lstab_djurskyddsomraden_y'){
 
       // Pattern style
       const pat_width = 16;
@@ -896,7 +896,7 @@ export default function op2022Style() {
 
     }
 
-    if(layer == 'gransk_av_nv_vattenskyddsomrade_y'){
+    if(layer == 'op2022_av_nv_vattenskyddsomrade_y'){
       // Pattern style
       const pat_width = 12;
       const pat_height = 12;
@@ -925,7 +925,7 @@ export default function op2022Style() {
       return style;
     }
 
-    if(layer == 'gransk_ri_jarnvag_befintlig_l'){
+    if(layer == 'op2022_ri_jarnvag_befintlig_l'){
       // // Pattern style
       // const pat_width = 12;
       // const pat_height = 12;
