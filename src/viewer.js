@@ -539,7 +539,12 @@ const Viewer = function Viewer(targetOption, options = {}) {
     keys.forEach(layerName => {
       const layerObj = layersToShow[layerName];
       const layerToShow = getLayer(layerName);
-      if (resetBackgroundLayers || layerToShow.get('group') !== 'background') {
+      if (!layerToShow) {
+        console.log('layer does not exist', layerName);
+        return;
+      }
+      if (resetBackgroundLayers
+         || (layerToShow.get('group') != null && layerToShow.get('group') !== 'background')) {
         layerToShow.setVisible(layerObj.visible);
         layerToShow.setOpacity(layerObj.opacity);
       }
@@ -609,6 +614,10 @@ const Viewer = function Viewer(targetOption, options = {}) {
     // show hidden layers
     defaultVisibleLayers.forEach(l => {
       const layer = getLayersByProperty('id', l.name)[0];
+      if (!layer) {
+        console.log('layer does not exist', l.name);
+        return;
+      }
       if (layer.getVisible() && shouldLayerBeReset(layer)) {
         console.log('turning on', l.name);
         layer.setVisible(true);
