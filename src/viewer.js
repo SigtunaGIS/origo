@@ -16,6 +16,7 @@ import Footer from './components/footer';
 import flattenGroups from './utils/flattengroups';
 import getcenter from './geometry/getcenter';
 import isEmbedded from './utils/isembedded';
+import permalink from './permalink/permalink';
 
 const Viewer = function Viewer(targetOption, options = {}) {
   let map;
@@ -24,10 +25,7 @@ const Viewer = function Viewer(targetOption, options = {}) {
   let selectionmanager;
 
   let {
-    projection
-  } = options;
-
-  const {
+    projection,
     breakPoints,
     breakPointsPrefix,
     clsOptions = '',
@@ -64,6 +62,7 @@ const Viewer = function Viewer(targetOption, options = {}) {
   const center = urlParams.center || centerOption;
   const zoom = urlParams.zoom || zoomOption;
   const groups = flattenGroups(groupOptions);
+  const layerStylePicker = {};
 
   const getCapabilitiesLayers = () => {
     const capabilitiesPromises = [];
@@ -325,6 +324,13 @@ const Viewer = function Viewer(targetOption, options = {}) {
             visible: false,
             legend: false
           };
+          // Apply changed style
+          if (savedLayerProps[layerName] && savedLayerProps[layerName].altStyleIndex > -1) {
+            const altStyle = initialProps.stylePicker[savedLayerProps[layerName].altStyleIndex];
+            savedProps.clusterStyle = altStyle.clusterStyle;
+            savedProps.style = altStyle.style;
+            savedProps.defaultStyle = initialProps.style;
+          }
           savedProps.name = initialProps.name;
           const mergedProps = Object.assign({}, initialProps, savedProps);
           acc.push(mergedProps);
@@ -370,8 +376,19 @@ const Viewer = function Viewer(targetOption, options = {}) {
     return false;
   };
 
+  const getLayerStylePicker = function getLayerStylePicker(layer) {
+    return layerStylePicker[layer.get('name')] || [];
+  };
+
+  const addLayerStylePicker = function addLayerStylePicker(layerProps) {
+    if (!layerStylePicker[layerProps.name]) {
+      layerStylePicker[layerProps.name] = layerProps.stylePicker;
+    }
+  };
+
   const addLayer = function addLayer(layerProps) {
     const layer = Layer(layerProps, this);
+    addLayerStylePicker(layerProps);
     map.addLayer(layer);
     this.dispatch('addlayer', {
       layerName: layerProps.name
@@ -570,6 +587,10 @@ const Viewer = function Viewer(targetOption, options = {}) {
                               ${main.render()}
                               ${footer.render()}
                             </div>
+                          </div>
+                              
+                          <div id="loading" class="hide">
+                            <div class="loading-spinner"></div>
                           </div>`;
       const el = document.querySelector(target);
       el.innerHTML = htmlString;
@@ -606,6 +627,7 @@ const Viewer = function Viewer(targetOption, options = {}) {
     getSearchableLayers,
     getSize,
     getLayer,
+    getLayerStylePicker,
     getLayers,
     getLayersByProperty,
     getMap,
@@ -627,7 +649,8 @@ const Viewer = function Viewer(targetOption, options = {}) {
     setStyle,
     zoomToExtent,
     getSelectionManager,
-    getEmbedded
+    getEmbedded,
+    permalink
   });
 };
 
