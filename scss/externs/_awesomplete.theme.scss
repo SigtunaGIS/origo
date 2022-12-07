@@ -69,15 +69,15 @@
   font-weight: bold;
 }
 
-.black mark {
-  color: #aaa;
+.grey mark {
+  color: #000;
 }
 
 .awesomplete li .suggestion:hover mark {
   background-color: $search-hover-backround;
 }
 
-.black li .suggestion:hover mark {
+.grey li .suggestion:hover mark {
   background-color: #fff;
 }
 
