@@ -8,7 +8,7 @@
   font-size: 12px;
   font-weight: normal;
   position: absolute;
-  right: 26em;
+  right: 27em;
   top: 6em;
   width: 320px;
   z-index: 1;
@@ -58,7 +58,7 @@
 
 .expandable_list {
   .urvalelement {
-    box-sizing: border-box; 
+    box-sizing: border-box;
     width: 100%;
     margin-right: 0;
     padding: 0;
@@ -66,7 +66,7 @@
 
   .urvalcontent {
     box-sizing: content-box;
-  
+
     .sublist:last-child {
       border-bottom: 1px solid #d9d9d9;
     }
