@@ -1039,7 +1039,7 @@ const Measure = function Measure({
               toggleType(this);
             },
             icon: '#ic_timeline_24px',
-            tooltipText: 'Längd',
+            tooltipText: 'Distans',
             tooltipPlacement: 'east'
           });
           buttons.push(lengthToolButton);
@@ -1054,7 +1054,7 @@ const Measure = function Measure({
               toggleType(this);
             },
             icon: '#o_polygon_24px',
-            tooltipText: 'Yta',
+            tooltipText: 'Areal',
             tooltipPlacement: 'east'
           });
           buttons.push(areaToolButton);
@@ -1068,7 +1068,7 @@ const Measure = function Measure({
               toggleType(this);
             },
             icon: '#ic_height_24px',
-            tooltipText: 'Höjd',
+            tooltipText: 'Markhöjd 2021',
             tooltipPlacement: 'east'
           });
           buttons.push(elevationToolButton);
