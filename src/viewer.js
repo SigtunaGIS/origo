@@ -13,16 +13,20 @@ import utils from './utils';
 import Layer from './layer';
 import Main from './components/main';
 import Footer from './components/footer';
+import CenterMarker from './components/centermarker';
 import flattenGroups from './utils/flattengroups';
 import getcenter from './geometry/getcenter';
 import isEmbedded from './utils/isembedded';
+import generateUUID from './utils/generateuuid';
 import permalink from './permalink/permalink';
+import Stylewindow from './style/stylewindow';
 
 const Viewer = function Viewer(targetOption, options = {}) {
   let map;
   let tileGrid;
   let featureinfo;
   let selectionmanager;
+  let stylewindow;
 
   const {
     breakPoints,
@@ -46,6 +50,7 @@ const Viewer = function Viewer(targetOption, options = {}) {
     resolutions = null,
     capabilitiesURL = null,
     layers: layerOptions = [],
+    layerParams = {},
     map: mapName,
     params: urlParams = {},
     proj4Defs,
@@ -53,7 +58,8 @@ const Viewer = function Viewer(targetOption, options = {}) {
     source = {},
     clusterOptions = {},
     tileGridOptions = {},
-    url
+    url,
+    palette
   } = options;
 
   let {
@@ -98,6 +104,7 @@ const Viewer = function Viewer(targetOption, options = {}) {
   const footer = Footer({
     data: footerData
   });
+  const centerMarker = CenterMarker();
   let mapSize;
 
   const addControl = function addControl(control) {
@@ -133,6 +140,8 @@ const Viewer = function Viewer(targetOption, options = {}) {
   const getFeatureinfo = () => featureinfo;
 
   const getSelectionManager = () => selectionmanager;
+
+  const getStylewindow = () => stylewindow;
 
   const getCenter = () => getcenter;
 
@@ -340,7 +349,14 @@ const Viewer = function Viewer(targetOption, options = {}) {
             const altStyle = initialProps.stylePicker[savedLayerProps[layerName].altStyleIndex];
             savedProps.clusterStyle = altStyle.clusterStyle;
             savedProps.style = altStyle.style;
-            savedProps.defaultStyle = initialProps.style;
+            if (initialProps.type === 'WMS') {
+              let WMSStylePickerInitialStyle = initialProps.stylePicker.find(style => style.initialStyle);
+              if (WMSStylePickerInitialStyle === undefined) {
+                WMSStylePickerInitialStyle = initialProps.stylePicker[0];
+                WMSStylePickerInitialStyle.initialStyle = true;
+              }
+              savedProps.defaultStyle = WMSStylePickerInitialStyle;
+            } else savedProps.defaultStyle = initialProps.style;
           }
           savedProps.name = initialProps.name;
           const mergedProps = Object.assign({}, initialProps, savedProps);
@@ -397,7 +413,11 @@ const Viewer = function Viewer(targetOption, options = {}) {
     }
   };
 
-  const addLayer = function addLayer(layerProps, insertBefore) {
+  const addLayer = function addLayer(thisProps, insertBefore) {
+    let layerProps = thisProps;
+    if (thisProps.layerParam && layerParams[thisProps.layerParam]) {
+      layerProps = Object.assign({}, layerParams[thisProps.layerParam], thisProps);
+    }
     const layer = Layer(layerProps, this);
     addLayerStylePicker(layerProps);
     if (insertBefore) {
@@ -482,9 +502,12 @@ const Viewer = function Viewer(targetOption, options = {}) {
     }
   };
 
-  const addMarker = function addMarker(coordinates, title, content) {
-    const layer = maputils.createMarker(coordinates, title, content, this);
-    map.addLayer(layer);
+  const addMarker = function addMarker(coordinates, title, content, layerProps, showPopup) {
+    maputils.createMarker(coordinates, title, content, this, layerProps, showPopup);
+  };
+
+  const removeMarkers = function removeMarkers(layerName) {
+    maputils.removeMarkers(this, layerName);
   };
 
   const getUrlParams = function getUrlParams() {
@@ -502,6 +525,7 @@ const Viewer = function Viewer(targetOption, options = {}) {
       }));
 
       tileGrid = maputils.tileGrid(tileGridSettings);
+      stylewindow = Stylewindow({ palette, viewer: this });
 
       setMap(Map({
         extent,
@@ -525,12 +549,31 @@ const Viewer = function Viewer(targetOption, options = {}) {
             mapId: this.getId()
           });
 
+          if (urlParams.pin) {
+            featureinfoOptions.savedPin = urlParams.pin;
+          } else if (urlParams.selection) {
+            // This needs further development for proper handling in permalink
+            featureinfoOptions.savedSelection = new Feature({
+              geometry: new geom[urlParams.selection.geometryType](urlParams.selection.coordinates)
+            });
+          }
+
+          featureinfoOptions.viewer = this;
+
+          selectionmanager = Selectionmanager(featureinfoOptions);
+          featureinfo = Featureinfo(featureinfoOptions);
+          this.addComponent(selectionmanager);
+          this.addComponent(featureinfo);
+          this.addComponent(centerMarker);
+
+          this.addControls();
+
           if (urlParams.feature) {
             const featureId = urlParams.feature;
             const layerName = featureId.split('.')[0];
             const layer = getLayer(layerName);
-            const layerType = layer.get('type');
-            if (layer && layerType !== 'GROUP') {
+            if (layer && layer.get('type') !== 'GROUP') {
+              const layerType = layer.get('type');
               // FIXME: postrender event is only emitted if any features from a layer is actually drawn, which means there is no feature in the default extent,
               // it will not be triggered until map is panned or zoomed where a feature exists.
               layer.once('postrender', () => {
@@ -578,27 +621,10 @@ const Viewer = function Viewer(targetOption, options = {}) {
             }
           }
 
-          if (urlParams.pin) {
-            featureinfoOptions.savedPin = urlParams.pin;
-          } else if (urlParams.selection) {
-            // This needs further development for proper handling in permalink
-            featureinfoOptions.savedSelection = new Feature({
-              geometry: new geom[urlParams.selection.geometryType](urlParams.selection.coordinates)
-            });
-          }
-
           if (!urlParams.zoom && !urlParams.mapStateId && startExtent) {
             map.getView().fit(startExtent, { size: map.getSize() });
           }
 
-          featureinfoOptions.viewer = this;
-
-          selectionmanager = Selectionmanager(featureinfoOptions);
-          featureinfo = Featureinfo(featureinfoOptions);
-          this.addComponent(selectionmanager);
-          this.addComponent(featureinfo);
-
-          this.addControls();
           this.dispatch('loaded');
         });
     },
@@ -668,11 +694,15 @@ const Viewer = function Viewer(targetOption, options = {}) {
     removeGroup,
     removeLayer,
     removeOverlays,
+    removeMarkers,
     setStyle,
     zoomToExtent,
     getSelectionManager,
+    getStylewindow,
     getEmbedded,
-    permalink
+    permalink,
+    generateUUID,
+    centerMarker
   });
 };
 
