@@ -176,6 +176,12 @@ const Viewer = function Viewer(targetOption, options = {}) {
 
   const getStyles = () => styles;
 
+  const addStyle = function addStyle(styleName, styleProps) {
+    if (!(styleName in styles)) {
+      styles[styleName] = styleProps;
+    }
+  };
+
   const getResolutions = () => resolutions;
 
   const getMapUrl = () => {
@@ -418,6 +424,11 @@ const Viewer = function Viewer(targetOption, options = {}) {
     if (thisProps.layerParam && layerParams[thisProps.layerParam]) {
       layerProps = Object.assign({}, layerParams[thisProps.layerParam], thisProps);
     }
+    if (thisProps.styleDef && !thisProps.style) {
+      const styleId = generateUUID();
+      addStyle(styleId, [thisProps.styleDef]);
+      layerProps.style = styleId;
+    }
     const layer = Layer(layerProps, this);
     addLayerStylePicker(layerProps);
     if (insertBefore) {
@@ -493,12 +504,6 @@ const Viewer = function Viewer(targetOption, options = {}) {
   const addSource = function addSource(sourceName, sourceProps) {
     if (!(sourceName in source)) {
       source[sourceName] = sourceProps;
-    }
-  };
-
-  const addStyle = function addStyle(styleName, styleProps) {
-    if (!(styleName in styles)) {
-      styles[styleName] = styleProps;
     }
   };
 
