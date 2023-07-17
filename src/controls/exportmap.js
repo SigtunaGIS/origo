@@ -3,15 +3,15 @@ import { Component, dom } from '../ui';
 const Exportmap = function Exportmap(options = {}) {
   const {
     buttonText = 'Ladda ner kartan',
-    attributionFontSize = options.attributionFontSize = '10',
-    attributionFontColor = options.attributionFontColor = 'rgb(64, 64, 64)',
-    scaleLineBgColor = options.scaleLineBgColor = 'rgb(255, 255, 255)',
-    logoWidth = options.logoWidth = '150',
-    logoHeight = options.logoHeight = '50',
-    arrowWidth = options.arrowWidth = '100',
-    arrowHeight = options.arrowHeight = '150',
-    logoSrc = options.logoSrc = 'img\\png\\sigtuna_logo.png',
-    arrowSrc = options.arrowSrc = 'img\\png\\north_arrow.png',
+    attributionFontSize = '10',
+    attributionFontColor = 'rgb(64, 64, 64)',
+    scaleLineBgColor = 'rgb(255, 255, 255)',
+    logoWidth = '150',
+    logoHeight = '50',
+    arrowWidth = '100',
+    arrowHeight = '150',
+    logoSrc = 'img\\png\\sigtuna_logo.png',
+    arrowSrc = 'img\\png\\north_arrow.png',
     icon = '#fa-download'
   } = options;
 
@@ -25,7 +25,6 @@ const Exportmap = function Exportmap(options = {}) {
 
   function renderCanvas(oldCanvas) {
     // create a new canvas
-    const layers = document.querySelectorAll('.ol-layer canvas');
     const newCanvas = document.createElement('canvas');
     const mapContext = newCanvas.getContext('2d');
 
@@ -41,7 +40,7 @@ const Exportmap = function Exportmap(options = {}) {
         mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
         const transform = canvas.style.transform;
         // Get the transform parameters from the style's transform matrix
-        const matrix = transform.match(/^matrix\(([^\(]*)\)$/)[1].split(',').map(Number);
+        const matrix = transform.match(/^matrix\(([^\\(]*)\)$/)[1].split(',').map(Number);
         // Apply the transform to the export map context
         CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
         mapContext.drawImage(canvas, 0, 0);
@@ -128,7 +127,7 @@ const Exportmap = function Exportmap(options = {}) {
       ctx.fillStyle = scaleLineBgColor;
       ctx.fillRect((breakWidth - scaleInfo.width - 15), (breakHeight - scaleInfo.height - 10), (scaleInfo.width + 4), (scaleInfo.height + 4));
       ctx.fillStyle = attributionFontColor;
-      ctx.font = '10px Arial';
+      ctx.font = attributionFontSize;
       const textSize = ctx.measureText(scaleInfo.innerHTML); // TextMetrics object
       ctx.fillText(scaleInfo.innerHTML, breakWidth - 10 - (scaleInfo.width / 2) - (textSize.width / 2), breakHeight - 15);
 
@@ -189,7 +188,7 @@ const Exportmap = function Exportmap(options = {}) {
             const len = binStr.length;
             const arr = new Uint8Array(len);
 
-            for (let i = 0; i < len; i++) {
+            for (let i = 0; i < len; i += 1) {
               arr[i] = binStr.charCodeAt(i);
             }
             callback(new Blob([arr], { type: type || 'image/png' }));
