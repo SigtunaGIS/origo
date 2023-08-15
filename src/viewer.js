@@ -48,7 +48,6 @@ const Viewer = function Viewer(targetOption, options = {}) {
     center: centerOption = [0, 0],
     zoom: zoomOption = 0,
     resolutions = null,
-    capabilitiesURL = null,
     layers: layerOptions = [],
     layerParams = {},
     map: mapName,

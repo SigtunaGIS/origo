@@ -1,59 +1,52 @@
-import Circle from 'ol/style/Circle';
 import Point from 'ol/geom/Point';
 import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
 import Style from 'ol/style/Style';
-import Icon from 'ol/style/Icon';
-import getColor from '../getcolor';
 import RegularShape from 'ol/style/RegularShape';
-import {DEVICE_PIXEL_RATIO} from 'ol/has';
+import { DEVICE_PIXEL_RATIO } from 'ol/has';
 
 export default function op2022Style() {
-
-  return function style(feature) {
-
-    console.log(feature)
+  // eslint-disable-next-line consistent-return
+  return function styleFunc(feature) {
+    console.log(feature);
 
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     const pixelRatio = DEVICE_PIXEL_RATIO;
 
-    let geom = feature.getGeometry().getType();
-    let layer = feature.getId().substring(0, feature.getId().lastIndexOf("."));
-    let properties = feature.getProperties();
+    // let geom = feature.getGeometry().getType();
+    const layer = feature.getId().substring(0, feature.getId().lastIndexOf('.'));
+    const properties = feature.getProperties();
 
-    let stroke_color;
-    let stroke_width;
+    let strokeColor;
+    let strokeWidth;
     let fill;
     let stroke;
     let style;
     let pattern;
-    let rotation;
 
-    function createPattern_dot(ctx_w,ctx_h,arc_fill){
+    function createPatternDot(ctxW, ctxH, arcFill) {
+      canvas.width = ctxW;
+      canvas.height = ctxH;
 
-      canvas.width = ctx_w;
-      canvas.height = ctx_h;
-
-      context.fillStyle = arc_fill;
+      context.fillStyle = arcFill;
 
       context.beginPath();
       // content.arc(x, y, radius, startAngle, endAngle [, anticlockwise]);
-      //The arc is given x-coordinate, y-coordinate, radius. To make a full circle, the arc begins at an angle of 0 radians (0°), and ends at an angle of 2π radians (360°).
+      // The arc is given x-coordinate, y-coordinate, radius. To make a full circle, the arc begins at an angle of 0 radians (0°), and ends at an angle of 2π radians (360°).
       context.arc(canvas.width * pixelRatio, canvas.height * pixelRatio, 2 * pixelRatio, 0, 2 * Math.PI);
       context.fill();
       return context.createPattern(canvas, 'repeat');
     }
 
-    function createPattern_grid(ctx_w,ctx_h,strokestyle,linewidth){
-
-      canvas.width = ctx_w * pixelRatio;
-      canvas.height = ctx_h * pixelRatio;
+    function createPatternGrid(ctxW, ctxH, strokestyle, linewidth) {
+      canvas.width = ctxW * pixelRatio;
+      canvas.height = ctxH * pixelRatio;
       // Set line width
       context.lineWidth = linewidth;
       // Set line color
       context.strokeStyle = strokestyle;
-      context.lineCap = "square";
+      context.lineCap = 'square';
 
       context.beginPath();
 
@@ -61,299 +54,139 @@ export default function op2022Style() {
       context.stroke();
 
       return context.createPattern(canvas, 'repeat');
-
     }
 
-    function createPattern_grid_45deg(ctx_w,ctx_h,strokestyle,linewidth){
-
-      canvas.width = ctx_w * pixelRatio;
-      canvas.height = ctx_h * pixelRatio;
+    function createPatternGrid45deg(ctxW, ctxH, strokestyle, linewidth) {
+      canvas.width = ctxW * pixelRatio;
+      canvas.height = ctxH * pixelRatio;
       // Set line width
       context.lineWidth = linewidth;
       // Set line color
       context.strokeStyle = strokestyle;
-      context.lineCap = "miter";
-      context.lineJoin = "miter";
+      context.lineCap = 'miter';
+      context.lineJoin = 'miter';
 
       // First path
       context.beginPath();
       context.moveTo(0, canvas.height);
-      context.lineTo(canvas.width,0);
+      context.lineTo(canvas.width, 0);
       context.stroke();
 
       // Second path
       context.beginPath();
-      context.moveTo(canvas.width,canvas.width);
-      context.lineTo(0,0);
+      context.moveTo(canvas.width, canvas.width);
+      context.lineTo(0, 0);
       context.stroke();
 
       return context.createPattern(canvas, 'repeat');
-
     }
 
-    function createPattern_stroke_0deg(ctx_w,ctx_h,strokestyle,linewidth){
-
-      canvas.width = ctx_w * pixelRatio;
-      canvas.height = ctx_h * pixelRatio;
+    function createPatternStroke0deg(ctxW, ctxH, strokestyle, linewidth) {
+      canvas.width = ctxW * pixelRatio;
+      canvas.height = ctxH * pixelRatio;
       // Set line width
       context.lineWidth = linewidth;
       // Set line color
       context.strokeStyle = strokestyle;
-      context.lineCap = "miter";
-      context.lineJoin = "miter";
+      context.lineCap = 'miter';
+      context.lineJoin = 'miter';
       context.beginPath();
-      context.moveTo(0,0);
-      context.lineTo(0,canvas.height);
+      context.moveTo(0, 0);
+      context.lineTo(0, canvas.height);
       context.stroke();
       return context.createPattern(canvas, 'repeat');
     }
 
-    function createPattern_stroke_45deg(ctx_w,ctx_h,strokestyle,linewidth){
-
-      canvas.width = ctx_w * pixelRatio;
-      canvas.height = ctx_h * pixelRatio;
+    function createPatternStroke45deg(ctxW, ctxH, strokestyle, linewidth) {
+      canvas.width = ctxW * pixelRatio;
+      canvas.height = ctxH * pixelRatio;
       // Set line width
       context.lineWidth = linewidth;
       // Set line color
       context.strokeStyle = strokestyle;
-      context.lineCap = "miter";
-      context.lineJoin = "miter";
+      context.lineCap = 'miter';
+      context.lineJoin = 'miter';
       context.beginPath();
       context.moveTo(0, canvas.height);
-      context.lineTo(canvas.width,0);
+      context.lineTo(canvas.width, 0);
       context.stroke();
       return context.createPattern(canvas, 'repeat');
     }
 
-    function createPattern_stroke_315deg(ctx_w,ctx_h,strokestyle,linewidth){
-
-      canvas.width = ctx_w * pixelRatio;
-      canvas.height = ctx_h * pixelRatio;
+    function createPatternStroke315deg(ctxW, ctxH, strokestyle, linewidth) {
+      canvas.width = ctxW * pixelRatio;
+      canvas.height = ctxH * pixelRatio;
       // Set line width
       context.lineWidth = linewidth;
       // Set line color
       context.strokeStyle = strokestyle;
-      context.lineCap = "miter";
-      context.lineJoin = "miter";
+      context.lineCap = 'miter';
+      context.lineJoin = 'miter';
       context.beginPath();
-      context.moveTo(canvas.width,canvas.width);
-      context.lineTo(0,0);
+      context.moveTo(canvas.width, canvas.width);
+      context.lineTo(0, 0);
       context.stroke();
       return context.createPattern(canvas, 'repeat');
     }
 
-    function createPattern_cross(ctx_w,ctx_h,strokestyle,linewidth){
+    // function createPatternCross(ctxW, ctxH, strokestyle, linewidth) {
+    //   canvas.width = ctxW * pixelRatio;
+    //   canvas.height = ctxH * pixelRatio;
+    //   // Set line width
+    //   context.lineWidth = linewidth;
+    //   // Set line color
+    //   context.strokeStyle = strokestyle;
+    //   context.beginPath();
 
-      canvas.width = ctx_w * pixelRatio;
-      canvas.height = ctx_h * pixelRatio;
-      // Set line width
-      context.lineWidth = linewidth;
-      // Set line color
-      context.strokeStyle = strokestyle;
-      context.beginPath();
+    //   context.moveTo(0, 4 * pixelRatio);
+    //   context.lineTo(8 * pixelRatio, 4 * pixelRatio);
 
-      context.moveTo(0, 4 * pixelRatio);
-      context.lineTo(8 * pixelRatio, 4 * pixelRatio);
+    //   context.moveTo(4 * pixelRatio, 0);
+    //   context.lineTo(4 * pixelRatio, 8 * pixelRatio);
 
-      context.moveTo(4 * pixelRatio, 0);
-      context.lineTo(4 * pixelRatio, 8 * pixelRatio);
+    //   context.stroke();
 
-      context.stroke();
-
-      return context.createPattern(canvas, 'repeat');
-    }
-
+    //   return context.createPattern(canvas, 'repeat');
+    // }
 
     /* op2022_ui_kommunikationslinjer_l__vag_enpil */
-    if (layer == 'op2022_ui_kommunikationslinjer_l' && properties.sig_typ == 'Kommunikationslänk väg' && properties.beteckning =='E4.65') {
-      var styleFunction = function(feature) {
+    if (layer === 'op2022_ui_kommunikationslinjer_l' && properties.sig_typ === 'Kommunikationslänk väg' && properties.beteckning === 'E4.65') {
+      const styleFunction = () => {
+        const arrowStrokeColor = 'rgba(121,121,121,1)';
+        const arrowFillColor = 'rgba(121,121,121,1)';
+        const arrowStroke = new Stroke({ color: arrowStrokeColor, width: 4 });
+        const arrowFill = new Fill({ color: arrowFillColor });
 
-        const arrow_stroke_color = 'rgba(121,121,121,1)'
-        const arrow_fill_color = 'rgba(121,121,121,1)'
-        const arrow_stroke = new Stroke({color: arrow_stroke_color, width: 4});
-        const arrow_fill = new Fill({color: arrow_fill_color});
-
-              var styles = [
-
-                new Style({
-                  stroke: new Stroke({
-                    color: arrow_stroke_color,
-                    width: 6
-                  })
-                }),
-                new Style({
-                  stroke: new Stroke({
-                    color: arrow_fill_color,
-                    width: 4
-                  })
-                })
-              ]
-
-              /* Arrow end of line */
-              var lastLine = feature.getGeometry().getCoordinates()[feature.getGeometry().getCoordinates().length - 1];
-              var lastPoint = lastLine.slice(-1)[0]
-              var secondLast = lastLine.slice(-2)[0]
-
-              var dx = lastPoint[0] - secondLast[0];
-              var dy = lastPoint[1] - secondLast[1];
-              var rotation = Math.atan2(dy, dx);
-
-              styles.push(new Style({
-                geometry: new Point(lastPoint),
-                image: new RegularShape({
-                  fill: arrow_fill,
-                  stroke: arrow_stroke,
-                  points: 3,
-                  radius: 8,
-                  rotation: -rotation,
-                  angle: Math.PI / 2 // rotate 90°
-                })
-              }));
-
-              return styles;
-
-            };
-
-            style = styleFunction(feature)
-
-            return style;
-    }
-
-    if (layer == 'op2022_ui_kommunikationslinjer_l' && properties.sig_typ == 'Kommunikationslänk väg' && properties.beteckning !='E4.65') {
-
-      var styleFunction = function(feature) {
-
-        const arrow_stroke_color = 'rgba(121,121,121,1)'
-        const arrow_fill_color = 'rgba(121,121,121,1)'
-        const arrow_stroke = new Stroke({color: arrow_stroke_color, width: 4});
-        const arrow_fill = new Fill({color: arrow_fill_color});
-
-              var styles = [
-
-                new Style({
-                  stroke: new Stroke({
-                    color: arrow_stroke_color,
-                    width: 6
-                  })
-                }),
-                new Style({
-                  stroke: new Stroke({
-                    color: arrow_fill_color,
-                    width: 4
-                  })
-                })
-              ]
-
-              /* Arrow end of line */
-              var lastLine = feature.getGeometry().getCoordinates()[feature.getGeometry().getCoordinates().length - 1];
-              var lastPoint = lastLine.slice(-1)[0]
-              var secondLast = lastLine.slice(-2)[0]
-
-              var dx = lastPoint[0] - secondLast[0];
-              var dy = lastPoint[1] - secondLast[1];
-              var rotation = Math.atan2(dy, dx);
-
-              styles.push(new Style({
-                geometry: new Point(lastPoint),
-                image: new RegularShape({
-                  fill: arrow_fill,
-                  stroke: arrow_stroke,
-                  points: 3,
-                  radius: 8,
-                  rotation: -rotation,
-                  angle: Math.PI / 2 // rotate 90°
-                })
-              }));
-
-              /* Arrow start of line */
-              var firstLine = feature.getGeometry().getCoordinates()[0];
-              var firstPoint = firstLine[0]
-              var secondPoint = firstLine[1]
-
-              var dx2 = firstPoint[0] - secondPoint[0];
-              var dy2 = firstPoint[1] - secondPoint[1];
-              var rotation = Math.atan2(dy2, dx2);
-              //
-              styles.push(new Style({
-                geometry: new Point(firstPoint),
-                image: new RegularShape({
-                  fill: arrow_fill,
-                  stroke: arrow_stroke,
-                  points: 3,
-                  radius: 8,
-                  rotation: -rotation,
-                  angle: Math.PI / 2 // rotate 90°
-                })
-              }));
-
-              return styles;
-
-            };
-
-            style = styleFunction(feature)
-
-            return style;
-    };
-
-    if (layer == 'op2022_ui_kommunikationslinjer_l' && properties.sig_typ == 'Kommunikationslänk spår') {
-
-      var styleFunction = function(feature) {
-
-        const arrow_stroke_color = 'rgba(111,111,111,1)'
-        const arrow_fill_color = 'rgba(111,111,111,1)'
-        const arrow_stroke = new Stroke({color: arrow_stroke_color, width: 4});
-        const arrow_fill = new Fill({color: arrow_fill_color});
-
-
-        var styles = [
+        const styles = [
 
           new Style({
             stroke: new Stroke({
-              color: arrow_stroke_color,
-              width: 6,
-              lineDash: [
-                5,
-                10
-              ]
+              color: arrowStrokeColor,
+              width: 6
+            })
+          }),
+          new Style({
+            stroke: new Stroke({
+              color: arrowFillColor,
+              width: 4
             })
           })
-        ]
+        ];
 
         /* Arrow end of line */
-        var lastLine = feature.getGeometry().getCoordinates()[feature.getGeometry().getCoordinates().length - 1];
-        var lastPoint = lastLine.slice(-1)[0]
-        var secondLast = lastLine.slice(-2)[0]
+        const lastLine = feature.getGeometry().getCoordinates()[feature.getGeometry().getCoordinates().length - 1];
+        const lastPoint = lastLine.slice(-1)[0];
+        const secondLast = lastLine.slice(-2)[0];
 
-        var dx = lastPoint[0] - secondLast[0];
-        var dy = lastPoint[1] - secondLast[1];
-        var rotation = Math.atan2(dy, dx);
+        const dx = lastPoint[0] - secondLast[0];
+        const dy = lastPoint[1] - secondLast[1];
+        const rotation = Math.atan2(dy, dx);
 
         styles.push(new Style({
           geometry: new Point(lastPoint),
           image: new RegularShape({
-            fill: arrow_fill,
-            stroke: arrow_stroke,
-            points: 3,
-            radius: 8,
-            rotation: -rotation,
-            angle: Math.PI / 2 // rotate 90°
-          })
-        }));
-
-        /* Arrow start of line */
-        var firstLine = feature.getGeometry().getCoordinates()[0];
-        var firstPoint = firstLine[0]
-        var secondPoint = firstLine[1]
-
-        var dx2 = firstPoint[0] - secondPoint[0];
-        var dy2 = firstPoint[1] - secondPoint[1];
-        var rotation = Math.atan2(dy2, dx2);
-        //
-        styles.push(new Style({
-          geometry: new Point(firstPoint),
-          image: new RegularShape({
-            fill: arrow_fill,
-            stroke: arrow_stroke,
+            fill: arrowFill,
+            stroke: arrowStroke,
             points: 3,
             radius: 8,
             rotation: -rotation,
@@ -362,28 +195,98 @@ export default function op2022Style() {
         }));
 
         return styles;
-
       };
 
-      style = styleFunction(feature)
+      style = styleFunction(feature);
 
       return style;
-    };
-    if (layer == 'op2022_ui_kommunikationslinjer_l' && properties.sig_typ == 'Kommunikationslänk spår - föreslagen') {
+    }
 
-      var styleFunction = function(feature) {
+    if (layer === 'op2022_ui_kommunikationslinjer_l' && properties.sig_typ === 'Kommunikationslänk väg' && properties.beteckning !== 'E4.65') {
+      const styleFunction = () => {
+        const arrowStrokeColor = 'rgba(121,121,121,1)';
+        const arrowFillColor = 'rgba(121,121,121,1)';
+        const arrowStroke = new Stroke({ color: arrowStrokeColor, width: 4 });
+        const arrowFill = new Fill({ color: arrowFillColor });
 
-        const arrow_stroke_color = 'rgba(197,197,197,1)'
-        const arrow_fill_color = 'rgba(197,197,197,1)'
-        const arrow_stroke = new Stroke({color: arrow_stroke_color, width: 4});
-        const arrow_fill = new Fill({color: arrow_fill_color});
-
-
-        var styles = [
+        const styles = [
 
           new Style({
             stroke: new Stroke({
-              color: arrow_stroke_color,
+              color: arrowStrokeColor,
+              width: 6
+            })
+          }),
+          new Style({
+            stroke: new Stroke({
+              color: arrowFillColor,
+              width: 4
+            })
+          })
+        ];
+
+        /* Arrow end of line */
+        const lastLine = feature.getGeometry().getCoordinates()[feature.getGeometry().getCoordinates().length - 1];
+        const lastPoint = lastLine.slice(-1)[0];
+        const secondLast = lastLine.slice(-2)[0];
+
+        const dx = lastPoint[0] - secondLast[0];
+        const dy = lastPoint[1] - secondLast[1];
+        let rotation = Math.atan2(dy, dx);
+
+        styles.push(new Style({
+          geometry: new Point(lastPoint),
+          image: new RegularShape({
+            fill: arrowFill,
+            stroke: arrowStroke,
+            points: 3,
+            radius: 8,
+            rotation: -rotation,
+            angle: Math.PI / 2 // rotate 90°
+          })
+        }));
+
+        /* Arrow start of line */
+        const firstLine = feature.getGeometry().getCoordinates()[0];
+        const firstPoint = firstLine[0];
+        const secondPoint = firstLine[1];
+
+        const dx2 = firstPoint[0] - secondPoint[0];
+        const dy2 = firstPoint[1] - secondPoint[1];
+        rotation = Math.atan2(dy2, dx2);
+        //
+        styles.push(new Style({
+          geometry: new Point(firstPoint),
+          image: new RegularShape({
+            fill: arrowFill,
+            stroke: arrowStroke,
+            points: 3,
+            radius: 8,
+            rotation: -rotation,
+            angle: Math.PI / 2 // rotate 90°
+          })
+        }));
+
+        return styles;
+      };
+
+      style = styleFunction(feature);
+
+      return style;
+    }
+
+    if (layer === 'op2022_ui_kommunikationslinjer_l' && properties.sig_typ === 'Kommunikationslänk spår') {
+      const styleFunction = () => {
+        const arrowStrokeColor = 'rgba(111,111,111,1)';
+        const arrowFillColor = 'rgba(111,111,111,1)';
+        const arrowStroke = new Stroke({ color: arrowStrokeColor, width: 4 });
+        const arrowFill = new Fill({ color: arrowFillColor });
+
+        const styles = [
+
+          new Style({
+            stroke: new Stroke({
+              color: arrowStrokeColor,
               width: 6,
               lineDash: [
                 5,
@@ -391,22 +294,92 @@ export default function op2022Style() {
               ]
             })
           })
-        ]
+        ];
 
         /* Arrow end of line */
-        var lastLine = feature.getGeometry().getCoordinates()[feature.getGeometry().getCoordinates().length - 1];
-        var lastPoint = lastLine.slice(-1)[0]
-        var secondLast = lastLine.slice(-2)[0]
+        const lastLine = feature.getGeometry().getCoordinates()[feature.getGeometry().getCoordinates().length - 1];
+        const lastPoint = lastLine.slice(-1)[0];
+        const secondLast = lastLine.slice(-2)[0];
 
-        var dx = lastPoint[0] - secondLast[0];
-        var dy = lastPoint[1] - secondLast[1];
-        var rotation = Math.atan2(dy, dx);
+        const dx = lastPoint[0] - secondLast[0];
+        const dy = lastPoint[1] - secondLast[1];
+        let rotation = Math.atan2(dy, dx);
 
         styles.push(new Style({
           geometry: new Point(lastPoint),
           image: new RegularShape({
-            fill: arrow_fill,
-            stroke: arrow_stroke,
+            fill: arrowFill,
+            stroke: arrowStroke,
+            points: 3,
+            radius: 8,
+            rotation: -rotation,
+            angle: Math.PI / 2 // rotate 90°
+          })
+        }));
+
+        /* Arrow start of line */
+        const firstLine = feature.getGeometry().getCoordinates()[0];
+        const firstPoint = firstLine[0];
+        const secondPoint = firstLine[1];
+
+        const dx2 = firstPoint[0] - secondPoint[0];
+        const dy2 = firstPoint[1] - secondPoint[1];
+        rotation = Math.atan2(dy2, dx2);
+        //
+        styles.push(new Style({
+          geometry: new Point(firstPoint),
+          image: new RegularShape({
+            fill: arrowFill,
+            stroke: arrowStroke,
+            points: 3,
+            radius: 8,
+            rotation: -rotation,
+            angle: Math.PI / 2 // rotate 90°
+          })
+        }));
+
+        return styles;
+      };
+
+      style = styleFunction(feature);
+
+      return style;
+    }
+    if (layer === 'op2022_ui_kommunikationslinjer_l' && properties.sig_typ === 'Kommunikationslänk spår - föreslagen') {
+      const styleFunction = () => {
+        const arrowStrokeColor = 'rgba(197,197,197,1)';
+        const arrowFillColor = 'rgba(197,197,197,1)';
+        const arrowStroke = new Stroke({ color: arrowStrokeColor, width: 4 });
+        const arrowFill = new Fill({ color: arrowFillColor });
+
+        const styles = [
+
+          new Style({
+            stroke: new Stroke({
+              color: arrowStrokeColor,
+              width: 6,
+              lineDash: [
+                5,
+                10
+              ]
+            })
+          })
+        ];
+
+        /* Arrow end of line */
+        const lastLine = feature.getGeometry().getCoordinates()[feature.getGeometry().getCoordinates().length - 1];
+        const lastPoint = lastLine.slice(-1)[0];
+        const secondLast = lastLine.slice(-2)[0];
+
+        const dx = lastPoint[0] - secondLast[0];
+        const dy = lastPoint[1] - secondLast[1];
+        const rotation = Math.atan2(dy, dx);
+
+        styles.push(new Style({
+          geometry: new Point(lastPoint),
+          image: new RegularShape({
+            fill: arrowFill,
+            stroke: arrowStroke,
             points: 3,
             radius: 8,
             rotation: -rotation,
@@ -426,8 +399,8 @@ export default function op2022Style() {
         // styles.push(new Style({
         //   geometry: new Point(firstPoint),
         //   image: new RegularShape({
-        //     fill: arrow_fill,
-        //     stroke: arrow_stroke,
+        //     fill: arrowFill,
+        //     stroke: arrowStroke,
         //     points: 3,
         //     radius: 8,
         //     rotation: -rotation,
@@ -436,109 +409,103 @@ export default function op2022Style() {
         // }));
 
         return styles;
-
       };
 
-      style = styleFunction(feature)
+      style = styleFunction(feature);
 
       return style;
-    };
+    }
 
-    if (layer == 'op2022_ui_natur_friluftslivslinjer_l' && properties.bestammelsekod == 'OP_UT_NAT_ViktigtSamband') {
+    if (layer === 'op2022_ui_natur_friluftslivslinjer_l' && properties.bestammelsekod === 'OP_UT_NAT_ViktigtSamband') {
+      const styleFunction = () => {
+        const arrowStrokeColor = 'rgba(90,115,92,1)';
+        const arrowFillColor = 'rgba(139,176,141,1)';
+        const arrowStroke = new Stroke({ color: arrowStrokeColor, width: 2 });
+        const arrowFill = new Fill({ color: arrowFillColor });
 
-      var styleFunction = function(feature) {
+        const styles = [
 
-        const arrow_stroke_color = 'rgba(90,115,92,1)'
-        const arrow_fill_color = 'rgba(139,176,141,1)'
-        const arrow_stroke = new Stroke({color: arrow_stroke_color, width: 2});
-        const arrow_fill = new Fill({color: arrow_fill_color});
+          new Style({
+            stroke: new Stroke({
+              color: arrowStrokeColor,
+              width: 8
+            })
+          }),
+          new Style({
+            stroke: new Stroke({
+              color: arrowFillColor,
+              width: 6
+            })
+          })
+        ];
 
-              var styles = [
+        /* Arrow end of line */
+        const lastLine = feature.getGeometry().getCoordinates()[feature.getGeometry().getCoordinates().length - 1];
+        const lastPoint = lastLine.slice(-1)[0];
+        const secondLast = lastLine.slice(-2)[0];
 
-                new Style({
-                  stroke: new Stroke({
-                    color: arrow_stroke_color,
-                    width: 8
-                  })
-                }),
-                new Style({
-                  stroke: new Stroke({
-                    color: arrow_fill_color,
-                    width: 6
-                  })
-                })
-              ]
+        const dx = lastPoint[0] - secondLast[0];
+        const dy = lastPoint[1] - secondLast[1];
+        let rotation = Math.atan2(dy, dx);
 
-              /* Arrow end of line */
-              var lastLine = feature.getGeometry().getCoordinates()[feature.getGeometry().getCoordinates().length - 1];
-              var lastPoint = lastLine.slice(-1)[0]
-              var secondLast = lastLine.slice(-2)[0]
+        styles.push(new Style({
+          geometry: new Point(lastPoint),
+          image: new RegularShape({
+            fill: arrowFill,
+            stroke: arrowStroke,
+            points: 3,
+            radius: 10,
+            rotation: -rotation,
+            angle: Math.PI / 2 // rotate 90°
+          })
+        }));
 
-              var dx = lastPoint[0] - secondLast[0];
-              var dy = lastPoint[1] - secondLast[1];
-              var rotation = Math.atan2(dy, dx);
+        /* Arrow start of line */
+        const firstLine = feature.getGeometry().getCoordinates()[0];
+        const firstPoint = firstLine[0];
+        const secondPoint = firstLine[1];
 
-              styles.push(new Style({
-                geometry: new Point(lastPoint),
-                image: new RegularShape({
-                  fill: arrow_fill,
-                  stroke: arrow_stroke,
-                  points: 3,
-                  radius: 10,
-                  rotation: -rotation,
-                  angle: Math.PI / 2 // rotate 90°
-                })
-              }));
+        const dx2 = firstPoint[0] - secondPoint[0];
+        const dy2 = firstPoint[1] - secondPoint[1];
+        rotation = Math.atan2(dy2, dx2);
+        //
+        styles.push(new Style({
+          geometry: new Point(firstPoint),
+          image: new RegularShape({
+            fill: arrowFill,
+            stroke: arrowStroke,
+            points: 3,
+            radius: 10,
+            rotation: -rotation,
+            angle: Math.PI / 2 // rotate 90°
+          })
+        }));
+        return styles;
+      };
 
-              /* Arrow start of line */
-              var firstLine = feature.getGeometry().getCoordinates()[0];
-              var firstPoint = firstLine[0]
-              var secondPoint = firstLine[1]
+      style = styleFunction(feature);
 
-              var dx2 = firstPoint[0] - secondPoint[0];
-              var dy2 = firstPoint[1] - secondPoint[1];
-              var rotation = Math.atan2(dy2, dx2);
-              //
-              styles.push(new Style({
-                geometry: new Point(firstPoint),
-                image: new RegularShape({
-                  fill: arrow_fill,
-                  stroke: arrow_stroke,
-                  points: 3,
-                  radius: 10,
-                  rotation: -rotation,
-                  angle: Math.PI / 2 // rotate 90°
-                })
-              }));
+      return style;
+    }
 
-              return styles;
-
-            };
-
-            style = styleFunction(feature)
-
-            return style;
-    };
-
-    if(layer == 'op2022_mak_mangfunktionell_bebyggelse_y_planerad'){
-
+    if (layer === 'op2022_mak_mangfunktionell_bebyggelse_y_planerad') {
       // Pattern style
-      const pat_width = 12;
-      const pat_height = 12;
-      const pat_line_color = 'rgba(245,168,140,1)';
-      const pat_line_width = 2;
-      //Outline style
-      const pat_outline_color = 'rgba(245,168,140,1)';
-      const pat_outline_width = 3;
+      const patWidth = 12;
+      const patHeight = 12;
+      const patLineColor = 'rgba(245,168,140,1)';
+      const patLineWidth = 2;
+      // Outline style
+      const patOutlineColor = 'rgba(245,168,140,1)';
+      const patOutlineWidth = 3;
 
-      pattern = createPattern_stroke_45deg(pat_width,pat_height,pat_line_color,pat_line_width);
+      pattern = createPatternStroke45deg(patWidth, patHeight, patLineColor, patLineWidth);
 
       fill = new Fill({
         color: pattern
       });
       stroke = new Stroke({
-        color: pat_outline_color,
-        width: pat_outline_width,
+        color: patOutlineColor,
+        width: patOutlineWidth,
         lineCap: 'square',
         lineJoin: 'square'
       });
@@ -550,25 +517,24 @@ export default function op2022Style() {
       return style;
     }
 
-    if(layer == 'op2022_mak_sammanhangande_bostadsbebyggelse_y_planerad'){
-
+    if (layer === 'op2022_mak_sammanhangande_bostadsbebyggelse_y_planerad') {
       // Pattern style
-      const pat_width = 12;
-      const pat_height = 12;
-      const pat_line_color = 'rgba(251,213,116,1)';
-      const pat_line_width = 2;
-      //Outline style
-      const pat_outline_color = 'rgba(251,213,116,1)';
-      const pat_outline_width = 3;
+      const patWidth = 12;
+      const patHeight = 12;
+      const patLineColor = 'rgba(251,213,116,1)';
+      const patLineWidth = 2;
+      // Outline style
+      const patOutlineColor = 'rgba(251,213,116,1)';
+      const patOutlineWidth = 3;
 
-      pattern = createPattern_stroke_45deg(pat_width,pat_height,pat_line_color,pat_line_width);
+      pattern = createPatternStroke45deg(patWidth, patHeight, patLineColor, patLineWidth);
 
       fill = new Fill({
         color: pattern
       });
       stroke = new Stroke({
-        color: pat_outline_color,
-        width: pat_outline_width,
+        color: patOutlineColor,
+        width: patOutlineWidth,
         lineCap: 'square',
         lineJoin: 'square'
       });
@@ -579,25 +545,24 @@ export default function op2022Style() {
       });
       return style;
     }
-    if(layer == 'op2022_mak_verksamheter_industri_y_planerad'){
-
+    if (layer === 'op2022_mak_verksamheter_industri_y_planerad') {
       // Pattern style
-      const pat_width = 12;
-      const pat_height = 12;
-      const pat_line_color = 'rgba(203,190,162,1)';
-      const pat_line_width = 2;
-      //Outline style
-      const pat_outline_color = 'rgba(203,190,162,1)';
-      const pat_outline_width = 3;
+      const patWidth = 12;
+      const patHeight = 12;
+      const patLineColor = 'rgba(203,190,162,1)';
+      const patLineWidth = 2;
+      // Outline style
+      const patOutlineColor = 'rgba(203,190,162,1)';
+      const patOutlineWidth = 3;
 
-      pattern = createPattern_stroke_45deg(pat_width,pat_height,pat_line_color,pat_line_width);
+      pattern = createPatternStroke45deg(patWidth, patHeight, patLineColor, patLineWidth);
 
       fill = new Fill({
         color: pattern
       });
       stroke = new Stroke({
-        color: pat_outline_color,
-        width: pat_outline_width,
+        color: patOutlineColor,
+        width: patOutlineWidth,
         lineCap: 'square',
         lineJoin: 'square'
       });
@@ -609,27 +574,27 @@ export default function op2022Style() {
       return style;
     }
 
-    if(layer == 'op2022_mak_verksamheter_industri_y'){
+    if (layer === 'op2022_mak_verksamheter_industri_y') {
+      // Pattern style
+      const patWidth = 12;
+      const patHeight = 12;
+      const patLineColor = 'rgba(0,0,0,1)';
+      const patLineWidth = 1;
+      // Outline style
+      const patOutlineColor = 'rgba(0,0,0,1)';
+      const patOutlineWidth = 1;
 
-      switch(properties.bestammelsekod) {
+      switch (properties.bestammelsekod) {
         case 'OP_MVA_VI_A':
-          // Pattern style
-          const pat_width = 12;
-          const pat_height = 12;
-          const pat_line_color = 'rgba(0,0,0,1)';
-          const pat_line_width = 1;
-          //Outline style
-          const pat_outline_color = 'rgba(0,0,0,1)';
-          const pat_outline_width = 1;
 
-          pattern = createPattern_grid(pat_width,pat_height,pat_line_color,pat_line_width);
+          pattern = createPatternGrid(patWidth, patHeight, patLineColor, patLineWidth);
 
           fill = new Fill({
             color: pattern
           });
           stroke = new Stroke({
-            color: pat_outline_color,
-            width: pat_outline_width,
+            color: patOutlineColor,
+            width: patOutlineWidth,
             lineCap: 'square',
             lineJoin: 'square'
           });
@@ -639,20 +604,18 @@ export default function op2022Style() {
             stroke
           });
           return style;
-          break;
         case 'OP_MVA_VI':
-          //Style
-          stroke_color = 'rgba(69,69,69,0)';
-          stroke_width = 1.5;
+          // Style
+          strokeColor = 'rgba(69,69,69,0)';
+          strokeWidth = 1.5;
           fill = 'rgba(203,190,162,0.6)';
 
-
           fill = new Fill({
             color: fill
           });
           stroke = new Stroke({
-            color: stroke_color,
-            width: stroke_width,
+            color: strokeColor,
+            width: strokeWidth
           });
 
           style = new Style({
@@ -660,20 +623,18 @@ export default function op2022Style() {
             stroke
           });
           return style;
-          break;
         case 'OP_MVA_VI_Besoksanlaggning':
-          //Style
-          stroke_color = 'rgba(69,69,69,0)';
-          stroke_width = 1.5;
+          // Style
+          strokeColor = 'rgba(69,69,69,0)';
+          strokeWidth = 1.5;
           fill = 'rgba(183,173,218,0.8)';
-
 
           fill = new Fill({
             color: fill
           });
           stroke = new Stroke({
-            color: stroke_color,
-            width: stroke_width,
+            color: strokeColor,
+            width: strokeWidth
           });
 
           style = new Style({
@@ -686,27 +647,26 @@ export default function op2022Style() {
       }
     }
 
-    if(layer == 'op2022_mak_natur_friluftsliv_y'){
+    if (layer === 'op2022_mak_natur_friluftsliv_y') {
+      // Pattern style
+      const patWidth = 8;
+      const patHeight = 8;
+      const patArcFill = 'rgba(55,126,184,1)';
 
-      switch(properties.bestammelsekod) {
+      // Outline style
+      const patOutlineColor = 'rgba(55,126,184,1)';
+      const patOutlineWidth = 2;
+      switch (properties.bestammelsekod) {
         case 'OP_MVA_NF_A':
-          // Pattern style
-          const pat_width = 8;
-          const pat_height = 8;
-          const pat_arc_fill = 'rgba(55,126,184,1)';
 
-          //Outline style
-          const pat_outline_color = 'rgba(55,126,184,1)';
-          const pat_outline_width = 2;
-
-          pattern = createPattern_dot(pat_width,pat_height,pat_arc_fill);
+          pattern = createPatternDot(patWidth, patHeight, patArcFill);
 
           fill = new Fill({
             color: pattern
           });
           stroke = new Stroke({
-            color: pat_outline_color,
-            width: pat_outline_width,
+            color: patOutlineColor,
+            width: patOutlineWidth,
             lineCap: 'square',
             lineJoin: 'square'
           });
@@ -716,21 +676,19 @@ export default function op2022Style() {
             stroke
           });
           return style;
-          break;
 
         case 'OP_MVA_NF':
-          //Style
-          stroke_color = 'rgba(69,69,69,0)';
-          stroke_width = 1.5;
+          // Style
+          strokeColor = 'rgba(69,69,69,0)';
+          strokeWidth = 1.5;
           fill = 'rgba(125,194,140,0.6)';
-
 
           fill = new Fill({
             color: fill
           });
           stroke = new Stroke({
-            color: stroke_color,
-            width: stroke_width,
+            color: strokeColor,
+            width: strokeWidth
           });
 
           style = new Style({
@@ -739,63 +697,29 @@ export default function op2022Style() {
           });
           return style;
 
-          break;
-
         default:
           // code block
       }
-
     }
 
-    if(layer == 'op2022_tema_gi_friluftsliv_hoga_varden_y'){
-
+    if (layer === 'op2022_tema_gi_friluftsliv_hoga_varden_y') {
       // Pattern style
-      const pat_width = 16;
-      const pat_height = 16;
-      const pat_line_color = 'rgba(21,118,79,1)';
-      const pat_line_width = 2;
-      //Outline style
-      const pat_outline_color = 'rgba(21,118,79,1)';
-      const pat_outline_width = 3;
+      const patWidth = 16;
+      const patHeight = 16;
+      const patLineColor = 'rgba(21,118,79,1)';
+      const patLineWidth = 2;
+      // Outline style
+      const patOutlineColor = 'rgba(21,118,79,1)';
+      const patOutlineWidth = 3;
 
-      pattern = createPattern_stroke_315deg(pat_width,pat_height,pat_line_color,pat_line_width);
+      pattern = createPatternStroke315deg(patWidth, patHeight, patLineColor, patLineWidth);
 
       fill = new Fill({
         color: pattern
       });
       stroke = new Stroke({
-        color: pat_outline_color,
-        width: pat_outline_width,
-        lineCap: 'square',
-        lineJoin: 'square'
-      });
-
-      style = new Style({
-        fill,
-        stroke
-      });
-      return style;
-
-    }
-
-    if(layer == 'op2022_tema_km_kultur_narmiljo_y'){
-      // Pattern style
-      const pat_width = 12;
-      const pat_height = 12;
-      const pat_line_color = 'rgba(74,20,20,1)';
-      const pat_line_width = 2;
-      //Outline style
-      const pat_outline_color = 'rgba(74,20,20,1)';
-      const pat_outline_width = 2;
-
-      pattern = createPattern_stroke_0deg(pat_width,pat_height,pat_line_color,pat_line_width);
-
-      fill = new Fill({
-        color: pattern
-      });
-      stroke = new Stroke({
-        color: pat_outline_color,
-        width: pat_outline_width,
+        color: patOutlineColor,
+        width: patOutlineWidth,
         lineCap: 'square',
         lineJoin: 'square'
       });
@@ -807,24 +731,24 @@ export default function op2022Style() {
       return style;
     }
 
-    if(layer == 'op2022_ri_lst_ri_rorligt_friluftsliv_mb4kap2_y'){
+    if (layer === 'op2022_tema_km_kultur_narmiljo_y') {
       // Pattern style
-      const pat_width = 12;
-      const pat_height = 12;
-      const pat_line_color = 'rgba(81,96,76,1)';
-      const pat_line_width = 2;
-      //Outline style
-      const pat_outline_color = 'rgba(81,96,76,1)';
-      const pat_outline_width = 2;
+      const patWidth = 12;
+      const patHeight = 12;
+      const patLineColor = 'rgba(74,20,20,1)';
+      const patLineWidth = 2;
+      // Outline style
+      const patOutlineColor = 'rgba(74,20,20,1)';
+      const patOutlineWidth = 2;
 
-      pattern = createPattern_stroke_0deg(pat_width,pat_height,pat_line_color,pat_line_width);
+      pattern = createPatternStroke0deg(patWidth, patHeight, patLineColor, patLineWidth);
 
       fill = new Fill({
         color: pattern
       });
       stroke = new Stroke({
-        color: pat_outline_color,
-        width: pat_outline_width,
+        color: patOutlineColor,
+        width: patOutlineWidth,
         lineCap: 'square',
         lineJoin: 'square'
       });
@@ -836,24 +760,53 @@ export default function op2022Style() {
       return style;
     }
 
-    if(layer == 'op2022_ri_tv_paverkan_lagfartsflyg_y'){
+    if (layer === 'op2022_ri_lst_ri_rorligt_friluftsliv_mb4kap2_y') {
       // Pattern style
-      const pat_width = 14;
-      const pat_height = 14;
-      const pat_line_color = 'rgba(105,90,90,0.5)';
-      const pat_line_width = 2;
-      //Outline style
-      const pat_outline_color = 'rgba(105,90,90,0.5)';
-      const pat_outline_width = 8;
+      const patWidth = 12;
+      const patHeight = 12;
+      const patLineColor = 'rgba(81,96,76,1)';
+      const patLineWidth = 2;
+      // Outline style
+      const patOutlineColor = 'rgba(81,96,76,1)';
+      const patOutlineWidth = 2;
 
-      pattern = createPattern_stroke_315deg(pat_width,pat_height,pat_line_color,pat_line_width);
+      pattern = createPatternStroke0deg(patWidth, patHeight, patLineColor, patLineWidth);
 
       fill = new Fill({
         color: pattern
       });
       stroke = new Stroke({
-        color: pat_outline_color,
-        width: pat_outline_width,
+        color: patOutlineColor,
+        width: patOutlineWidth,
+        lineCap: 'square',
+        lineJoin: 'square'
+      });
+
+      style = new Style({
+        fill,
+        stroke
+      });
+      return style;
+    }
+
+    if (layer === 'op2022_ri_tv_paverkan_lagfartsflyg_y') {
+      // Pattern style
+      const patWidth = 14;
+      const patHeight = 14;
+      const patLineColor = 'rgba(105,90,90,0.5)';
+      const patLineWidth = 2;
+      // Outline style
+      const patOutlineColor = 'rgba(105,90,90,0.5)';
+      const patOutlineWidth = 8;
+
+      pattern = createPatternStroke315deg(patWidth, patHeight, patLineColor, patLineWidth);
+
+      fill = new Fill({
+        color: pattern
+      });
+      stroke = new Stroke({
+        color: patOutlineColor,
+        width: patOutlineWidth,
         lineDash: [
           5,
           12
@@ -867,25 +820,24 @@ export default function op2022Style() {
       return style;
     }
 
-    if(layer == 'op2022_av_lstab_djurskyddsomraden_y'){
-
+    if (layer === 'op2022_av_lstab_djurskyddsomraden_y') {
       // Pattern style
-      const pat_width = 16;
-      const pat_height = 16;
-      const pat_line_color = 'rgba(46,100,100,1)';
-      const pat_line_width = 1;
-      //Outline style
-      const pat_outline_color = 'rgba(46,100,100,1)';
-      const pat_outline_width = 2;
+      const patWidth = 16;
+      const patHeight = 16;
+      const patLineColor = 'rgba(46,100,100,1)';
+      const patLineWidth = 1;
+      // Outline style
+      const patOutlineColor = 'rgba(46,100,100,1)';
+      const patOutlineWidth = 2;
 
-      pattern = createPattern_grid_45deg(pat_width,pat_height,pat_line_color,pat_line_width);
+      pattern = createPatternGrid45deg(patWidth, patHeight, patLineColor, patLineWidth);
 
       fill = new Fill({
         color: pattern
       });
       stroke = new Stroke({
-        color: pat_outline_color,
-        width: pat_outline_width,
+        color: patOutlineColor,
+        width: patOutlineWidth
       });
 
       style = new Style({
@@ -893,27 +845,26 @@ export default function op2022Style() {
         stroke
       });
       return style;
-
     }
 
-    if(layer == 'op2022_av_nv_vattenskyddsomrade_y'){
+    if (layer === 'op2022_av_nv_vattenskyddsomrade_y') {
       // Pattern style
-      const pat_width = 12;
-      const pat_height = 12;
-      const pat_line_color = 'rgba(133,120,82,1)';
-      const pat_line_width = 1;
-      //Outline style
-      const pat_outline_color = 'rgba(133,120,82,1)';
-      const pat_outline_width = 2;
+      const patWidth = 12;
+      const patHeight = 12;
+      const patLineColor = 'rgba(133,120,82,1)';
+      const patLineWidth = 1;
+      // Outline style
+      const patOutlineColor = 'rgba(133,120,82,1)';
+      const patOutlineWidth = 2;
 
-      pattern = createPattern_stroke_45deg(pat_width,pat_height,pat_line_color,pat_line_width);
+      pattern = createPatternStroke45deg(patWidth, patHeight, patLineColor, patLineWidth);
 
       fill = new Fill({
         color: pattern
       });
       stroke = new Stroke({
-        color: pat_outline_color,
-        width: pat_outline_width,
+        color: patOutlineColor,
+        width: patOutlineWidth,
         lineCap: 'square',
         lineJoin: 'square'
       });
@@ -925,24 +876,24 @@ export default function op2022Style() {
       return style;
     }
 
-    if(layer == 'op2022_ri_jarnvag_befintlig_l'){
+    if (layer === 'op2022_ri_jarnvag_befintlig_l') {
       // // Pattern style
-      // const pat_width = 12;
-      // const pat_height = 12;
-      // const pat_line_color = 'rgba(245,168,140,1)';
-      // const pat_line_width = 2;
+      // const patWidth = 12;
+      // const patHeight = 12;
+      // const patLineColor = 'rgba(245,168,140,1)';
+      // const patLineWidth = 2;
       // //Outline style
-      // const pat_outline_color = 'rgba(245,168,140,1)';
-      // const pat_outline_width = 3;
+      // const patOutlineColor = 'rgba(245,168,140,1)';
+      // const patOutlineWidth = 3;
       //
-      // pattern = createPattern_stroke_45deg(pat_width,pat_height,pat_line_color,pat_line_width);
+      // pattern = createPatternStroke45deg(patWidth,patHeight,patLineColor,patLineWidth);
       //
       // fill = new Fill({
       //   color: pattern
       // });
       // stroke = new Stroke({
-      //   color: pat_outline_color,
-      //   width: pat_outline_width,
+      //   color: patOutlineColor,
+      //   width: patOutlineWidth,
       //   lineCap: 'square',
       //   lineJoin: 'square'
       // });
@@ -953,5 +904,5 @@ export default function op2022Style() {
       // });
       // return style;
     }
-}
+  };
 }
