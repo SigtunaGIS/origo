@@ -25,6 +25,7 @@ const Exportmap = function Exportmap(options = {}) {
 
   function renderCanvas(oldCanvas) {
     // create a new canvas
+    // const layers = document.querySelectorAll('.ol-layer canvas');
     const newCanvas = document.createElement('canvas');
     const mapContext = newCanvas.getContext('2d');
 
@@ -40,7 +41,7 @@ const Exportmap = function Exportmap(options = {}) {
         mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
         const transform = canvas.style.transform;
         // Get the transform parameters from the style's transform matrix
-        const matrix = transform.match(/^matrix\(([^\\(]*)\)$/)[1].split(',').map(Number);
+        const matrix = transform.match(/^matrix\(([^(]*)\)$/)[1].split(',').map(Number);
         // Apply the transform to the export map context
         CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
         mapContext.drawImage(canvas, 0, 0);
@@ -112,7 +113,7 @@ const Exportmap = function Exportmap(options = {}) {
     const attr = getAttributions();
     const scaleInfo = getScaleInfo();
 
-    map.once('postrender', (event) => {
+    map.once('postrender', () => {
       const canvasOriginal = document.getElementsByTagName('canvas')[0];
       // Render a canvas so that adding text to it doesn't dirty map view.
       const canvas = renderCanvas(canvasOriginal);
@@ -141,10 +142,10 @@ const Exportmap = function Exportmap(options = {}) {
       ctx.stroke();
 
       const logo = new Image();
-      logo.onload = function () {
+      logo.onload = function Logo() {
         ctx.drawImage(logo, 20, 20, logoWidth, logoHeight);
         const northArrow = new Image();
-        northArrow.onload = function () {
+        northArrow.onload = function NorthArrow() {
           if (map.getView().getRotation() === 0) {
             ctx.drawImage(northArrow, 25, 80, arrowWidth, arrowHeight);
           } else {
@@ -173,7 +174,6 @@ const Exportmap = function Exportmap(options = {}) {
     map.renderSync();
   }
 
-
   /**
  * Using canvas.msToBlob() is much easier but it always turns a blob to a png.
  * This polyfill is needed if we want to choose format other than png.
@@ -188,7 +188,8 @@ const Exportmap = function Exportmap(options = {}) {
             const len = binStr.length;
             const arr = new Uint8Array(len);
 
-            for (let i = 0; i < len; i += 1) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < len; i++) {
               arr[i] = binStr.charCodeAt(i);
             }
             callback(new Blob([arr], { type: type || 'image/png' }));
@@ -197,7 +198,7 @@ const Exportmap = function Exportmap(options = {}) {
       });
     }
     if (!Array.prototype.find) {
-      Object.defineProperty(Array.prototype, 'find', {
+      Object.defineProperty(/* Array.prototype, */'find', {
         value(predicate) {
           // 1. Let O be ? ToObject(this value).
           if (this == null) {
@@ -207,6 +208,7 @@ const Exportmap = function Exportmap(options = {}) {
           const o = Object(this);
 
           // 2. Let len be ? ToLength(? Get(O, "length")).
+          // eslint-disable-next-line no-bitwise
           const len = o.length >>> 0;
 
           // 3. If IsCallable(predicate) is false, throw a TypeError exception.
@@ -215,6 +217,7 @@ const Exportmap = function Exportmap(options = {}) {
           }
 
           // 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
+          // eslint-disable-next-line prefer-rest-params
           const thisArg = arguments[1];
 
           // 5. Let k be 0.

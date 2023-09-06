@@ -9,7 +9,6 @@ import getFeature from '../getfeature';
 import mapUtils from '../maputils';
 import popup from '../popup';
 import sidebar from '../sidebar';
-import infowindowManager from '../infowindow';
 import utils from '../utils';
 
 const Search = function Search(options = {}) {
@@ -68,7 +67,7 @@ const Search = function Search(options = {}) {
     }
   }
 
-  function showFeatureInfo(features, objTitle, content, layer, name) {
+  function showFeatureInfo(features, objTitle, content, layer) {
     const obj = {};
     obj.feature = features[0];
     obj.title = objTitle;
@@ -184,19 +183,19 @@ const Search = function Search(options = {}) {
       feature = mapUtils.wktToFeature(data[geometryAttribute], projectionCode);
       layer = viewer.getLayer(data[layerName]);
       showFeatureInfo([feature], layer.get('title'), getAttributes(feature, layer, map), layer, layer.get('name')); // Kontrollera om det funkar bra med map!
-    // 3
+      // 3
     } else if (titleAttribute && contentAttribute && geometryAttribute) {
       feature = mapUtils.wktToFeature(data[geometryAttribute], projectionCode);
 
       // Make sure the response is wrapped in a html element
       content = utils.createElement('div', data[contentAttribute]);
       showFeatureInfo([feature], data[titleAttribute], content, layer, layer.get('name'));
-    // 4
+      // 4
     } else if (geometryAttribute && title) {
       feature = mapUtils.wktToFeature(data[geometryAttribute], projectionCode);
       content = utils.createElement('div', data[name]);
       showFeatureInfo([feature], title, content, layer, layer.get('name'));
-    // 5
+      // 5
     } else if (easting && northing && title) {
       coord = [data[easting], data[northing]];
       showOverlay(data, coord);

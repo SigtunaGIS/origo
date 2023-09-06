@@ -8,7 +8,6 @@ import { Component } from '../ui';
  * @param {Object} options
  */
 const Keepexternalsessionalive = function Keepexternalsessionalive(options) {
-
   /**
    * Schedule the call.
    * @param {object} service the object defining the service
@@ -46,8 +45,7 @@ const Keepexternalsessionalive = function Keepexternalsessionalive(options) {
 
         if (service.nrOfRefreshes > 0) {
           initTimer(service, timeoutInMinutes);
-        }
-        else {
+        } else {
           console.log(`Disabling recurrent call to external service: ${service.url} at ${new Date().toLocaleString()}`);
         }
       }
@@ -67,7 +65,7 @@ const Keepexternalsessionalive = function Keepexternalsessionalive(options) {
         });
       }
     },
-    onAdd(evt) {
+    onAdd() {
     },
     render() {
     }
