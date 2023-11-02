@@ -88,6 +88,7 @@
   display: inline-block;
   font-weight: normal;
   margin-right: 1em;
+  margin-left: 1em;
   padding: 0.5em 0;
 }
 
@@ -112,7 +113,7 @@
 .listcontainer {
   font-size: 12px;
   font-weight: normal;
-  margin-right: 0.5em;
+  margin: 0.5em 0.5em 0.5em 0.8em ;
   max-height: 40em;
   overflow-y: auto;
   scroll-behavior: smooth;
@@ -197,7 +198,6 @@
 
 .highlighted {
   background-color: $whitesmoke;
-  border-radius: 0 1em 1em 0;
   transition: background-color 0.5s;
   transition: background-color 0.5s;
   transition: background-color 0.5s;
