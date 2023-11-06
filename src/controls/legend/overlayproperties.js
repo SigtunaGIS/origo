@@ -123,13 +123,17 @@ const OverlayProperties = function OverlayProperties(options = {}) {
         direction: 'up',
         cls: 'o-stylepicker text-black flex',
         contentCls: 'bg-grey-lighter text-smaller rounded',
+        contentStyle: 'max-height: 12em; overflow-y: auto;',
         buttonCls: 'bg-white border text-black box-shadow',
         buttonTextCls: 'text-smaller',
         text: getStyleDisplayName(layer.get('styleName')),
         buttonIconCls: 'black',
         ariaLabel: 'Välj stil'
       });
-      const components = [transparencySlider, legendComponent];
+      const components = [legendComponent];
+      if (opacityControl) {
+        components.push(transparencySlider);
+      }
       if (hasStylePicker()) {
         components.push(styleSelection);
       }
@@ -141,12 +145,12 @@ const OverlayProperties = function OverlayProperties(options = {}) {
     onRender() {
       viewer.getControlByName('legend').dispatch('renderOverlayProperties', { cmp: this, layer });
       this.dispatch('render');
-      sliderEl = document.getElementById(transparencySlider.getId());
       overlayEl = document.getElementById(this.getId());
       overlayEl.addEventListener('click', (e) => {
         this.dispatch('click', e);
       });
       if (opacityControl) {
+        sliderEl = document.getElementById(transparencySlider.getId());
         sliderEl.nextElementSibling.value *= 100;
         sliderEl.addEventListener('input', () => {
           layer.setOpacity(sliderEl.valueAsNumber);
@@ -169,7 +173,7 @@ const OverlayProperties = function OverlayProperties(options = {}) {
                 <div class="padding-small">
                   ${legendComponent.render()}
                   ${renderStyleSelection()}
-                  ${transparencySlider.render()}
+                  ${opacityControl ? transparencySlider.render() : ''}
                 </div>
                 ${abstract ? `<div class="padding-small padding-x text-small">${abstract}</div>` : ''}
               </div>`;

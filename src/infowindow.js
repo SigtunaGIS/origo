@@ -4,6 +4,7 @@ import { dom, Button } from './ui';
 let parentElement;
 let mainContainer;
 let urvalContainer;
+let urvalListContainer;
 let listContainer;
 let exportContainer;
 let groupFooterContainer;
@@ -38,6 +39,10 @@ function hideInfowindow() {
 
 function showInfowindow() {
   mainContainer.classList.remove('hidden');
+}
+
+function getActiveSelectionGroup() {
+  return activeSelectionGroup;
 }
 
 function makeElementDraggable(elm) {
@@ -111,6 +116,8 @@ function render(viewerId) {
   mainContainer.id = 'sidebarcontainer';
   urvalContainer = document.createElement('div');
   urvalContainer.classList.add('urvalcontainer');
+  urvalListContainer = document.createElement('div');
+  urvalListContainer.classList.add('urvalListContainer');
   // We add this so that urvalcontainer can become draggable
   urvalContainer.id = 'sidebarcontainer-draggable';
   const urvalTextNodeContainer = document.createElement('div');
@@ -120,6 +127,7 @@ function render(viewerId) {
   urvalContainer.appendChild(urvalTextNodeContainer);
   const closeButton = createCloseButton();
   urvalContainer.appendChild(dom.html(closeButton.render()));
+  urvalContainer.appendChild(urvalListContainer);
   listContainer = document.createElement('div');
   listContainer.classList.add('listcontainer');
 
@@ -155,6 +163,22 @@ function render(viewerId) {
   makeElementDraggable(mainContainer);
 }
 
+function highlightListElement(featureId) {
+  sublists.forEach((sublist) => {
+    const elements = sublist.getElementsByClassName('listelement');
+    for (let index = 0; index < elements.length; index += 1) {
+      const element = elements[index];
+      if (element.id === featureId) {
+        setTimeout(() => {
+          element.classList.add('highlighted');
+        }, 100);
+      } else {
+        element.classList.remove('highlighted');
+      }
+    }
+  });
+}
+
 function showSelectedList(selectionGroup) {
   if (activeSelectionGroup === selectionGroup) {
     return;
@@ -179,7 +203,8 @@ function showSelectedList(selectionGroup) {
   }
   const subexportToAppend = subexports.get(selectionGroup);
   exportContainer.appendChild(subexportToAppend);
-
+  selectionManager.clearHighlightedFeatures();
+  selectionManager.refreshAllLayers();
   urvalElements.forEach((value, key) => {
     if (key === selectionGroup) {
       value.classList.add('selectedurvalelement');
@@ -187,6 +212,7 @@ function showSelectedList(selectionGroup) {
       value.classList.remove('selectedurvalelement');
     }
   });
+  highlightListElement();
 }
 
 /**
@@ -200,7 +226,7 @@ function createUrvalElement(selectionGroup, selectionGroupTitle) {
   urvalElement.classList.add('urvalelement');
   const textNode = document.createTextNode(selectionGroupTitle);
   urvalElement.appendChild(textNode);
-  urvalContainer.appendChild(urvalElement);
+  urvalListContainer.appendChild(urvalElement);
   urvalElements.set(selectionGroup, urvalElement);
   urvalElement.addEventListener('click', () => {
     showSelectedList(selectionGroup);
@@ -214,22 +240,6 @@ function createUrvalElement(selectionGroup, selectionGroupTitle) {
 
   const subexportComponent = createSubexportComponent({ selectionGroup, viewer, exportOptions });
   subexports.set(selectionGroup, subexportComponent);
-}
-
-function highlightListElement(featureId) {
-  sublists.forEach((sublist) => {
-    const elements = sublist.getElementsByClassName('listelement');
-    for (let index = 0; index < elements.length; index += 1) {
-      const element = elements[index];
-      if (element.id === featureId) {
-        setTimeout(() => {
-          element.classList.add('highlighted');
-        }, 100);
-      } else {
-        element.classList.remove('highlighted');
-      }
-    }
-  });
 }
 
 function createExpandableContent(listElementContentContainer, content, elementId) {
@@ -424,6 +434,7 @@ function init(options) {
   render(options.viewer.getId());
 
   return {
+    getActiveSelectionGroup,
     createListElement,
     removeListElement,
     expandListElement,

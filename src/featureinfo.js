@@ -266,30 +266,34 @@ const Featureinfo = function Featureinfo(options = {}) {
   };
 
   const addLinkListener = function addLinkListener(el) {
-    el.addEventListener('click', (e) => {
-      e.preventDefault();
-      const targ = e.target;
-      let modalStyle = '';
-      switch (targ.target) {
-        case 'modal-full':
-        {
-          modalStyle = 'max-width:unset;width:98%;height:98%;resize:both;overflow:auto;display:flex;flex-flow:column;';
-          break;
+    // Check if element already has a listener
+    if (el && !el.hasAttribute('onClickModal')) {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targ = e.target;
+        let modalStyle = '';
+        switch (targ.target) {
+          case 'modal-full':
+          {
+            modalStyle = 'max-width:unset;width:98%;height:98%;resize:both;overflow:auto;display:flex;flex-flow:column;';
+            break;
+          }
+          default:
+          {
+            modalStyle = 'resize:both;overflow:auto;display:flex;flex-flow:column;';
+            break;
+          }
         }
-        default:
-        {
-          modalStyle = 'resize:both;overflow:auto;display:flex;flex-flow:column;';
-          break;
-        }
-      }
-      Modal({
-        title: targ.title,
-        content: `<iframe src="${targ.href}" class=""style="width:100%;height:99%"></iframe>`,
-        target: viewer.getId(),
-        style: modalStyle,
-        newTabUrl: targ.href
+        Modal({
+          title: targ.title,
+          content: `<iframe src="${targ.href}" class=""style="width:100%;height:99%"></iframe>`,
+          target: viewer.getId(),
+          style: modalStyle,
+          newTabUrl: targ.href
+        });
       });
-    });
+      el.setAttribute('onClickModal', 'true');
+    }
   };
 
   /**
@@ -604,18 +608,30 @@ const Featureinfo = function Featureinfo(options = {}) {
 
   /**
   * Shows the featureinfo popup/sidebar/infowindow for the provided feature and fit the view to it.
-  * @param {any} feature An object containing layerName and feature
+  * @param {any} featureObj An object containing layerName and feature
+  * @param {any} opts An object containing options. Supported options are : coordinate, the coordinate where popup will be shown. If omitted first feature is used.
+  *                                                                         ignorePan, do not autopan if type is overlay. Pan should be supressed if view is changed manually to avoid contradicting animations.
   * @returns nothing
   */
-  const showFeatureInfo = function showFeatureInfo(featureObj) {
-    const feature = featureObj.feature;
+  const showFeatureInfo = function showFeatureInfo(featureObj, opts = { ignorePan: true }) {
+    const newItems = [];
     const layerName = featureObj.layerName;
     const layer = viewer.getLayer(layerName);
     const map = viewer.getMap();
     const grouplayers = viewer.getGroupLayers();
-    const newItem = getFeatureInfo.createSelectedItem(feature, layer, map, grouplayers);
-    render([newItem], identifyTarget, maputils.getCenter(feature.getGeometry()), { ignorePan: true });
-    viewer.zoomToExtent(feature.getGeometry());
+    if (Array.isArray(featureObj.feature)) {
+      featureObj.feature.forEach(feature => {
+        const newItem = getFeatureInfo.createSelectedItem(feature, layer, map, grouplayers);
+        newItems.push(newItem);
+      });
+    } else {
+      const newItem = getFeatureInfo.createSelectedItem(featureObj.feature, layer, map, grouplayers);
+      newItems.push(newItem);
+    }
+    if (newItems.length > 0) {
+      render(newItems, identifyTarget, opts.coordinate || maputils.getCenter(newItems[0].getFeature().getGeometry()), opts);
+      viewer.getMap().getView().fit(maputils.getExtent(featureObj.feature));
+    }
   };
 
   const onClick = function onClick(evt) {
@@ -624,7 +640,6 @@ const Featureinfo = function Featureinfo(options = {}) {
     const pixel = evt.pixel;
     const map = viewer.getMap();
     const coordinate = evt.coordinate;
-    const layers = viewer.getQueryableLayers();
     const clientResult = getFeatureInfo.getFeaturesAtPixel({
       coordinate,
       clusterFeatureinfoLevel,
@@ -636,7 +651,6 @@ const Featureinfo = function Featureinfo(options = {}) {
     if (clientResult !== false) {
       getFeatureInfo.getFeaturesFromRemote({
         coordinate,
-        layers,
         map,
         pixel
       }, viewer)
@@ -676,6 +690,7 @@ const Featureinfo = function Featureinfo(options = {}) {
   return Component({
     name: 'featureInfo',
     clear,
+    addLinkListener,
     getHitTolerance,
     getPin,
     getSelectionLayer,
