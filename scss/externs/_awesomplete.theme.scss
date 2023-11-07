@@ -69,26 +69,18 @@
   font-weight: bold;
 }
 
-.black mark {
-  color: #aaa;
+.grey mark {
+  color: #000;
 }
 
 .awesomplete li .suggestion:hover mark {
   background-color: $search-hover-backround;
 }
 
-.black li .suggestion:hover mark {
+.grey li .suggestion:hover mark {
   background-color: #fff;
 }
 
 .awesomplete li[aria-selected='true'] mark {
   background-color: $search-hover-backround;
-}
-
-&[class*=#{$media-l-m}] {
-  .awesomplete > ul {
-    max-width: calc(100% + 2rem);
-    min-width: calc(100% + 2rem);
-    top: 2.25rem;
-  }
 }

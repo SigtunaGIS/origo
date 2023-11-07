@@ -15,14 +15,8 @@ const OverlayProperties = function OverlayProperties(options = {}) {
   const opacity = layer.getOpacity();
   const opacityControl = layer.get('opacityControl') !== false;
   const style = viewer.getStyle(layer.get('styleName'));
-  const legend = Legend(style, opacity);
+  const legendComponent = Legend({ styleRules: style, opacity, layer, viewer, clickable: false });
   const stylePicker = viewer.getLayerStylePicker(layer);
-
-  const legendComponent = Component({
-    render() {
-      return `<div id=${this.getId()}>${legend}</div>`;
-    }
-  });
 
   let styleSelection;
   let overlayEl;
@@ -63,7 +57,10 @@ const OverlayProperties = function OverlayProperties(options = {}) {
   }
 
   function getStyleDisplayName(styleName) {
-    const altStyle = stylePicker.find(s => s.style === styleName);
+    let altStyle = stylePicker.find(s => s.style === styleName);
+    if (!altStyle) {
+      altStyle = stylePicker.find(s => s.defaultWMSServerStyle);
+    }
     return (altStyle && altStyle.title) || styleName;
   }
 
@@ -71,12 +68,51 @@ const OverlayProperties = function OverlayProperties(options = {}) {
     const altStyleIndex = stylePicker.findIndex(s => s.title === styleTitle);
     const altStyle = stylePicker[altStyleIndex];
     styleSelection.setButtonText(styleTitle);
-    const newStyle = Style.createStyle({ style: altStyle.style, clusterStyleName: altStyle.clusterStyle, viewer });
     const legendCmp = document.getElementById(legendComponent.getId());
-    legendCmp.innerHTML = Legend(viewer.getStyle(altStyle.style), opacity);
-    if (!layer.get('defaultStyle')) layer.setProperties({ defaultStyle: layer.get('styleName') });
+    if (!layer.get('defaultStyle')) {
+      layer.setProperties({ defaultStyle: layer.get('styleName') });
+    }
     layer.setProperties({ altStyleIndex });
-    layer.setProperties({ styleName: altStyle.style });
+
+    if (layer.get('type') === 'WMS') {
+      const layerSource = layer.get('source');
+      const sourceParams = layerSource.getParams();
+      let styleToSet = altStyle.style;
+
+      if (altStyle.initialStyle) {
+        styleToSet = layer.get('defaultStyle');
+      } else if (altStyle.defaultWMSServerStyle) {
+        styleToSet = `${layer.get('name')}_WMSServerDefault`;
+      }
+
+      sourceParams.STYLES = altStyle.defaultWMSServerStyle ? '' : styleToSet;
+      layerSource.refresh();
+      layer.set('styleName', styleToSet);
+      let maxResolution;
+      if (!(altStyle.legendParams) || !(Object.keys(altStyle.legendParams).find(key => key.toUpperCase() === 'SCALE'))) {
+        maxResolution = viewer.getResolutions()[viewer.getResolutions().length - 1];
+      }
+      let styleNameParam = styleToSet;
+      if (altStyle.defaultWMSServerStyle) styleNameParam = '';
+      const getLegendString = layerSource.getLegendUrl(maxResolution, {
+        STYLE: styleNameParam,
+        ...altStyle.legendParams
+      });
+      const newWmsStyle = [[{
+        icon: {
+          src: `${getLegendString}`
+        },
+        extendedLegend: altStyle.hasThemeLegend || false
+      }]];
+      viewer.addStyle(styleToSet, newWmsStyle);
+      legendCmp.innerHTML = Legend({ styleRules: viewer.getStyle(styleToSet), opacity, layer, viewer, clickable: false }).render();
+      layer.dispatchEvent('change:style');
+      return;
+    }
+
+    layer.set('styleName', altStyle.style);
+    legendCmp.innerHTML = Legend({ styleRules: viewer.getStyle(altStyle.style), opacity, layer, viewer, clickable: false }).render();
+    const newStyle = Style.createStyle({ style: altStyle.style, clusterStyleName: altStyle.clusterStyle, viewer });
     layer.setStyle(newStyle);
     layer.dispatchEvent('change:style');
   };
@@ -87,12 +123,17 @@ const OverlayProperties = function OverlayProperties(options = {}) {
         direction: 'up',
         cls: 'o-stylepicker text-black flex',
         contentCls: 'bg-grey-lighter text-smaller rounded',
+        contentStyle: 'max-height: 12em; overflow-y: auto;',
         buttonCls: 'bg-white border text-black box-shadow',
         buttonTextCls: 'text-smaller',
         text: getStyleDisplayName(layer.get('styleName')),
-        buttonIconCls: 'black'
+        buttonIconCls: 'black',
+        ariaLabel: 'Välj stil'
       });
-      const components = [transparencySlider];
+      const components = [legendComponent];
+      if (opacityControl) {
+        components.push(transparencySlider);
+      }
       if (hasStylePicker()) {
         components.push(styleSelection);
       }
@@ -102,13 +143,14 @@ const OverlayProperties = function OverlayProperties(options = {}) {
       });
     },
     onRender() {
+      viewer.getControlByName('legend').dispatch('renderOverlayProperties', { cmp: this, layer });
       this.dispatch('render');
-      sliderEl = document.getElementById(transparencySlider.getId());
       overlayEl = document.getElementById(this.getId());
       overlayEl.addEventListener('click', (e) => {
         this.dispatch('click', e);
       });
       if (opacityControl) {
+        sliderEl = document.getElementById(transparencySlider.getId());
         sliderEl.nextElementSibling.value *= 100;
         sliderEl.addEventListener('input', () => {
           layer.setOpacity(sliderEl.valueAsNumber);
@@ -124,8 +166,6 @@ const OverlayProperties = function OverlayProperties(options = {}) {
         styleSelectionEl.addEventListener('dropdown:select', (evt) => {
           onSelectStyle(evt.target.textContent);
         });
-        styleSelectionEl.setAttribute('aria-label', 'Välj stil');
-        styleSelectionEl.setAttribute('aria-labelledby', 'Välj stil');
       }
     },
     render() {
@@ -133,7 +173,7 @@ const OverlayProperties = function OverlayProperties(options = {}) {
                 <div class="padding-small">
                   ${legendComponent.render()}
                   ${renderStyleSelection()}
-                  ${transparencySlider.render()}
+                  ${opacityControl ? transparencySlider.render() : ''}
                 </div>
                 ${abstract ? `<div class="padding-small padding-x text-small">${abstract}</div>` : ''}
               </div>`;

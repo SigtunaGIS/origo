@@ -9,12 +9,11 @@ import OrientationControl from './orientation-control';
 import SizeControl from './size-control';
 import TitleControl from './title-control';
 import CreatedControl from './created-control';
-import ScaleControl from './scale-control';
 import NorthArrowControl from './north-arrow-control';
 import PrintLegendControl from './print-legend-control';
 import RotationControl from './rotation-control';
 import SetScaleControl from './set-scale-control';
-//import ResolutionControl from './resolution-control';
+import ResolutionControl from './resolution-control';
 import ShowScaleControl from './show-scale-control';
 
 const PrintSettings = function PrintSettings(options = {}) {
@@ -41,10 +40,11 @@ const PrintSettings = function PrintSettings(options = {}) {
     sizeCustomMinWidth,
     sizeCustomMaxWidth,
     orientation,
-    //resolutions,
-    //resolution,
+    resolutions,
+    resolution,
     scales,
     scaleInitial,
+    settingsExpanded,
     showMargins,
     showCreated,
     showScale,
@@ -54,19 +54,6 @@ const PrintSettings = function PrintSettings(options = {}) {
     rotationStep
   } = options;
 
-const PrintSettings = function PrintSettings({
-  closeIcon = '#ic_close_24px',
-  initialSize,
-  openIcon = '#ic_tune_24px',
-  orientation = 'portrait',
-  customSize,
-  sizes,
-  map,
-  showCreated,
-  showScale,
-  showNorthArrow,
-  rotationEnable
-} = {}) {
   let headerComponent;
   let contentComponent;
   let openButton;
@@ -76,6 +63,7 @@ const PrintSettings = function PrintSettings({
   let northArrowControl;
   let printLegendControl;
   let rotationControl;
+  let setScaleControl;
 
   // Set tabindex for all settings buttons to include or exclude in taborder depending on if expanded or not
   const setTabIndex = function setTabIndex() {
@@ -123,13 +111,14 @@ const PrintSettings = function PrintSettings({
 
   return Component({
     close,
+    getScaleControl() { return setScaleControl; },
     onInit() {
       openButton = Button({
-        cls: 'padding-small icon-smaller light text-normal',
+        cls: 'padding-small icon-smaller round light box-shadow',
         icon: openIcon,
         tooltipText: 'Visa inställningar',
         tooltipPlacement: 'east',
-        state: 'initial',
+        state: settingsExpanded === true ? 'hidden' : 'initial',
         validStates: ['initial', 'hidden'],
         click() {
           toggle();
@@ -138,8 +127,9 @@ const PrintSettings = function PrintSettings({
       closeButton = Button({
         cls: 'small round margin-top-small margin-right small icon-smaller grey-lightest',
         icon: closeIcon,
-        state: 'hidden',
+        state: settingsExpanded === true ? 'initial' : 'hidden',
         validStates: ['initial', 'hidden'],
+        ariaLabel: 'Stäng',
         click() {
           toggle();
         }
@@ -151,23 +141,48 @@ const PrintSettings = function PrintSettings({
       });
 
       const orientationControl = OrientationControl({ orientation });
-      const sizeControl = SizeControl({ initialSize, sizes });
-      const titleControl = TitleControl({});
-      const descriptionControl = DescriptionControl();
-      const marginControl = MarginControl({ checked: true });
+      const sizeControl = SizeControl({
+        initialSize: size,
+        sizes: Object.keys(sizes)
+      });
+      const titleControl = TitleControl({
+        title,
+        titlePlaceholderText,
+        titleAlignment,
+        titleSizes,
+        titleSize,
+        titleFormatIsVisible
+      });
+      const descriptionControl = DescriptionControl({
+        description,
+        descriptionPlaceholderText,
+        descriptionAlignment,
+        descriptionSizes,
+        descriptionSize,
+        descriptionFormatIsVisible
+      });
+      const marginControl = MarginControl({ checked: showMargins });
       const createdControl = CreatedControl({ checked: showCreated });
-      /*const resolutionControl = ResolutionControl({
+      const resolutionControl = resolutions.length > 1 ? ResolutionControl({
         initialResolution: resolution,
         resolutions
-      });*/
+      }) : undefined;
       const showScaleControl = ShowScaleControl({ checked: showScale });
       northArrowControl = NorthArrowControl({ showNorthArrow });
       printLegendControl = PrintLegendControl({ showPrintLegend });
       rotationControl = map.getView().getConstraints().rotation(180) === 180 ? RotationControl({ rotation, rotationStep, map }) : undefined;
       customSizeControl = CustomSizeControl({
-        state: initialSize === 'custom' ? 'active' : 'inital',
-        height: customSize[0],
-        width: customSize[1]
+        minHeight: sizeCustomMinHeight,
+        maxHeight: sizeCustomMaxHeight,
+        minWidth: sizeCustomMinWidth,
+        maxWidth: sizeCustomMaxWidth,
+        height: sizes.custom ? sizes.custom[0] : sizeCustomMinHeight,
+        width: sizes.custom ? sizes.custom[1] : sizeCustomMinWidth,
+        state: size === 'custom' ? 'active' : 'initial'
+      });
+      setScaleControl = SetScaleControl(map, {
+        scales,
+        initialScale: scaleInitial
       });
 
       contentComponent = Component({
@@ -178,7 +193,6 @@ const PrintSettings = function PrintSettings({
             customSizeControl,
             descriptionControl,
             marginControl,
-            scaleControl,
             orientationControl,
             sizeControl,
             titleControl,
@@ -186,7 +200,7 @@ const PrintSettings = function PrintSettings({
             northArrowControl,
             rotationControl,
             setScaleControl,
-            //resolutionControl,
+            resolutionControl,
             showScaleControl,
             printLegendControl
           });
@@ -194,28 +208,37 @@ const PrintSettings = function PrintSettings({
       });
       const components = [customSizeControl, marginControl, orientationControl, sizeControl, titleControl, descriptionControl, createdControl, northArrowControl, printLegendControl, setScaleControl, showScaleControl];
       if (rotationControl) { components.push(rotationControl); }
+      if (resolutions.length > 1) { components.push(resolutionControl); }
       contentComponent.addComponents(components);
       printSettingsContainer = Collapse({
-        cls: 'no-print fixed flex column top-left rounded box-shadow bg-white overflow-hidden z-index-ontop-high',
+        cls: 'flex column',
+        containerCls: 'collapse-container no-margin height-full',
         collapseX: true,
         collapseY: true,
         headerComponent,
-        contentComponent
+        contentComponent,
+        mainCls: 'collapse-scroll',
+        expanded: settingsExpanded === true
       });
       this.addComponent(printSettingsContainer);
 
-      descriptionControl.on('change', (evt) => this.dispatch('change:description', evt));
+      descriptionControl.on('change:description', (evt) => this.dispatch('change:description', evt));
+      descriptionControl.on('change:descriptionSize', (evt) => this.dispatch('change:descriptionSize', evt));
+      descriptionControl.on('change:descriptionAlign', (evt) => this.dispatch('change:descriptionAlign', evt));
       marginControl.on('change:check', (evt) => this.dispatch('change:margin', evt));
       orientationControl.on('change:orientation', (evt) => this.dispatch('change:orientation', evt));
       sizeControl.on('change:size', (evt) => this.dispatch('change:size', evt));
       sizeControl.on('change:size', this.onChangeSize.bind(this));
       customSizeControl.on('change:size', (evt) => this.dispatch('change:size-custom', evt));
-      titleControl.on('change', (evt) => this.dispatch('change:title', evt));
+      titleControl.on('change:title', (evt) => this.dispatch('change:title', evt));
+      titleControl.on('change:titleSize', (evt) => this.dispatch('change:titleSize', evt));
+      titleControl.on('change:titleAlign', (evt) => this.dispatch('change:titleAlign', evt));
       createdControl.on('change:check', (evt) => this.dispatch('change:created', evt));
-      scaleControl.on('change:check', (evt) => this.dispatch('change:scale', evt));
       northArrowControl.on('change:check', (evt) => this.dispatch('change:northarrow', evt));
       printLegendControl.on('change:check', (evt) => this.dispatch('change:printlegend', evt));
-      //resolutionControl.on('change:resolution', (evt) => this.dispatch('change:resolution', evt));
+      if (resolutionControl) {
+        resolutionControl.on('change:resolution', (evt) => this.dispatch('change:resolution', evt));
+      }
       setScaleControl.on('change:scale', (evt) => this.dispatch('change:scale', evt));
       showScaleControl.on('change:check', (evt) => this.dispatch('change:showscale', evt));
     },
@@ -224,7 +247,7 @@ const PrintSettings = function PrintSettings({
       customSizeControl.dispatch('change:visible', { visible });
     },
     onRender() {
-      rotationControl.setRotation();
+      if (rotationControl) { rotationControl.setRotation(); }
       this.dispatch('render');
       setTabIndex();
     },

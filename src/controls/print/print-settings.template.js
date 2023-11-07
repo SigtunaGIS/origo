@@ -7,20 +7,17 @@ export default function printTemplate({
   sizeControl,
   titleControl,
   createdControl,
-  scaleControl,
   northArrowControl,
   rotationControl,
   setScaleControl,
-  //resolutionControl,
+  resolutionControl,
   showScaleControl,
   printLegendControl
 }) {
   return `
-  <div id="${id}" class="flex column no-print padding-large width-16">
-    <h6>Rubrik</h6>
+  <div id="${id}" class="flex column no-print padding-x overflow-auto max-height-100">
     ${titleControl.render()}
     <div class="padding-top"></div>
-    <h6>Beskrivning</h6>
     ${descriptionControl.render()}
     <div class="padding-top"></div>
     <h6>Storlek</h6>
@@ -30,6 +27,7 @@ export default function printTemplate({
     <div class="padding-top"></div>
     <h6>Orientering</h6>
     ${orientationControl.render()}
+    ${resolutionControl ? `<div class="padding-top"></div><h6>Upplösning</h6>${resolutionControl.render()}` : ''}
     <div class="padding-top"></div>
       ${setScaleControl.render()}
     <div class="padding-top-large"></div>
@@ -39,13 +37,13 @@ export default function printTemplate({
     </div>
     <div class="padding-top-large"></div>
     <div class="flex padding-right-small">
-      <div class="grow text-normal">Visa skala</div>
-      ${scaleControl.render()}
+      <div class="grow text-normal">Visa skapad tid</div>
+      ${createdControl.render()}
     </div>
     <div class="padding-top-large"></div>
     <div class="flex padding-right-small">
-      <div class="grow text-normal">Visa skapad tid</div>
-      ${createdControl.render()}
+      <div class="grow text-normal">Visa skala</div>
+      ${showScaleControl.render()}
     </div>
     <div class="padding-top-large"></div>
     <div class="flex padding-right-small">
@@ -54,7 +52,7 @@ export default function printTemplate({
     </div>
     <div class="padding-top-large"></div>
     <div class="flex padding-right-small">
-      <div class="grow text-normal">Visa legend</div>
+      <div class="grow text-normal">Visa teckenförklaring</div>
       ${printLegendControl.render()}
     </div>
     <div class="padding-bottom-large">
