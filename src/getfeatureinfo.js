@@ -5,6 +5,16 @@ import infoTemplates from './featureinfotemplates';
 import maputils from './maputils';
 import SelectedItem from './models/SelectedItem';
 
+/**
+ * Factory method to create a SelectedItem instance. Note that this method is exposed in api.
+ * Does not add async content (related tables and attachments). If you need async content use
+ * SelectItem.createContentAsync afterwards.
+ * @param {any} feature
+ * @param {any} layer
+ * @param {any} map
+ * @param {any} groupLayers
+ * @returns {SelectedItem}
+ */
 function createSelectedItem(feature, layer, map, groupLayers) {
   // Above functions have no way of knowing whether the layer is part of a LayerGroup or not, therefore we need to check every layer against the groupLayers.
   const layerName = layer.get('name');
@@ -28,29 +38,6 @@ function createSelectedItem(feature, layer, map, groupLayers) {
     selectionGroupTitle = layer.get('title');
   }
 
-  // Add pseudo attributes to make sure they exist when the SelectedItem is created as the content is created in constructor
-  // Ideally we would also populate here, but that is an async operation and will break the api.
-  const attachments = layer.get('attachments');
-  if (attachments) {
-    attachments.groups.forEach(a => {
-      if (a.linkAttribute) {
-        feature.set(a.linkAttribute, '');
-      }
-      if (a.fileNameAttribute) {
-        feature.set(a.fileNameAttribute, '');
-      }
-    });
-  }
-  const relatedLayers = layer.get('relatedLayers');
-  if (relatedLayers) {
-    relatedLayers.forEach(currLayer => {
-      if (currLayer.promoteAttribs) {
-        currLayer.promoteAttribs.forEach(currAttrib => {
-          feature.set(currAttrib.parentName, '');
-        });
-      }
-    });
-  }
   return new SelectedItem(feature, layer, map, selectionGroup, selectionGroupTitle);
 }
 
@@ -319,23 +306,27 @@ function getFeatureInfoRequests({
   return requests;
 }
 
-function getFeaturesFromRemote(requestOptions, viewer, textHtmlHandler) {
+async function getFeaturesFromRemote(requestOptions, viewer, textHtmlHandler) {
   const requestResult = [];
-  const requestPromises = getFeatureInfoRequests(requestOptions, viewer, textHtmlHandler).map((request) => request.fn.then((features) => {
-    const layer = viewer.getLayer(request.layer);
-    const groupLayers = viewer.getGroupLayers();
-    const map = viewer.getMap();
-    if (features) {
-      features.forEach((feature) => {
+  const requests = getFeatureInfoRequests(requestOptions, viewer, textHtmlHandler);
+  const featureInfoPromises = requests.map((request) => request.fn);
+  const featureInfoPromisesResults = await Promise.allSettled(featureInfoPromises);
+
+  featureInfoPromisesResults.forEach((result, i) => {
+    const layer = viewer.getLayer(requests[i].layer);
+    if (result.status === 'fulfilled' && result.value) {
+      const groupLayers = viewer.getGroupLayers();
+      const map = viewer.getMap();
+      result.value.forEach((feature) => {
         const si = createSelectedItem(feature, layer, map, groupLayers);
         requestResult.push(si);
       });
-      return requestResult;
+    } else {
+      console.warn(`GetFeatureInfo request failed for layer: ${layer.get('name')}`);
     }
+  });
 
-    return false;
-  }));
-  return Promise.all([...requestPromises]).then(() => requestResult).catch(error => console.log(error));
+  return requestResult;
 }
 
 function getFeaturesAtPixel({
