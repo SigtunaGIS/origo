@@ -103,14 +103,14 @@ const Draw = function Draw(options = {}) {
 
         const formSaveButton = Button({
           cls: 'margin-small icon-smaller light box-shadow',
-          style: 'border-radius: 3px',
+          style: 'border-radius: 15px',
           icon: '#ic_save_24px',
           text: 'Spara'
         });
 
         const cancelButton = Button({
           cls: 'margin-small icon-smaller light box-shadow',
-          style: 'border-radius: 3px',
+          style: 'border-radius: 15px',
           icon: '#ic_close_24px',
           text: 'Avbryt'
         });
@@ -238,7 +238,7 @@ const Draw = function Draw(options = {}) {
 
       const addLayerButton = Button({
         cls: 'icon-smaller light box-shadow',
-        style: 'border-radius: 3px',
+        style: 'border-radius: 15px',
         icon: '#ic_add_24px',
         text: 'Nytt ritlager',
         async click() {
@@ -288,8 +288,8 @@ const Draw = function Draw(options = {}) {
 
       const openBtn = Button({
         cls: 'icon-smaller light box-shadow',
-        style: 'border-radius: 3px',
-        icon: '#ic_add_24px',
+        style: 'border-radius: 15px',
+        icon: '#ic_upload_24px',
         click() {
           const inputEl = document.getElementById(fileInput.getId());
           inputEl.value = null;
@@ -301,7 +301,7 @@ const Draw = function Draw(options = {}) {
 
       const okButton = Button({
         cls: 'icon-smaller light box-shadow',
-        style: 'border-radius: 3px',
+        style: 'border-radius: 15px',
         icon: '#ic_check_24px',
         text: 'OK',
         click() {
