@@ -248,9 +248,9 @@ const measureStyle = function measureStyle({ scale = 1, highlightColor } = {}) {
     }),
     new Style({
       stroke: new Stroke({
-        color: 'rgba(0, 0, 0, 0.8)',
+        color: 'rgba(0, 122, 255, 0.8)',
         lineDash: [10 * scale, 10 * scale],
-        width: 2 * scale
+        width: 3 * scale
       }),
       image: new CircleStyle({
         radius: 5 * scale,
