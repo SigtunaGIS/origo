@@ -184,7 +184,7 @@ const Viewer = function Viewer(targetOption, options = {}) {
   const getStyles = () => styles;
 
   const addStyle = function addStyle(styleName, styleProps) {
-    if (!(styleName in styles)) {
+    if (styleName && !(styleName in styles)) {
       styles[styleName] = styleProps;
     }
   };
