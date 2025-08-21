@@ -6,7 +6,7 @@ const OverlayLayer = function OverlayLayer(options) {
   const {
     headerIconCls = '',
     cls: clsSettings = '',
-    icon = '#o_list_24px',
+    icon = '#o_list_24px',// Sigtuna
     iconCls = 'grey-lightest',
     layer,
     position = 'top',

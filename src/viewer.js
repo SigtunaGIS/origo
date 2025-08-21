@@ -36,11 +36,11 @@ const Viewer = function Viewer(targetOption, options = {}) {
     consoleId = 'o-console',
     mapCls = 'o-map',
     controls = [],
-    constrainResolution = false,
-    enableRotation = true,
+    constrainResolution = false,// Sigtuna. Kolla upp.
+    enableRotation = true,// Sigtuna. Kolla upp.
     featureinfoOptions = {},
     groups: groupOptions = [],
-    mapGrid = true,
+    mapGrid = true,// Sigtuna. Kolla upp.
     pageSettings = {},
     projectionCode,
     projectionExtent,
@@ -101,7 +101,7 @@ const Viewer = function Viewer(targetOption, options = {}) {
     tileSize: [256, 256]
   };
   const tileGridSettings = Object.assign({}, defaultTileGridOptions, tileGridOptions);
-  const mapGridCls = mapGrid ? 'o-mapgrid' : '';
+  const mapGridCls = mapGrid ? 'o-mapgrid' : '';// Sigtuna. Kolla upp.
   const cls = `${clsOptions} ${mapGridCls} ${mapCls} o-ui`.trim();
   const footerData = pageSettings.footer || {};
   const main = Main();
@@ -570,6 +570,7 @@ const Viewer = function Viewer(targetOption, options = {}) {
       tileGrid = maputils.tileGrid(tileGridSettings);
       stylewindow = Stylewindow({ palette, viewer: this, localization: controls.find((control) => control.name === 'localization') });
 
+      // Sigtuna. Kontrollera vilken kod som ska finnas här.
       setMap(Map({
         extent,
         getFeatureinfo,
@@ -581,6 +582,7 @@ const Viewer = function Viewer(targetOption, options = {}) {
         enableRotation,
         target: this.getId()
       }));
+      // Slut Sigtuna
 
       mergeSavedLayerProps(layerOptions, urlParams.layers)
         .then(layerProps => {
