@@ -26,7 +26,8 @@ const Featureinfo = function Featureinfo(options = {}) {
     savedPin: savedPinOptions,
     savedSelection,
     selectionStyles: selectionStylesOptions,
-    autoplay = false
+    autoplay = false,
+    localization
   } = options;
 
   let selectionLayer;
@@ -148,6 +149,14 @@ const Featureinfo = function Featureinfo(options = {}) {
     // search result is remote.
     if (item instanceof SelectedItem) {
       component.dispatch('changeselection', item);
+    }
+  };
+
+  const dispatchItemAdded = function dispatchItemAdded(item) {
+    // Make sure it actually is a SelectedItem. At least Search can call render() without creating proper selectedItems when
+    // search result is remote.
+    if (item instanceof SelectedItem) {
+      component.dispatch('itemadded', item);
     }
   };
 
@@ -312,139 +321,130 @@ const Featureinfo = function Featureinfo(options = {}) {
    * @param {any} coordinate
    * @param {bool} ignorePan true if overlay should not be panned into view
    */
-  const doRender = function doRender(identifyItems, target, coordinate, ignorePan) {
-    const map = viewer.getMap();
-
-    items = identifyItems;
+  const doRender = function doRender(identifyItems, target, coordinate, ignorePan, suppressDialog) {
     clear(false);
-    // FIXME: variable is overwritten in next row
-    let content = items.map((i) => i.content).join('');
-    content = '<div id="o-identify"><div id="o-identify-carousel" class="flex"></div></div>';
-    switch (target) {
-      case 'overlay':
-      {
-        popup = Popup(`#${viewer.getId()}`, { closeCb: onInfoClosed });
-        popup.setContent({
-          content,
-          title: getTitle(items[0])
-        });
-        const contentDiv = document.getElementById('o-identify-carousel');
-        const carouselIds = [];
-        items.forEach((item) => {
-          carouselIds.push(item.feature.ol_uid);
-          if (item.content instanceof Element) {
-            contentDiv.appendChild(item.content);
-          } else {
-            contentDiv.innerHTML = item.content;
-          }
-        });
-        popup.setVisibility(true);
-        initCarousel('#o-identify-carousel');
-        const firstFeature = items[0].feature;
-        const geometry = firstFeature.getGeometry();
-        const origostyle = firstFeature.get('origostyle');
-        const clone = firstFeature.clone();
-        clone.setId(firstFeature.getId());
-        // FIXME: should be layer name, not feature name
-        clone.layerName = firstFeature.name;
-        selectionLayer.clearAndAdd(
-          clone,
-          selectionStyles[geometry.getType()]
-        );
-        selectionLayer.setSourceLayer(items[0].layer);
-        const coord = geometry.getType() === 'Point' ? geometry.getCoordinates() : coordinate;
-        carouselIds.forEach((carouselId) => {
-          let targetElement;
-          const elements = document.getElementsByClassName(`o-image-carousel${carouselId}`);
-          Array.from(elements).forEach(element => {
-            if (!element.closest('.glide__slide--clone')) {
-              targetElement = element;
+    items = identifyItems;
+    if (target === 'infowindow') {
+      if (items.length === 1) {
+        selectionManager.addOrHighlightItem(items[0], { suppressDialog });
+      } else if (items.length > 1) {
+        selectionManager.addItems(items, { suppressDialog });
+      }
+    } else {
+      // Overlay or sidebar goes here
+      const map = viewer.getMap();
+
+      // Add the first feature to selection layer.
+      // Only one is added, the others are added when the carousel changes.
+      const firstFeature = items[0].feature;
+      const geometry = firstFeature.getGeometry();
+      const clone = firstFeature.clone();
+      clone.setId(firstFeature.getId());
+      selectionLayer.clearAndAdd(
+        clone,
+        selectionStyles[geometry.getType()]
+      );
+      selectionLayer.setSourceLayer(items[0].layer);
+
+      // Create the popup/side bar
+      if (!suppressDialog) {
+        const content = '<div id="o-identify"><div id="o-identify-carousel" class="flex"></div></div>';
+        switch (target) {
+          case 'overlay':
+          {
+            popup = Popup(`#${viewer.getId()}`, { closeCb: onInfoClosed });
+            popup.setContent({
+              content,
+              title: getTitle(items[0])
+            });
+            const contentDiv = document.getElementById('o-identify-carousel');
+            const carouselIds = [];
+            items.forEach((item) => {
+              carouselIds.push(item.feature.ol_uid);
+              if (item.content instanceof Element) {
+                contentDiv.appendChild(item.content);
+              } else {
+                contentDiv.innerHTML = item.content;
+              }
+            });
+            popup.setVisibility(true);
+            initCarousel('#o-identify-carousel');
+            const origostyle = firstFeature.get('origostyle');
+
+            const coord = geometry.getType() === 'Point' ? geometry.getCoordinates() : coordinate;
+            carouselIds.forEach((carouselId) => {
+              let targetElement;
+              const elements = document.getElementsByClassName(`o-image-carousel${carouselId}`);
+              Array.from(elements).forEach(element => {
+                if (!element.closest('.glide__slide--clone')) {
+                  targetElement = element;
+                }
+              });
+              const imageCarouselEl = document.getElementsByClassName(`o-image-carousel${carouselId}`);
+              if (imageCarouselEl.length > 0) {
+                initImageCarousel(`#o-image-carousel${carouselId}`, `.o-image-content${carouselId}`, carouselId, targetElement);
+              }
+            });
+            const popupEl = popup.getEl();
+            const popupHeight = document.querySelector('.o-popup').offsetHeight + 10;
+            popupEl.style.height = `${popupHeight}px`;
+            const overlayOptions = { element: popupEl, positioning: 'bottom-center' };
+            if (!ignorePan) {
+              overlayOptions.autoPan = {
+                margin: 55,
+                animation: {
+                  duration: 500
+                }
+              };
             }
-          });
-          const imageCarouselEl = document.getElementsByClassName(`o-image-carousel${carouselId}`);
-          if (imageCarouselEl.length > 0) {
-            initImageCarousel(`#o-image-carousel${carouselId}`, `.o-image-content${carouselId}`, carouselId, targetElement);
-          }
-        });
-        const popupEl = popup.getEl();
-        const popupHeight = document.querySelector('.o-popup').offsetHeight + 10;
-        popupEl.style.height = `${popupHeight}px`;
-        const overlayOptions = { element: popupEl, positioning: 'bottom-center' };
-        if (!ignorePan) {
-          overlayOptions.autoPan = {
-            margin: 55,
-            animation: {
-              duration: 500
+            if (items[0].layer && items[0].layer.get('styleName')) {
+              const styleName = items[0].layer.get('styleName');
+              const itemStyle = viewer.getStyle(styleName);
+              if (itemStyle && itemStyle[0] && itemStyle[0][0] && itemStyle[0][0].overlayOptions) {
+                Object.assign(overlayOptions, itemStyle[0][0].overlayOptions);
+              }
             }
-          };
-        }
-        if (items[0].layer && items[0].layer.get('styleName')) {
-          const styleName = items[0].layer.get('styleName');
-          const itemStyle = viewer.getStyle(styleName);
-          if (itemStyle && itemStyle[0] && itemStyle[0][0] && itemStyle[0][0].overlayOptions) {
-            Object.assign(overlayOptions, itemStyle[0][0].overlayOptions);
+            if (origostyle && origostyle.overlayOptions) {
+              Object.assign(overlayOptions, origostyle.overlayOptions);
+            }
+            if (overlayOptions.positioning) {
+              popupEl.classList.add(`popup-${overlayOptions.positioning}`);
+            }
+            overlay = new Overlay(overlayOptions);
+            map.addOverlay(overlay);
+            overlay.setPosition(coord);
+            break;
+          }
+          case 'sidebar':
+          {
+            sidebar.setContent({
+              content,
+              title: getTitle(items[0])
+            });
+            const contentDiv = document.getElementById('o-identify-carousel');
+            items.forEach((item) => {
+              if (item.content instanceof Element) {
+                contentDiv.appendChild(item.content);
+              } else {
+                contentDiv.innerHTML = item.content;
+              }
+            });
+            sidebar.setVisibility(true);
+
+            initCarousel('#o-identify-carousel');
+            break;
+          }
+
+          default:
+          {
+            break;
           }
         }
-        if (origostyle && origostyle.overlayOptions) {
-          Object.assign(overlayOptions, origostyle.overlayOptions);
-        }
-        if (overlayOptions.positioning) {
-          popupEl.classList.add(`popup-${overlayOptions.positioning}`);
-        }
-        overlay = new Overlay(overlayOptions);
-        map.addOverlay(overlay);
-        overlay.setPosition(coord);
-        break;
-      }
-      case 'sidebar':
-      {
-        sidebar.init(viewer);
-        sidebar.setContent({
-          content,
-          title: getTitle(items[0])
-        });
-        const contentDiv = document.getElementById('o-identify-carousel');
-        items.forEach((item) => {
-          if (item.content instanceof Element) {
-            contentDiv.appendChild(item.content);
-          } else {
-            contentDiv.innerHTML = item.content;
-          }
-        });
-        sidebar.setVisibility(true);
-        const firstFeature = items[0].feature;
-        const geometry = firstFeature.getGeometry();
-        const clone = firstFeature.clone();
-        clone.setId(firstFeature.getId());
-        // FIXME: should be layer name
-        clone.layerName = firstFeature.name;
-        selectionLayer.clearAndAdd(
-          clone,
-          selectionStyles[geometry.getType()]
-        );
-        selectionLayer.setSourceLayer(items[0].layer);
-        initCarousel('#o-identify-carousel');
-        break;
-      }
-      case 'infowindow':
-      {
-        if (items.length === 1) {
-          const item = new SelectedItem(items[0].feature, items[0].layer, map, items[0].name, items[0].title);
-          selectionManager.addOrHighlightItem(item);
-        } else if (items.length > 1) {
-          const selectedItems = [];
-          items.forEach(item => {
-            selectedItems.push(new SelectedItem(item.feature, item.layer, map, item.name, item.title));
-          });
-          selectionManager.addItems(items);
-        }
-        break;
-      }
-      default:
-      {
-        break;
       }
     }
+
+    // Dispatch itemadded event for every item added
+    items.forEach((item) => dispatchItemAdded(item));
 
     const modalLinks = document.getElementsByClassName('o-identify-link-modal');
     for (let i = 0; i < modalLinks.length; i += 1) {
@@ -465,7 +465,7 @@ const Featureinfo = function Featureinfo(options = {}) {
    * @param {any} opts Additional options. Supported options are : ignorePan, disable auto pan to popup overlay.
    */
   const render = function render(identifyItems, target, coordinate, opts = {}) {
-    doRender(identifyItems, target, coordinate, opts.ignorePan);
+    doRender(identifyItems, target, coordinate, opts.ignorePan, opts.suppressDialog);
   };
   /**
    * Renders the selectedItems after adding async content. Not actually defined as async as it is part of a sync call chain,
@@ -487,7 +487,7 @@ const Featureinfo = function Featureinfo(options = {}) {
         alert('Kunde inte hämta relaterade objekt. En del fält från relaterade objekt kommer att vara tomma.');
       })
       .then(() => {
-        doRender(identifyItems, target, coordinate, opts.ignorePan);
+        doRender(identifyItems, target, coordinate, opts.ignorePan, opts.suppressDialog);
       })
       .catch(err => console.log(err));
   }
@@ -561,7 +561,7 @@ const Featureinfo = function Featureinfo(options = {}) {
       hitTolerance,
       map,
       pixel
-    }, viewer);
+    }, viewer, localization);
     // Abort if clientResult is false
     if (clientResult !== false) {
       getFeatureInfo.getFeaturesFromRemote({

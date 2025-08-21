@@ -5,6 +5,15 @@ import infoTemplates from './featureinfotemplates';
 import maputils from './maputils';
 import SelectedItem from './models/SelectedItem';
 
+const isValidJSON = str => {
+  try {
+    JSON.parse(str);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
 /**
  * Factory method to create a SelectedItem instance. Note that this method is exposed in api.
  * Does not add async content (related tables and attachments). If you need async content use
@@ -13,9 +22,10 @@ import SelectedItem from './models/SelectedItem';
  * @param {any} layer
  * @param {any} map
  * @param {any} groupLayers
+ * @param {any} [localization]
  * @returns {SelectedItem}
  */
-function createSelectedItem(feature, layer, map, groupLayers) {
+function createSelectedItem(feature, layer, map, groupLayers, localization) {
   // Above functions have no way of knowing whether the layer is part of a LayerGroup or not, therefore we need to check every layer against the groupLayers.
   const layerName = layer.get('name');
   let groupLayer;
@@ -38,7 +48,7 @@ function createSelectedItem(feature, layer, map, groupLayers) {
     selectionGroupTitle = layer.get('title');
   }
 
-  return new SelectedItem(feature, layer, map, selectionGroup, selectionGroupTitle);
+  return new SelectedItem(feature, layer, map, selectionGroup, selectionGroupTitle, localization);
 }
 
 async function getFeatureInfoUrl({
@@ -134,12 +144,24 @@ async function getFeatureInfoUrl({
   }
 
   if (layer.get('infoFormat') === 'application/geo+json' || layer.get('infoFormat') === 'application/geojson') {
-    const url = layer.getSource().getFeatureInfoUrl(coordinate, resolution, projection, {
-      INFO_FORMAT: layer.get('infoFormat'),
-      FEATURE_COUNT: '20'
-    });
-    const res = await fetch(url, { method: 'GET' });
-    const text = await res.text();
+    const infoFormat = layer.get('infoFormat');
+    const formatArr = [...new Set([infoFormat, 'application/geo+json', 'application/geojson', 'application/json'])];
+    let text;
+    for (let i = 0; i < formatArr.length; i += 1) {
+      const format = formatArr[i];
+      const url = layer.getSource().getFeatureInfoUrl(coordinate, resolution, projection, {
+        INFO_FORMAT: format,
+        FEATURE_COUNT: '20'
+      });
+      // eslint-disable-next-line no-await-in-loop
+      const result = await fetch(url, { method: 'GET' }).then((res) => res.text())
+        .catch(error => console.error(error));
+      if (isValidJSON(result)) {
+        text = result;
+        layer.set('infoFormat', format);
+        break;
+      }
+    }
     let json = {};
     try {
       json = JSON.parse(text);
@@ -335,7 +357,7 @@ function getFeaturesAtPixel({
   hitTolerance,
   map,
   pixel
-}, viewer) {
+}, viewer, localization) {
   const result = [];
   let cluster = false;
   const resolutions = map.getView().getResolutions();
@@ -358,15 +380,15 @@ function getFeaturesAtPixel({
           return true;
         }
         collection.forEach((f) => {
-          const si = createSelectedItem(f, layer, map, groupLayers);
+          const si = createSelectedItem(f, layer, map, groupLayers, localization);
           result.push(si);
         });
       } else if (collection.length === 1 && queryable) {
-        const si = createSelectedItem(collection[0], layer, map, groupLayers);
+        const si = createSelectedItem(collection[0], layer, map, groupLayers, localization);
         result.push(si);
       }
     } else if (queryable) {
-      const si = createSelectedItem(feature, layer, map, groupLayers);
+      const si = createSelectedItem(feature, layer, map, groupLayers, localization);
       result.push(si);
     }
 
