@@ -81,7 +81,7 @@ const Splash = function Splash(options = {}) {
       }
       if (hideButtonVisible) {
         hideButton = Button({
-          cls: 'rounded margin-top-small padding-y grey-lightest',
+          cls: 'rounded-larger margin-top-small padding-y grey-lightest',
           style: 'display: block;',
           text: hideText,
           click() {

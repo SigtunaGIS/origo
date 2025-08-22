@@ -23,7 +23,8 @@ const Measure = function Measure({
   snap = false,
   snapIsActive = true,
   snapLayers,
-  snapRadius = 15
+  snapRadius = 15,
+  highlightColor
 } = {}) {
   let map;
   let activeButton;
@@ -75,7 +76,7 @@ const Measure = function Measure({
   function styleFunction(feature, segments, drawType, tip) {
     const styleScale = feature.get('styleScale') || 1;
     const labelStyle = drawStyles.getLabelStyle(styleScale);
-    let styles = [measureStyle(styleScale)];
+    let styles = measureStyle({ styleScale, highlightColor });
     const geometry = feature.getGeometry();
     const geomType = geometry.getType();
     let point; let line; let label;
@@ -94,7 +95,7 @@ const Measure = function Measure({
       const segmentLabelStyle = drawStyles.getSegmentLabelStyle(line, projection);
       styles = styles.concat(segmentLabelStyle);
     }
-    if (label) {
+    if (label !== '0 m²') {
       labelStyle.setGeometry(point);
       labelStyle.getText().setText(label);
       styles.push(labelStyle);
@@ -215,8 +216,12 @@ const Measure = function Measure({
     }
     const pointCenter = feature.getGeometry().getCoordinates();
     const bufferCircle = new Circle(pointCenter, bufferSize);
+
+    feature.setStyle((feat) => {
+      const [styleColl, ...styles] = drawStyles.bufferStyleFunction(feat, highlightColor);
+      return [...styleColl, ...styles];
+    });
     feature.setGeometry(bufferCircle);
-    feature.setStyle((feat) => drawStyles.bufferStyleFunction(feat));
   }
 
   function clearSnapInteractions() {

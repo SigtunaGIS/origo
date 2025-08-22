@@ -3,12 +3,10 @@ import Point from 'ol/geom/Point';
 import Awesomplete from 'awesomplete';
 import { Component, Element as El, Button, Collapse, CollapseHeader, dom } from '../ui';
 import generateUUID from '../utils/generateuuid';
-import getAttributes from '../getattributes';
 import getCenter from '../geometry/getcenter';
 import getFeature from '../getfeature';
 import mapUtils from '../maputils';
 import popup from '../popup';
-import sidebar from '../sidebar';
 import utils from '../utils';
 import Infowindow from '../components/infowindow';
 import { listExportHandler } from '../infowindow_exporthandler';
@@ -48,7 +46,8 @@ const Search = function Search(options = {}) {
     url,
     queryParameterName = 'q',
     autocompletePlacement,
-    searchlistOptions = {}
+    searchlistOptions = {},
+    queryType
   } = options;
 
   const searchlistPlacement = searchlistOptions.placement;
@@ -56,7 +55,6 @@ const Search = function Search(options = {}) {
   let map;
   let projectionCode;
   let overlay;
-  let resultWindow;
   let awesomplete;
   let viewer;
   let featureInfo;
@@ -73,74 +71,33 @@ const Search = function Search(options = {}) {
     }
   }
 
-  function showFeatureInfo(features, objTitle, content, layer) {
+  function showFeatureInfo(features, objTitle, content) {
     const obj = {};
     obj.feature = features[0];
     obj.title = objTitle;
     obj.content = content;
-    obj.layer = layer;
-    obj.name = name;
     clear();
-
-    featureInfo.render([obj], 'infowindow', getCenter(features[0].getGeometry()));
+    featureInfo.render([obj], 'overlay', getCenter(features[0].getGeometry()), { ignorePan: true });
     viewer.zoomToExtent(features[0].getGeometry(), maxZoomLevel);
   }
 
   function showOverlay(data, coord) {
     clear();
-    // const view = map.getView();
-    const target = viewer.getId();
+    const newPopup = popup(`#${viewer.getId()}`);
+    overlay = new Overlay({
+      element: newPopup.getEl()
+    });
+
+    map.addOverlay(overlay);
+
+    overlay.setPosition(coord);
     const content = data[name];
-    const featureId = data[idAttribute];
-    switch (target) {
-      case 'overlay':
-      {
-        resultWindow = popup(`#${viewer.getId()}`);
-        overlay = new Overlay({
-          element: window.getEl()
-        });
-        map.addOverlay(overlay);
-        overlay.setPosition(coord);
-        resultWindow.setContent({
-          content,
-          title
-        });
-        resultWindow.setVisibility(true);
-        break;
-      }
-      case 'sidebar':
-      {
-        resultWindow = sidebar.init(viewer);
-        resultWindow.setContent({
-          content,
-          title
-        });
-        const contentDiv = document.getElementById('o-identify-carousel');
-        content.forEach((item) => {
-          if (item.content instanceof Element) {
-            contentDiv.appendChild(item.content);
-          } else {
-            contentDiv.innerHTML = item.content;
-          }
-        });
-        resultWindow.setVisibility(true);
-        resultWindow.initCarousel('#o-identify-carousel');
-        break;
-      }
-      case 'infowindow':
-      {
-        window.showSelectedList(content);
-        window.expandListElement(featureId);
-        window.highlightListElement(featureId);
-        window.scrollListElementToView(featureId);
-        break;
-      }
-      default:
-      {
-        break;
-      }
-    }
-    mapUtils.zoomToExent(new Point(coord), maxZoomLevel);
+    newPopup.setContent({
+      content,
+      title
+    });
+    newPopup.setVisibility(true);
+    viewer.zoomToExtent(new Point(coord), maxZoomLevel);
   }
 
   /** There are several different ways to handle selected search result.
@@ -177,7 +134,8 @@ const Search = function Search(options = {}) {
           let featureWkt;
           let coordWkt;
           if (res.length > 0) {
-            showFeatureInfo(res, layer.get('title'), getAttributes(res[0], layer, map), layer, layer.get('name')); // Kontrollera om det funkar bra med map!
+            const featLayerName = layer.get('name');
+            featureInfo.showFeatureInfo({ feature: res, layerName: featLayerName }, { maxZoomLevel });
           } else if (geometryAttribute) {
             // Fallback if no geometry in response
             featureWkt = mapUtils.wktToFeature(data[geometryAttribute], projectionCode);
@@ -187,21 +145,17 @@ const Search = function Search(options = {}) {
         });
     } else if (geometryAttribute && layerName) {
       feature = mapUtils.wktToFeature(data[geometryAttribute], projectionCode);
-      layer = viewer.getLayer(data[layerName]);
-      showFeatureInfo([feature], layer.get('title'), getAttributes(feature, layer, map), layer, layer.get('name')); // Kontrollera om det funkar bra med map!
-      // 3
+      featureInfo.showFeatureInfo({ feature: [feature], layerName }, { maxZoomLevel });
     } else if (titleAttribute && contentAttribute && geometryAttribute) {
       feature = mapUtils.wktToFeature(data[geometryAttribute], projectionCode);
 
       // Make sure the response is wrapped in a html element
       content = utils.createElement('div', data[contentAttribute]);
-      showFeatureInfo([feature], data[titleAttribute], content, layer, layer.get('name'));
-      // 4
+      showFeatureInfo([feature], data[titleAttribute], content);
     } else if (geometryAttribute && title) {
       feature = mapUtils.wktToFeature(data[geometryAttribute], projectionCode);
       content = utils.createElement('div', data[name]);
-      showFeatureInfo([feature], title, content, layer, layer.get('name'));
-      // 5
+      showFeatureInfo([feature], title, content);
     } else if (easting && northing && title) {
       coord = [data[easting], data[northing]];
       showOverlay(data, coord);
@@ -410,7 +364,7 @@ const Search = function Search(options = {}) {
                     .then((res) => {
                       if (res.length > 0) {
                         const featLayerName = layer.get('name');
-                        featureInfo.showFeatureInfo({ feature: res, layerName: featLayerName });
+                        featureInfo.showFeatureInfo({ feature: res, layerName: featLayerName }, { maxZoomLevel });
                       }
                     });
                 });
@@ -438,7 +392,7 @@ const Search = function Search(options = {}) {
                     .then((res) => {
                       if (res.length > 0) {
                         const featureLayerName = layer.get('name');
-                        featureInfo.showFeatureInfo({ feature: res, layerName: featureLayerName });
+                        featureInfo.showFeatureInfo({ feature: res, layerName: featureLayerName }, { maxZoomLevel });
                       }
                     });
                 });
@@ -554,11 +508,24 @@ const Search = function Search(options = {}) {
       infowindow.changeContent(listcomponent, `${searchlistTitle.replace('{{value}}', searchVal)}`);
     };
 
-    function makeRequest(reqHandler, obj, opt, ignoreGroup = false) {
+    function makeRequest(params) {
+      const {
+        reqHandler,
+        obj,
+        opt = {},
+        ignoreGroup = false,
+        complete = false
+      } = params;
       const searchVal = obj.value;
       let queryUrl = `${url}${url.indexOf('?') !== -1 ? '&' : '?'}${queryParameterName}=${encodeURI(obj.value)}`;
       if (includeSearchableLayers) {
         queryUrl += `&l=${viewer.getSearchableLayers(searchableDefault)}`;
+      }
+      if (complete) {
+        queryUrl += '&c=true';
+      }
+      if (queryType) {
+        queryUrl += `&t=${queryType}`;
       }
       fetch(queryUrl)
         .then(response => response.json())
@@ -584,11 +551,11 @@ const Search = function Search(options = {}) {
           switch (searchlistPlacement) {
             case 'floating':
             case 'left':
-              makeRequest(infowindowHandler, input, {}, true);
+              makeRequest({ reqHandler: infowindowHandler, obj: input, ignoreGroup: true, complete: true });
               clearAll();
               break;
             default:
-              makeRequest(handler, input);
+              makeRequest({ reqHandler: handler, obj: input, complete: true });
           }
         } else if (keyCode in keyCodes) {
           // empty
@@ -596,10 +563,10 @@ const Search = function Search(options = {}) {
           switch (autocompletePlacement) {
             case 'floating':
             case 'left':
-              makeRequest(infowindowHandler, input);
+              makeRequest({ reqHandler: infowindowHandler, obj: input });
               break;
             default:
-              makeRequest(handler, input);
+              makeRequest({ reqHandler: handler, obj: input });
           }
         }
       } else {
