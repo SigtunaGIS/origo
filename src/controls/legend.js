@@ -346,7 +346,7 @@ const Legend = function Legend(options = {}) {
 
   const layerSearchInput = Input({
     cls: 'o-search-layer-field placeholder-text-smaller smaller',
-    style: { height: '1.5rem', 'border-radius': '15px', margin: 0, width: '100%' },// Sigtuna
+    style: { height: '1.5rem', 'border-radius': '15px', margin: 0, width: '100%' }, // Sigtuna
     placeholderText: searchLayersPlaceholderText,
     value: ''
   });

@@ -36,11 +36,11 @@ const Viewer = function Viewer(targetOption, options = {}) {
     consoleId = 'o-console',
     mapCls = 'o-map',
     controls = [],
-    constrainResolution = false,// Sigtuna. Kolla upp.
-    enableRotation = true,// Sigtuna. Kolla upp.
+    constrainResolution = false, // Sigtuna. Kolla upp.
+    enableRotation = true, // Sigtuna. Kolla upp.
     featureinfoOptions = {},
     groups: groupOptions = [],
-    mapGrid = true,// Sigtuna. Kolla upp.
+    mapGrid = true, // Sigtuna. Kolla upp.
     pageSettings = {},
     projectionCode,
     projectionExtent,

@@ -4,7 +4,7 @@ import op2022Style from './stylefunctions/op2022';// Sigtuna
 
 const customStyles = {
   default: defaultStyle,
-  hova: hovaStyle,// Sigtuna
+  hova: hovaStyle, // Sigtuna
   op2022: op2022Style// Sigtuna
 };
 
