@@ -7,8 +7,8 @@
             "layerTitle": "Mätresultat",
             "mainButtonTooltip": "Mäta",
             "startMeasureTooltip": "Klicka för att börja mäta",
-            "lengthTooltip": "Distans",// Sigtuna
-            "areaTooltip": "Areal",// Sigtuna
+            "lengthTooltip": "Distans",
+            "areaTooltip": "Areal",
             "clearTooltip": "Rensa",
             "bufferTooltip": "Buffert",
             "bufferModalTitle": "Ange buffert i meter (ex 1000):",
@@ -16,7 +16,7 @@
             "snapTooltip": "Snappning",
             "showSectionsTooltip": "Visa delsträckor",
             "addNodeTooltip": "Lägg till punkt",
-            "elevationTooltip": "Markhöjd från 2021",// Sigtuna
+            "elevationTooltip": "Markhöjd från 2021",
             "fetchingElevation": "Hämtar höjd...",
             "undoTooltip": "Ångra"
         },
@@ -128,7 +128,7 @@
             "showVisibleTitle": "Visa endast tända lager",
             "showAllVisibleTitle": "Visa alla lager",
             "turnOnLayersTitle": "Tänd alla lager",
-            "addLayerTitle": "Lägg till från fil",// Sigtuna
+            "addLayerTitle": "Lägg till från fil",
             "selectHandlerError": "Search options are missing",
             "titleMissing": "Titel saknas",
             "layerSwitcher": "Lagerbytare",
@@ -137,7 +137,7 @@
             "addLayerWarningGroup": "Grupp",
             "addLayerWarningDNE": "finns inte",
             "layerTitleMissing": "Titel saknas",
-            "layerIcon": "Lagerikon",// Sigtuna
+            "layerIcon": "Lagerikon",
             "toggleLayer": "Växla lagersynlighet",
             "showInfoMenuItem": "Visa",
             "layerInfoMenuItem": "lagerinformation",

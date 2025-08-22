@@ -41,7 +41,7 @@
 @use 'scalepicker';
 @use 'embedded-overlay';
 @use 'spinner';
-@use 'exportmap'; // Sigtunas
+@use 'exportmap' as exportmap; // Sigtunas
 @use 'logger';
 @use 'localization';
 @use 'audio';
