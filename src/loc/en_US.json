@@ -174,7 +174,14 @@
             "scaleText": "Scale 1:"
         },
         "scalepicker": {
-            "selectScaleAriaLabel": "Pick scale"
+            "selectScaleAriaLabel": "Pick scale",
+            "buttonPrefix": "",
+            "listItemPrefix": ""
+        },
+        "splash": {
+            "defaultTitle": "About the map",
+            "hideText": "Don't show again",
+            "confirmText": "Are you sure you don't want to see the information again?"
         },
         "position": {
             "characterError": "Invalid character for coordinate, please try again.",
