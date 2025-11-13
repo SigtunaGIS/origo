@@ -1,0 +1,8 @@
+#o-tools-left .o-maptools {
+    padding-right: 180px;
+}
+
+.o-tooltip {
+    /* Make sure it floats above*/
+    z-index: 9999;
+}

@@ -1,0 +1,29 @@
+
+/* Visible scrollbar when tools overflow
+    Loads after core, wins the cascade*/
+#o-tools-left .o-maptools {
+    max-height: 70vh;
+    overflow-y: auto;
+
+    /*Hide scrollbar in Firefox*/
+    /* For Firefox only (won't affect Chrome/Safari) */
+    scrollbar-width: none;
+    scrollbar-color: auto transparent;
+
+    /* Hide scrollbar in IE 10+*/
+    -ms-overflow-style: none;
+
+    /* Visible but thin; remove if you want hidden.
+        To fully hide in Chrome: comment out these two and keep overflow-y:auto*/
+}
+
+/* WebKit*/
+#o-tools-left .o-maptools::-webkit-scrollbar {
+    width: 5px;
+    background: transparent;
+}
+
+#o-tools-left .o-maptools::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, .25);
+}

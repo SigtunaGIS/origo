@@ -1,0 +1,34 @@
+/* Sigtuna overrides mirroring commit ff61535c (infowindow tweaks) */
+
+/* 1) .listcontainer: widen left margin */
+.o-infowindow .listcontainer {
+  margin: 0.5em 0.5em 0.5em 0.8em !important;
+}
+
+/* 2) .highlighted: drop rounded right side */
+.o-infowindow .highlighted {
+  background-color: whitesmoke !important;
+  border-radius: 0 !important;
+  transition: background-color 0.5s !important;
+}
+
+/* 3) Add left margin to inline labels in the list (matches most builds) */
+.o-infowindow .listcontainer label,
+.o-infowindow .listcontainer .title {
+  margin-left: 1em !important;
+}
+
+.sidebarcontainer {
+  max-height: 90%;
+}
+
+.urvalcontainer {
+  padding: 1em 0em 1em 2em;
+}
+
+.urvalListContainer {
+  margin-right: 0.5em;
+  max-height: 10em;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
