@@ -139,7 +139,10 @@
       "clusterFeatureinfoLevel": 2,
       "pinning": false,
       "hitTolerance": 4,
-	    "infowindow": "infowindow"
+	    "infowindow": "infowindow",
+      "infowindowOptions": {
+        "listLayout": false
+      }
   },
   "source": {
     "sigtuna": {

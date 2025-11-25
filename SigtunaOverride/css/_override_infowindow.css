@@ -1,34 +1,55 @@
 /* Sigtuna overrides mirroring commit ff61535c (infowindow tweaks) */
 
-/* 1) .listcontainer: widen left margin */
-.o-infowindow .listcontainer {
+/* 1) Container margin: classic list + listLayout list */
+.o-infowindow .listcontainer,
+.o-infowindow .expandable_list .urvalcontainer {
   margin: 0.5em 0.5em 0.5em 0.8em !important;
 }
 
-/* 2) .highlighted: drop rounded right side */
+/* 2) Highlighted row: used in both layouts if class is present */
 .o-infowindow .highlighted {
   background-color: whitesmoke !important;
   border-radius: 0 !important;
   transition: background-color 0.5s !important;
 }
 
-/* 3) Add left margin to inline labels in the list (matches most builds) */
+/* 3) Left margin for labels/titles:
+      - classic: .listcontainer …
+      - listLayout: labels/titles inside .urvalelement */
 .o-infowindow .listcontainer label,
-.o-infowindow .listcontainer .title {
+.o-infowindow .listcontainer .title,
+.o-infowindow .expandable_list .urvalelement label,
+.o-infowindow .expandable_list .urvalelement .title {
   margin-left: 1em !important;
 }
 
-.sidebarcontainer {
+.removelistelement-svg-container {
+  margin-left: 1.1em !important;
+}
+
+/* 4) Sidebar: common wrapper for both variants */
+.o-infowindow .sidebarcontainer {
   max-height: 90%;
 }
 
-.urvalcontainer {
-  padding: 1em 0em 1em 2em;
+/* 5) Outer list container: exists in both layouts */
+.o-infowindow .urvalcontainer {
+  padding: 1em 0 1em 2em;
 }
 
-.urvalListContainer {
+/* 6) Scroll container:
+      - classic: .urvalListContainer
+      - listLayout: .urvalcontent inside .expandable_list */
+.o-infowindow .urvalListContainer,
+.o-infowindow .expandable_list .urvalcontent {
   margin-right: 0.5em;
   max-height: 10em;
   overflow-y: auto;
   scroll-behavior: smooth;
+}
+
+/* Reduce padding on the draggable sidebar container */
+#sidebarcontainer-draggable.urvalcontainer {
+  padding-left: 1.5em !important;   /* adjust as needed */
+  border-radius: 0 !important;
 }
