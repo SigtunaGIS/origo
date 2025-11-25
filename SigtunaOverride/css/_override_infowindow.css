@@ -53,3 +53,9 @@
   padding-left: 1.5em !important;   /* adjust as needed */
   border-radius: 0 !important;
 }
+
+/* Strong, scoped override for listLayout headers */
+.o-infowindow .expandable_list .collapse-header.padding-x {
+  padding-left: 1.8em !important;
+  padding-right: 1.8em !important; /* override padding-x fully */
+}

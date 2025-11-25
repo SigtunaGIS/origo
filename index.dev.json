@@ -141,7 +141,7 @@
       "hitTolerance": 4,
 	    "infowindow": "infowindow",
       "infowindowOptions": {
-        "listLayout": false
+        "listLayout": true
       }
   },
   "source": {
