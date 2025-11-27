@@ -1,61 +1,96 @@
-/* Sigtuna overrides mirroring commit ff61535c (infowindow tweaks) */
+/* Sigtuna override */
 
-/* 1) Container margin: classic list + listLayout list */
-.o-infowindow .listcontainer,
-.o-infowindow .expandable_list .urvalcontainer {
-  margin: 0.5em 0.5em 0.5em 0.8em !important;
-}
+/*************************************************
+ * 1. SHARED STYLES (APPLY TO BOTH LAYOUTS)
+ *************************************************/
 
-/* 2) Highlighted row: used in both layouts if class is present */
-.o-infowindow .highlighted {
-  background-color: whitesmoke !important;
-  border-radius: 0 !important;
-  transition: background-color 0.5s !important;
-}
-
-/* 3) Left margin for labels/titles:
-      - classic: .listcontainer …
-      - listLayout: labels/titles inside .urvalelement */
-.o-infowindow .listcontainer label,
-.o-infowindow .listcontainer .title,
-.o-infowindow .expandable_list .urvalelement label,
-.o-infowindow .expandable_list .urvalelement .title {
-  margin-left: 1em !important;
-}
-
-.removelistelement-svg-container {
-  margin-left: 1.1em !important;
-}
-
-/* 4) Sidebar: common wrapper for both variants */
-.o-infowindow .sidebarcontainer {
-  max-height: 90%;
-}
-
-/* 5) Outer list container: exists in both layouts */
-.o-infowindow .urvalcontainer {
-  padding: 1em 0 1em 2em;
-}
-
-/* 6) Scroll container:
-      - classic: .urvalListContainer
-      - listLayout: .urvalcontent inside .expandable_list */
-.o-infowindow .urvalListContainer,
-.o-infowindow .expandable_list .urvalcontent {
-  margin-right: 0.5em;
-  max-height: 10em;
+/* Shared scrolling behavior for grouped (urval) and flat lists */
+.sidebarcontainer .urvalcontainer,
+.sidebarcontainer .listcontainer {
+  scrollbar-width: thin;            /* Firefox */
+  scrollbar-color: #999 #e0e0e0;    /* Firefox track + thumb */
+  
+  max-height: 1%;
   overflow-y: auto;
   scroll-behavior: smooth;
+
+  /* creates bottom gap for the scrollbar */
+  margin-bottom: 1.5em;   
 }
 
-/* Reduce padding on the draggable sidebar container */
-#sidebarcontainer-draggable.urvalcontainer {
-  padding-left: 1.5em !important;   /* adjust as needed */
-  border-radius: 0 !important;
+/* WebKit browsers: Chrome, Edge, Opera, Safari */
+.sidebarcontainer .urvalcontainer::-webkit-scrollbar,
+.sidebarcontainer .listcontainer::-webkit-scrollbar {
+  width: 6px;                       /* thin scrollbar */
 }
 
-/* Strong, scoped override for listLayout headers */
-.o-infowindow .expandable_list .collapse-header.padding-x {
-  padding-left: 1.8em !important;
-  padding-right: 1.8em !important; /* override padding-x fully */
+.sidebarcontainer .urvalcontainer::-webkit-scrollbar-thumb,
+.sidebarcontainer .listcontainer::-webkit-scrollbar-thumb {
+  background: #999;
+  border-radius: 10px;
 }
+
+.sidebarcontainer .urvalcontainer::-webkit-scrollbar-track,
+.sidebarcontainer .listcontainer::-webkit-scrollbar-track {
+  background: #e0e0e0;
+}
+
+/*************************************************
+ * 2. listLayout: false  (flat list)
+ *    .sidebarcontainer .listcontainer ...
+ *************************************************/
+.sidebarcontainer .urvalcontainer {
+  border-radius: initial;
+  padding: 0em 0em 0em 1.9em;
+}
+
+.sidebarcontainer .urvalListContainer {
+  padding-bottom: 0em;
+}
+
+.sidebarcontainer .listcontainer {
+  margin-left: 1.5em;
+}
+
+.sidebarcontainer .urval-textnode-container {
+  margin-top: 1.0em;
+}
+
+/*************************************************
+ * 3. listLayout: true  (expandable_list / urval)
+ *    .sidebarcontainer.expandable_list ...
+ *************************************************/
+
+ /* Kill any bottom border from wrapper, header, and content */
+.sidebarcontainer.expandable_list .urvalelement,
+.sidebarcontainer.expandable_list .urvalelement .collapse-header,
+.sidebarcontainer.expandable_list .urvalelement .urvalcontent {
+  border-bottom: none;
+}
+
+.sidebarcontainer.expandable_list .urvalelement {
+  margin-left: 1.25em;
+  padding-right: 0.5em;
+  border-bottom: 0.01em solid hsl(0, 0%, 92%);
+}
+
+.listelement .removelistelement-svg-container {
+  padding-right: 0.25em;
+}
+
+.listelement .listelement-content-container {
+  margin-left: 0.5em;
+  padding-left: 0.25em;
+}
+
+.sidebarcontainer.expandable_list .urval-textnode-container {
+  margin-bottom: 0.5em;
+}
+
+
+
+
+
+
+
+

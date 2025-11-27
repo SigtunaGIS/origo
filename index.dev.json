@@ -126,7 +126,7 @@
   ],
   "extent": [
     115160.07, 6588840.23, 172504.07, 6637992.23
- ],
+  ],
   "center": [
     142476, 6614452
   ],
@@ -141,7 +141,7 @@
       "hitTolerance": 4,
 	    "infowindow": "infowindow",
       "infowindowOptions": {
-        "listLayout": true
+        "listLayout": false
       }
   },
   "source": {
