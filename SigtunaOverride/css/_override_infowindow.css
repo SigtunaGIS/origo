@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* Sigtuna override */
 
 /*************************************************
@@ -94,3 +95,129 @@
 
 
 
+=======
+
+/* =========================================
+   SIDEBAR TITLE / DRAGGABLE HEADER
+   ========================================= */
+#sidebarcontainer-draggable {
+  text-indent: 0.5em;
+  margin: 0.7em 1em 1em 1em;
+}
+
+/* =========================================
+   URVALCONTAINER — DEFAULT (ALL COLLAPSED)
+   Scrollbar fully disabled & invisible
+   ========================================= */
+.urvalcontainer {
+  max-height: 60em;
+  /* defines expansion threshold */
+  overflow-y: hidden;
+  /* no scroll when nothing expanded */
+
+  /* Firefox: hide scrollbar completely */
+  scrollbar-width: none;
+}
+
+/* WebKit browsers: hide scrollbar completely */
+.urvalcontainer::-webkit-scrollbar {
+  display: none;
+}
+
+/* =========================================
+   URVALCONTAINER — EXPANDED STATE
+   Enable scrollbar ONLY when needed
+   ========================================= */
+.urvalcontainer:has(.collapse.expanded) {
+  overflow-y: auto;
+
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.4) transparent;
+}
+
+/* WebKit scrollbar when expanded */
+.urvalcontainer:has(.collapse.expanded)::-webkit-scrollbar {
+  display: block;
+  width: 6px;
+  height: 6px;
+}
+
+.urvalcontainer:has(.collapse.expanded)::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.urvalcontainer:has(.collapse.expanded)::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 4px;
+}
+
+.urvalcontainer:has(.collapse.expanded)::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Prevent scroll chaining into the map */
+.urvalcontainer:has(.collapse.expanded) {
+  overscroll-behavior: contain;
+}
+
+/* =========================================
+   LAYOUT FIXES FOR LISTLAYOUT
+   ========================================= */
+
+/* Reset margins inside expandable list */
+.o-map .expandable_list .urvalcontainer {
+  margin: 0;
+}
+
+/* =========================================
+   LIST ELEMENT + HEADER SPACING
+   ========================================= */
+.sidebarcontainer .collapse-header {
+  padding-left: 0.4em;
+  padding-right: 0.6em;
+}
+
+.sidebarcontainer .removelistelement-svg-container {
+  padding: 0.5em 0.2em 0.5em 0.5em;
+}
+
+.sidebarcontainer .listelement-content-container {
+  padding: 0;
+}
+
+/* =========================================
+   DIVIDER LINE (ALWAYS VISIBLE)
+   ========================================= */
+.sidebarcontainer .urvalelement .collapse:not(.expanded),
+.sidebarcontainer .urvalelement .collapse.expanded {
+  border-bottom: 0.01em solid #7c7979;
+  margin-left: 1.8em;
+}
+
+/* =========================================
+   HIGHLIGHTED ROW BEHAVIOR
+   ========================================= */
+.o-infowindow .highlighted {
+  background-color: whitesmoke !important;
+  border-radius: 0 !important;
+  transition: background-color 0.5s !important;
+}
+
+/* =========================================
+   LABEL / TITLE INDENT (ALL LIST TYPES)
+   ========================================= */
+.o-infowindow .listcontainer label,
+.o-infowindow .listcontainer .title,
+.o-infowindow .expandable_list .urvalcontent label,
+.o-infowindow .expandable_list .urvalcontent .title {
+  margin-left: 1.5rem !important;
+}
+
+/* =========================================
+   HEADER TEXT ALIGNMENT (LISTLAYOUT)
+   ========================================= */
+.o-infowindow .expandable_list .collapse-header .grow.basis-0 {
+  padding-left: 12px;
+}
+>>>>>>> 4e2aae0 (Infowindow final fix)
