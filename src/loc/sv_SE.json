@@ -16,7 +16,7 @@
             "snapTooltip": "Snappning",
             "showSectionsTooltip": "Visa delsträckor",
             "addNodeTooltip": "Lägg till punkt",
-            "elevationTooltip": "Markhöjd från 2021",
+            "elevationTooltip": "Markhöjd",
             "fetchingElevation": "Hämtar höjd...",
             "undoTooltip": "Ångra"
         },
