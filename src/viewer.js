@@ -568,7 +568,7 @@ const Viewer = function Viewer(targetOption, options = {}) {
       }));
 
       tileGrid = maputils.tileGrid(tileGridSettings);
-      stylewindow = Stylewindow({ palette, viewer: this, localization: controls.find((control) => control.name === 'localization') });
+      stylewindow = Stylewindow({ palette, viewer: this, localization: controls.find((control) => control.name === 'localization'), extraMarkers: controls.find((control) => control.name === 'draw')?.options?.extraMarkers });
 
       // Sigtuna. Kontrollera vilken kod som ska finnas här.
       setMap(Map({

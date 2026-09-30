@@ -48,8 +48,14 @@ const Search = function Search(options = {}) {
     autocompletePlacement,
     searchlistOptions = {},
     queryType,
-    suppressDialog
+    suppressDialog,
+    localization,
+    searchDelay = 400
   } = options;
+
+  function localize(key) {
+    return localization.getStringByKeys({ targetParentKey: 'search', targetKey: key });
+  }
 
   const searchlistPlacement = searchlistOptions.placement;
   let searchDb = {};
@@ -64,6 +70,7 @@ const Search = function Search(options = {}) {
   let containerElement;
   let wrapperElement;
   let infowindow;
+  let debounceTimer;
 
   function clear() {
     featureInfo.clear();
@@ -384,7 +391,7 @@ const Search = function Search(options = {}) {
           const rows = [];
           if (searchlistOptions.makeSelectionButton) {
             const ids = resultArray.map(item => item[idAttribute]);
-            const buttonText = searchlistOptions.makeSelectionButtonText || 'Gör urval i kartan';
+            const buttonText = searchlistOptions.makeSelectionButtonText || localize('searchlistMakeSelectionButtonText');
             const makeSelectionButton = Button({
               cls: 'export-button',
               text: buttonText
@@ -489,7 +496,7 @@ const Search = function Search(options = {}) {
       if (Object.keys(result).length > 0 && searchlistOptions.export && searchlistOptions.exportUrl) {
         const roundButton = searchlistOptions.roundButton;
         const buttonIcon = searchlistOptions.roundButtonIcon || '#fa-download';
-        const buttonText = searchlistOptions.exportButtonText || 'Export';
+        const buttonText = searchlistOptions.exportButtonText || localize('searchlistExportButtonText');
         const exportFileName = searchlistOptions.exportFilename || 'export.xlsx';
         const exportExcludedFields = searchlistOptions.exportExcludedFields || [];
         if (exportExcludedFields.length > 0) {
@@ -540,7 +547,7 @@ const Search = function Search(options = {}) {
           return `${content}`;
         }
       });
-      const searchlistTitle = searchlistOptions.title || 'Sökresultat för "{{value}}"';
+      const searchlistTitle = searchlistOptions.title || `${localize('searchlistTitle')} "{{value}}"`;
       infowindow.changeContent(listcomponent, `${searchlistTitle.replace('{{value}}', searchVal)}`);
       infowindow.show();
     };
@@ -564,21 +571,24 @@ const Search = function Search(options = {}) {
       if (queryType) {
         queryUrl += `&t=${queryType}`;
       }
-      fetch(queryUrl)
-        .then(response => response.json())
-        .then((data) => {
-          let list = [];
-          searchDb = {};
-          if (data.length) {
-            setSearchDb(data);
-            if (name && groupSuggestions && !ignoreGroup) {
-              list = groupToList(groupDb(searchDb));
-            } else {
-              list = dbToList(data);
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        fetch(queryUrl)
+          .then(response => response.json())
+          .then((data) => {
+            let list = [];
+            searchDb = {};
+            if (data.length) {
+              setSearchDb(data);
+              if (name && groupSuggestions && !ignoreGroup) {
+                list = groupToList(groupDb(searchDb));
+              } else {
+                list = dbToList(data);
+              }
             }
-          }
-          reqHandler(list, searchVal, opt);
-        });
+            reqHandler(list, searchVal, opt);
+          });
+      }, complete ? 0 : searchDelay);
     }
 
     input.addEventListener('keyup', (e) => {
@@ -607,6 +617,7 @@ const Search = function Search(options = {}) {
           }
         }
       } else {
+        clearTimeout(debounceTimer);
         switch (searchlistPlacement) {
           case 'floating':
           case 'left':
@@ -649,7 +660,7 @@ const Search = function Search(options = {}) {
       this.render();
     },
     onInit() {
-      if (!hintText) hintText = 'Sök...';
+      if (!hintText) hintText = localize('hintText');
       searchButton = Button({
         cls: 'o-search-button no-shrink no-grow compact icon-small',
         icon: '#ic_search_24px',
@@ -667,7 +678,7 @@ const Search = function Search(options = {}) {
 
       containerElement = El({
         cls: 'o-search o-search-false flex row align-center padding-right-small',
-        innerHTML: `<input id="hjl" class="o-search-field form-control text-grey-darker" type="text" placeholder="${hintText}"></input>`
+        innerHTML: `<input id="hjl" class="o-search-field form-control text-grey-darker" type="text" placeholder="${localize('hintText')}"></input>`
       });
 
       wrapperElement = El({
