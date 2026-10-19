@@ -1,0 +1,9 @@
+/* Keep legend search results gray when Origo applies both theme classes. */
+.o-map .o-legend .awesomplete > ul {
+  background: #ddd !important;
+  color: #000;
+}
+
+.o-map .o-legend .awesomplete mark {
+  color: #000;
+}
