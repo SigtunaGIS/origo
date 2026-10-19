@@ -91,10 +91,21 @@
 /* =========================================
    DIVIDER LINE (ALWAYS VISIBLE)
    ========================================= */
-.sidebarcontainer .urvalelement .collapse:not(.expanded),
-.sidebarcontainer .urvalelement .collapse.expanded {
-  border-bottom: 0.01em solid #7c7979;
+.sidebarcontainer.expandable_list .urvalelement > .collapse {
+  border-bottom: none;
   margin-left: 1.8em;
+}
+
+.sidebarcontainer.expandable_list .urvalelement > .collapse > .collapse-header {
+  border-bottom: none;
+}
+
+/* Keep the group divider inset independently of the content indentation. */
+.sidebarcontainer.expandable_list .urvalelement::after {
+  content: "";
+  display: block;
+  border-bottom: 1px solid #d9d9d9;
+  margin: 0 1em;
 }
 
 /* =========================================
