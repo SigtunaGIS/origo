@@ -8,59 +8,33 @@
 }
 
 /* =========================================
-   URVALCONTAINER — DEFAULT (ALL COLLAPSED)
-   Scrollbar fully disabled & invisible
+   LISTLAYOUT SCROLLING
+   Show a thin scrollbar whenever results overflow
    ========================================= */
-.urvalcontainer {
-  max-height: 60em;
-  /* defines expansion threshold */
-  overflow-y: hidden;
-  /* no scroll when nothing expanded */
-
-  /* Firefox: hide scrollbar completely */
-  scrollbar-width: none;
-}
-
-/* WebKit browsers: hide scrollbar completely */
-.urvalcontainer::-webkit-scrollbar {
-  display: none;
-}
-
-/* =========================================
-   URVALCONTAINER — EXPANDED STATE
-   Enable scrollbar ONLY when needed
-   ========================================= */
-.urvalcontainer:has(.collapse.expanded) {
+.o-map .sidebarcontainer.expandable_list > .urvalcontainer {
   overflow-y: auto;
-
-  /* Firefox */
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.4) transparent;
+  overscroll-behavior: contain;
 }
 
-/* WebKit scrollbar when expanded */
-.urvalcontainer:has(.collapse.expanded)::-webkit-scrollbar {
-  display: block;
+/* WebKit fallback */
+.o-map .sidebarcontainer.expandable_list > .urvalcontainer::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
-.urvalcontainer:has(.collapse.expanded)::-webkit-scrollbar-track {
+.o-map .sidebarcontainer.expandable_list > .urvalcontainer::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.urvalcontainer:has(.collapse.expanded)::-webkit-scrollbar-thumb {
+.o-map .sidebarcontainer.expandable_list > .urvalcontainer::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.4);
   border-radius: 4px;
 }
 
-.urvalcontainer:has(.collapse.expanded)::-webkit-scrollbar-thumb:hover {
+.o-map .sidebarcontainer.expandable_list > .urvalcontainer::-webkit-scrollbar-thumb:hover {
   background-color: rgba(0, 0, 0, 0.6);
-}
-
-/* Prevent scroll chaining into the map */
-.urvalcontainer:has(.collapse.expanded) {
-  overscroll-behavior: contain;
 }
 
 /* =========================================
@@ -111,25 +85,8 @@
 /* =========================================
    HIGHLIGHTED ROW BEHAVIOR
    ========================================= */
-.o-infowindow .highlighted {
+.o-map .sidebarcontainer .listelement.highlighted {
   background-color: whitesmoke !important;
   border-radius: 0 !important;
   transition: background-color 0.5s !important;
-}
-
-/* =========================================
-   LABEL / TITLE INDENT (ALL LIST TYPES)
-   ========================================= */
-.o-infowindow .listcontainer label,
-.o-infowindow .listcontainer .title,
-.o-infowindow .expandable_list .urvalcontent label,
-.o-infowindow .expandable_list .urvalcontent .title {
-  margin-left: 1.5rem !important;
-}
-
-/* =========================================
-   HEADER TEXT ALIGNMENT (LISTLAYOUT)
-   ========================================= */
-.o-infowindow .expandable_list .collapse-header .grow.basis-0 {
-  padding-left: 12px;
 }
