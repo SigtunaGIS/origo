@@ -78,4 +78,4 @@ The target Origo build directory must already exist.
 
 The copy task validates both generated files before copying `sigtuna.css` and
 `sigtuna.css.map`. It preserves other Origo assets. SCSS sources, package files,
-this README, and the retained auxiliary HTML and JavaScript files are not copied.
+and this README are not copied.
