@@ -2,7 +2,7 @@
 /* =========================================
    SIDEBAR TITLE / DRAGGABLE HEADER
    ========================================= */
-#sidebarcontainer-draggable {
+.o-map #sidebarcontainer-draggable {
   text-indent: 0.5em;
   margin: 0.7em 1em 1em 1em;
 }
@@ -49,33 +49,33 @@
 /* =========================================
    LIST ELEMENT + HEADER SPACING
    ========================================= */
-.sidebarcontainer .collapse-header {
+.o-map .sidebarcontainer .collapse-header {
   padding-left: 0.4em;
   padding-right: 0.6em;
 }
 
-.sidebarcontainer .removelistelement-svg-container {
+.o-map .sidebarcontainer .removelistelement-svg-container {
   padding: 0.5em 0.2em 0.5em 0.5em;
 }
 
-.sidebarcontainer .listelement-content-container {
+.o-map .sidebarcontainer .listelement-content-container {
   padding: 0;
 }
 
 /* =========================================
    DIVIDER LINE (ALWAYS VISIBLE)
    ========================================= */
-.sidebarcontainer.expandable_list .urvalelement > .collapse {
+.o-map .sidebarcontainer.expandable_list .urvalelement > .collapse {
   border-bottom: none;
   margin-left: 1.8em;
 }
 
-.sidebarcontainer.expandable_list .urvalelement > .collapse > .collapse-header {
+.o-map .sidebarcontainer.expandable_list .urvalelement > .collapse > .collapse-header {
   border-bottom: none;
 }
 
 /* Keep the group divider inset independently of the content indentation. */
-.sidebarcontainer.expandable_list .urvalelement::after {
+.o-map .sidebarcontainer.expandable_list .urvalelement::after {
   content: "";
   display: block;
   border-bottom: 1px solid #d9d9d9;
@@ -86,7 +86,7 @@
    HIGHLIGHTED ROW BEHAVIOR
    ========================================= */
 .o-map .sidebarcontainer .listelement.highlighted {
-  background-color: whitesmoke !important;
-  border-radius: 0 !important;
-  transition: background-color 0.5s !important;
+  background-color: whitesmoke;
+  border-radius: 0;
+  transition: background-color 0.5s;
 }

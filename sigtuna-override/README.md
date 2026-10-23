@@ -9,9 +9,21 @@ Author styles in SCSS, following the project's `DEVELOPING.md`; do not edit gene
 - `scss/_legend.scss` contains legend customizations.
 - `scss/sigtuna.scss` loads those partials in that order using Sass `@use`.
 
-Preserve the order when adding partials. Scope new selectors to `.o-map` where possible
-and explain any necessary `!important` declarations. The existing rules are preserved
-from the original override styles.
+Preserve the order when adding partials. Scope every override selector to `.o-map`
+so these styles only affect elements inside an Origo map. Use the existing component
+classes within that scope and avoid adding IDs or deeper selector chains just to
+increase priority.
+
+Load `sigtuna.css` after Origo's stylesheet. Within the same cascade layer and
+importance level, selector specificity takes precedence over stylesheet order;
+the later declaration wins when specificity is equal. Keep selectors only as
+specific as needed to override the corresponding Origo rule.
+
+Use normal declarations by default. The highlighted-row selector is already more
+specific than Origo's `.o-map .highlighted`, so it does not need `!important`.
+The legend search background retains `!important` because Origo's `.awesomplete.black`
+and `.awesomplete.grey` backgrounds also use it. Document the competing rule whenever
+an `!important` declaration is necessary; do not add it preemptively.
 
 ## Separate packages
 
@@ -45,6 +57,12 @@ Both processes are needed when developing the complete Sigtuna application.
 To compile Sigtuna styles once without copying, use
 `npm --prefix sigtuna-override run build-sass`. The `watch-sass` command exposes the
 same watcher used by `start`; it does not update packaged build directories.
+
+For changes limited to this package, use `build-sass` and verify infowindow scrolling,
+highlighted rows, expanded groups, and legend search results on both narrow and wide
+map views. Check that matching elements outside `.o-map` are unaffected. Do not run
+`build` or `build-dev` for a package-only check: those commands also write to Origo's
+build directories outside this folder.
 
 The generated CSS, source map, and local `node_modules` are ignored by Git.
 The source map embeds its SCSS sources so it also works in copied builds.
