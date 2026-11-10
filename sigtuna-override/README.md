@@ -6,7 +6,7 @@ Author styles in SCSS, following the project's `DEVELOPING.md`; do not edit gene
 ## Editing styles
 
 - `scss/_infowindow.scss` contains infowindow and sidebar customizations.
-- `scss/_legend.scss` contains legend customizations.
+- `scss/_legend.scss` contains legend search input rounding and result colors.
 - `scss/sigtuna.scss` loads those partials in that order using Sass `@use`.
 
 Preserve the order when adding partials. Scope every override selector to `.o-map`
@@ -22,8 +22,13 @@ specific as needed to override the corresponding Origo rule.
 Use normal declarations by default. The highlighted-row selector is already more
 specific than Origo's `.o-map .highlighted`, so it does not need `!important`.
 The legend search background retains `!important` because Origo's `.awesomplete.black`
-and `.awesomplete.grey` backgrounds also use it. Document the competing rule whenever
+background also uses it. Document the competing rule whenever
 an `!important` declaration is necessary; do not add it preemptively.
+
+Sigtuna's legend search appearance comes from this package's CSS. Origo's legend
+keeps its `black` autocomplete class for dropdown layout and hover behavior; it does
+not add a Sigtuna theme class or inline input rounding. Without `sigtuna.css`, the
+legend uses Origo's base input rounding and black results theme.
 
 ## Separate packages
 
