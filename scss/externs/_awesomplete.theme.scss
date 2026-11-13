@@ -63,11 +63,6 @@
         background-color: vars.$search-hover-backround;
         color: #000;
     }
-    // Sigtuna
-    .grey mark {
-        color: #000;
-    }
-    // Slut Sigtuna
     .awesomplete>ul>li[aria-selected='true']>.suggestion {
         background-color: vars.$search-hover-backround;
         color: #000;
@@ -77,11 +72,6 @@
         background: none;
         font-weight: bold;
     }
-    // Sigtuna
-    .grey li .suggestion:hover mark {
-        background-color: #fff;
-    }
-    // Slut Sigtuna
     .black mark {
         color: #aaa;
     }

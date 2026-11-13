@@ -29,7 +29,15 @@
         "expanded": false,
    		  "contentStyle": {
      	    "width": "280px"
-   		}
+   		},
+      "visibleLayersControl": true,
+        "searchLayersControl": true,
+        "searchLayersMinLength": 2,
+        "searchLayersLimit": 10,
+        "searchLayersParameters": [
+          "title",
+          "abstract"
+        ]
  		}
 	},
     {
@@ -126,7 +134,7 @@
   ],
   "extent": [
     115160.07, 6588840.23, 172504.07, 6637992.23
- ],
+  ],
   "center": [
     142476, 6614452
   ],
@@ -139,7 +147,10 @@
       "clusterFeatureinfoLevel": 2,
       "pinning": false,
       "hitTolerance": 4,
-	    "infowindow": "infowindow"
+	    "infowindow": "infowindow",
+      "infowindowOptions": {
+        "listLayout": true
+      }
   },
   "source": {
     "sigtuna": {

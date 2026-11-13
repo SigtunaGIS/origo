@@ -1,0 +1,13 @@
+.o-map .o-legend .o-search-layer-field {
+  border-radius: 15px;
+}
+
+/* Override Origo's .awesomplete.black background, which also uses !important. */
+.o-map .o-legend .awesomplete > ul {
+  background: #ddd !important;
+  color: #000;
+}
+
+.o-map .o-legend .awesomplete mark {
+  color: #000;
+}

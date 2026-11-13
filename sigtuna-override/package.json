@@ -1,0 +1,17 @@
+{
+  "name": "sigtuna-override",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sigtuna-specific styles for Origo",
+  "license": "BSD-2-Clause",
+  "scripts": {
+    "start": "npm run watch-sass",
+    "build": "npm run build-sass && node tasks/copy-css.js ../build",
+    "build-dev": "npm run build-sass && node tasks/copy-css.js ../build-dev",
+    "build-sass": "sass --embed-sources scss/sigtuna.scss css/sigtuna.css",
+    "watch-sass": "sass --watch --embed-sources scss/sigtuna.scss css/sigtuna.css"
+  },
+  "devDependencies": {
+    "sass-embedded": "1.87.0"
+  }
+}

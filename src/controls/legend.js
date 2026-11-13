@@ -346,7 +346,7 @@ const Legend = function Legend(options = {}) {
 
   const layerSearchInput = Input({
     cls: 'o-search-layer-field placeholder-text-smaller smaller',
-    style: { height: '1.5rem', 'border-radius': '15px', margin: 0, width: '100%' }, // Sigtuna
+    style: { height: '1.5rem', margin: 0, width: '100%' },
     placeholderText: searchLayersPlaceholderText,
     value: ''
   });
@@ -563,7 +563,6 @@ const Legend = function Legend(options = {}) {
         }
       });
 
-      input.parentNode.classList.add('grey');// Sigtuna
       awesomplete.ul.style.maxHeight = `${calcMaxHeight(getTargetHeight()) / 2}px`;
       input.parentNode.classList.add('black');
       input.parentNode.classList.add('grow');
